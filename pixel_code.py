@@ -102,7 +102,6 @@ class Main:
         self.projectsArray = []
         self.show_details = False 
 
-        
         self.current_screen = "main" # > ["main", "parametre"]
 
         self.parametre = Param()
@@ -411,7 +410,10 @@ main.display_projects()
 while True:
     key = get_key()
     if key == "q": # Always
-        print("Fermeture du programme...")
+        if main.parametre.language == "en":
+            print("End of programme")
+        else :
+            print("Fermeture du programme...")
         break
         
     elif main.current_screen == "main" : # Interface of Main
