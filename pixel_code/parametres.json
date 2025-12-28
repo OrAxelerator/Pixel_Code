@@ -1,0 +1,18 @@
+{
+    "app": {
+        "language": "fr",
+        "use_nerd_font": false,
+        "display_tutorial": false,
+        "theme": "default"
+    },
+    "ui": {
+        "details_mode_default": false,
+        "truncate_text": true,
+        "path_truncate_mode": "middle",
+        "clear_mode": "partial"
+    },
+    "projects": {
+        "auto_reload": false,
+        "sort_by_name": false
+    }
+}

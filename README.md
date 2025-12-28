@@ -23,6 +23,9 @@ Pixel_Code est un outil en Python permettant de facilement enregistrer vos proje
 
 Objectif => faciliter l’ouverture via VS Code et une meilleure organisation et visualisation des projets en cours et finis.
 
+> Appelez l'app en tapant la commande : **pixel-code**
+
+
 > [!IMPORTANT]
 >
 > Pour que les icônes marchent, il faut mettre la police **"0xProto Nerd Font"** dans votre terminal, et si vous souhaitez exécuter le code dans VS Code, il faut aussi définir **Terminal › Integrated: Font Family** = `"0xProto Nerd Font"`
