@@ -10,3 +10,9 @@ requires-python = ">=3.8"
 
 [project.scripts]
 pixel-code = "pixel_code.__main__:main"
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.package-data]
+pixel_code = ["*json", "*.txt"]

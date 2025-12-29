@@ -4,7 +4,7 @@ import json
 import subprocess
 
 # Détection clavier selon OS
-if os.name == "nt":
+if os.name == "nt":# Windows ..
     import msvcrt
 else:
     import termios
@@ -45,6 +45,8 @@ PARAMETRES_JSON   = BASE_DIR / "parametres.json"
 
 # Call the code : "pixel-code"
 
+# on macOs : pip install -e .
+# on Ubuntu use pipx and write : pipx install . 
 
 # CONST
 # Styles ANSI #Do ANSI.py for later ??
@@ -122,7 +124,7 @@ class Main:
         self.current_screen = "main" # > ["main", "parametre"]
 
         self.parametre = Param()
-        self.parametre.load_param("parametres.json")
+        self.parametre.load_param()
         self.language = None # Param 
 
     @property
@@ -158,6 +160,9 @@ class Main:
                     print()
             except FileNotFoundError:
                 print("Logo introuvable.")
+                print(BASE_DIR)
+                print(LOGO_TXT)
+                
 
     def clear_terminal(self):
         if os.name == "nt": # work ??
@@ -339,9 +344,9 @@ class Param:
         
 
 
-    def load_param(self, file_path=PARAMETRES_JSON):
+    def load_param(self):
         try:
-            with open(file_path, encoding="utf-8") as f:
+            with open(PARAMETRES_JSON, encoding="utf-8") as f:
                 data = json.load(f)
 
                 # Parcours des sections et assignation des valeurs aux variables correspondantes
@@ -376,7 +381,7 @@ class Param:
 
 
 
-    def save_param(self, file_path='parametres.json'):
+    def save_param(self):
         data = {
             'app': {
                 'language': self.language,
@@ -395,7 +400,7 @@ class Param:
                 'sort_by_name': self.sort_by_name
             }
         }
-        with open(file_path, 'w', encoding="utf-8") as f:
+        with open(PARAMETRES_JSON, 'w', encoding="utf-8") as f:
             json.dump(data, f, indent=4)
 
 
