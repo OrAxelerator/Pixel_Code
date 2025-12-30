@@ -93,7 +93,7 @@ Objectif => faciliter l’ouverture via VS Code et une meilleure organisation et
             6. Dans Variables utilisateur → sélectionner Path
             7. Modifier
             8. Nouveau
-            9. coller ce chemin si : C:\Users\**votre 10. username**\AppData\Local\Python\pythoncore-3.14-64\Scripts
+            9. coller ce chemin si (changez avec votre username) : C:\Users\votre username\AppData\Local\Python\pythoncore-3.14-64\Scripts
             10. OK -> OK -> OK
             11. Fermez et re-ouvrez le terminal après ça.
             
@@ -107,8 +107,8 @@ Objectif => faciliter l’ouverture via VS Code et une meilleure organisation et
     allez le télechrgez sur le site officiel : Python.org
 
     installé pip avrec python : 
-    py -m ensurepip --upgrade
-    py -m pip install --upgrade pip
+    * py -m ensurepip --upgrade
+    * py -m pip install --upgrade pip
 
 
 Lancez ensuite le programme avec :
