@@ -90,6 +90,8 @@ def get_key():
             
             if ch1 == 'q':
                 return "q"
+            if ch1 == 'h':
+                return "h"
             if ch1 == 's':
                 return "s"
             elif ch1 == 'r':
@@ -147,8 +149,27 @@ class Main:
         return 0 if self.language == "fr" else 1
 
     def help(self):
-        help_message = [""]
-        print()
+        help_message = ["""
+Keybinds :
+    q : Quit
+    ↑/↓ : Navigation
+    p : Open parametre
+    r : refresh display (only work for screen main)
+    e : edit project inside Pixel_Code (doesnt work for the moment)
+   ESPACE : Change a parametre
+""",
+"""
+Raccourci clavier :
+    q : Quitter
+    ↑/↓ : Navigation
+    p : ouvrir les parametres
+    r : rafraichir l'affichage (marche seulement sur main)
+    e : chager les info sur un projet (marche pas pour le moment)
+   ESPACE : Changer un parametre
+"""
+]
+        help_message[0] if self.parametre.language == "en" else help_message[1]
+        print(help_message[0] if self.parametre.language == "en" else help_message[1])
 
     def display_logo(self): # Static
             try:
@@ -160,8 +181,6 @@ class Main:
                     print()
             except FileNotFoundError:
                 print("Logo introuvable.")
-                print(BASE_DIR)
-                print(LOGO_TXT)
                 
 
     def clear_terminal(self):
@@ -182,9 +201,9 @@ class Main:
 
     def move_down(self):
         if self.current_screen == "main":
-            print("main")
+            
             self.selection = self._selection + 1  # Utilisation du setter
-            print(self.selection)
+            
         elif self.current_screen == "parametre":
             self.parametre.selection_parametre = self.parametre.selection_parametre + 1
 
@@ -284,7 +303,7 @@ class Project:
         for  text in self.dataAnsiStr[1::]:
             a = 1 if self.dataAnsiStr.index(text) == len(self.dataAnsiStr[1::]) else 0
             print("  " + carac[a] + " "+ txt[lang][self.dataAnsiStr.index(text)] + text)
-        #print("-------------------------") # End
+        
         print()
 
     def edit_project(self): # change info about prject like the name ...
@@ -371,7 +390,7 @@ class Param:
 
     def change_value(self, i):
         
-        print(i)
+        
         if i == 0:
             self.language = "fr" if self.language == "en" else "en"
         elif i == 1:
@@ -436,6 +455,8 @@ while True:
             main.display_projects()
         elif key == "ENTER": 
             main.projectsArray[main.selection].open_project()
+        elif key == "h":
+            main.help()
         elif key == "e":
             main.projectsArray[main.selection].edit_project()
         elif key == "p": # Parametre off app
