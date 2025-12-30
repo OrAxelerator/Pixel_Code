@@ -10,7 +10,7 @@ else:
     import termios
     import tty
 
-
+import shutil
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent
@@ -68,14 +68,30 @@ def get_key():
     """
     if os.name == "nt":  # Windowsn WORK ?
         key = msvcrt.getch()
+    # touches simples
         if key == b'q':
             return "q"
-        if key == b'\xe0':  # touche spéciale
+        elif key == b'p':
+            return "p"
+        elif key == b' ':
+            return "SPACE"
+        elif key == b'h':
+            return "h"
+        elif key == b'r':
+            return "r"
+        elif key == b'e':
+            return "e"
+        elif key == b'\r':   # ENTRÉE
+            return "ENTER"
+
+        # touches spéciales (flèches)
+        elif key == b'\xe0':
             key = msvcrt.getch()
             if key == b'H':
                 return "UP"
             elif key == b'P':
                 return "DOWN"
+
         return None
     else:  # Linux / macOS
         fd = sys.stdin.fileno()
@@ -311,7 +327,22 @@ class Project:
 
 
     def open_project(self):
-        subprocess.run(["code", "-n", self.pwd])
+
+        project_path = Path(self.pwd).expanduser().resolve()
+
+        # Chercher la commande "code"
+        code_cmd = shutil.which("code")
+
+        if code_cmd:
+            subprocess.run([code_cmd, "-n", str(project_path)])
+            return
+
+        # Fallback macOS
+        if os.name == "posix" and shutil.which("open"):
+            subprocess.run(["open", "-a", "Visual Studio Code", str(project_path)])
+            return
+
+        raise RuntimeError("VS Code n'est pas trouvé sur ce système")
 
     def archive(self):
         pass
