@@ -42,3 +42,21 @@ Objectif => faciliter l’ouverture via VS Code et une meilleure organisation et
 > * **p** : ouvrir les paramètres
 > * **r** : recharger l’affichage (marche seulement dans main)
 > * **e** : éditer les données d’un projet depuis Pixel_Code (pas encore fonctionnel)
+
+Installation pour Ubuntu (linux) : 
+
+**Si pipx n'est pas installé :**
+```cmd
+sudo apt install pipx
+pipx ensurepath
+```
+Téléchargez le projet et installez l’outil :
+```cmd
+git clone https://github.com/OrAxelerator/Pixel_Code.git
+cd Pixel_Code
+pipx install .
+```
+Lancez ensuite le programme avec :
+```cmd
+pixel-code
+```
