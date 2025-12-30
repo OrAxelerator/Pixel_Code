@@ -1,7 +1,7 @@
 {
     "app": {
         "language": "fr",
-        "use_nerd_font": true,
+        "use_nerd_font": false,
         "display_tutorial": false,
         "theme": "default"
     },

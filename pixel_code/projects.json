@@ -4,6 +4,7 @@
         "pwd" : "/home/oraxelerator/Bureau/Cours/Nsi/1209/edit",
         "description" : "Clavier html 3 langues",
         "programming_languages": ["JavaScript", "HTML", "CSS"],
+        "icon":"",
         "avancement" : {
             "code" : "true",
             "git" : "False"
@@ -14,6 +15,7 @@
         "pwd" : "/home/oraxelerator/Scripts/Pixel_code",
         "description" : "TODOLIST mais pour projet code",
         "programming_languages": ["Python"],
+        "icon":"side",
         "avancement" : {
             "code" : "False",
             "git" : "False"
@@ -24,6 +26,7 @@
         "pwd" : "/home/oraxelerator/Bureau/Perso/1-Programmation/1-Python/1-Programmes/jeux/terminal/master_mind",
         "description" : "Jeu de master mind dans le terminal",
         "programming_languages": ["Python"],
+        "icon":"favorite",
         "avancement" : {
             "code" : "False",
             "git" : "False"

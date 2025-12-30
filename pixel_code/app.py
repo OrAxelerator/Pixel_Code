@@ -4,11 +4,20 @@ import json
 import subprocess
 
 # Détection clavier selon OS
-if os.name == "nt":
+if os.name == "nt":# Windows ..
     import msvcrt
 else:
     import termios
     import tty
+
+import shutil
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent
+
+LOGO_TXT   = BASE_DIR / "logo.txt"
+PROJECTS_JSON = BASE_DIR / "projects.json"
+PARAMETRES_JSON   = BASE_DIR / "parametres.json"
 
 
 
@@ -26,8 +35,18 @@ else:
 #   - programme de mise a jour automatique
 #   - Do something cleaner at change_value() in Param
 #   - Improve translate systeme ... 
-#   - 
+#   - projet.json : icone = ["":iconed de base, "favortite : icone + cœur, "]
 
+# coeur : 󱃪
+# side project : 󰉌
+# add folder : 
+
+# icone (NF) : https://www.nerdfonts.com/cheat-sheet
+
+# Call the code : "pixel-code"
+
+# on macOs : pip install -e .
+# on Ubuntu use pipx and write : pipx install . 
 
 # CONST
 # Styles ANSI #Do ANSI.py for later ??
@@ -49,14 +68,30 @@ def get_key():
     """
     if os.name == "nt":  # Windowsn WORK ?
         key = msvcrt.getch()
+    # touches simples
         if key == b'q':
             return "q"
-        if key == b'\xe0':  # touche spéciale
+        elif key == b'p':
+            return "p"
+        elif key == b' ':
+            return "SPACE"
+        elif key == b'h':
+            return "h"
+        elif key == b'r':
+            return "r"
+        elif key == b'e':
+            return "e"
+        elif key == b'\r':   # ENTRÉE
+            return "ENTER"
+
+        # touches spéciales (flèches)
+        elif key == b'\xe0':
             key = msvcrt.getch()
             if key == b'H':
                 return "UP"
             elif key == b'P':
                 return "DOWN"
+
         return None
     else:  # Linux / macOS
         fd = sys.stdin.fileno()
@@ -71,6 +106,8 @@ def get_key():
             
             if ch1 == 'q':
                 return "q"
+            if ch1 == 'h':
+                return "h"
             if ch1 == 's':
                 return "s"
             elif ch1 == 'r':
@@ -105,7 +142,7 @@ class Main:
         self.current_screen = "main" # > ["main", "parametre"]
 
         self.parametre = Param()
-        self.parametre.load_param("parametres.json")
+        self.parametre.load_param()
         self.language = None # Param 
 
     @property
@@ -128,12 +165,31 @@ class Main:
         return 0 if self.language == "fr" else 1
 
     def help(self):
-        help_message = [""]
-        print()
+        help_message = ["""
+Keybinds :
+    q : Quit
+    ↑/↓ : Navigation
+    p : Open parametre
+    r : refresh display (only work for screen main)
+    e : edit project inside Pixel_Code (doesnt work for the moment)
+   ESPACE : Change a parametre
+""",
+"""
+Raccourci clavier :
+    q : Quitter
+    ↑/↓ : Navigation
+    p : ouvrir les parametres
+    r : rafraichir l'affichage (marche seulement sur main)
+    e : chager les info sur un projet (marche pas pour le moment)
+   ESPACE : Changer un parametre
+"""
+]
+        help_message[0] if self.parametre.language == "en" else help_message[1]
+        print(help_message[0] if self.parametre.language == "en" else help_message[1])
 
     def display_logo(self): # Static
             try:
-                with open('logo.txt', encoding="utf-8") as l:
+                with open(LOGO_TXT, encoding="utf-8") as l:
                     logo = l.read()
                     print()
                     print(logo)
@@ -141,6 +197,7 @@ class Main:
                     print()
             except FileNotFoundError:
                 print("Logo introuvable.")
+                
 
     def clear_terminal(self):
         if os.name == "nt": # work ??
@@ -160,9 +217,9 @@ class Main:
 
     def move_down(self):
         if self.current_screen == "main":
-            print("main")
+            
             self.selection = self._selection + 1  # Utilisation du setter
-            print(self.selection)
+            
         elif self.current_screen == "parametre":
             self.parametre.selection_parametre = self.parametre.selection_parametre + 1
 
@@ -178,7 +235,7 @@ class Main:
 
     def load_projects(self):
         try:
-            with open('projects.json', encoding="utf-8") as f:
+            with open(PROJECTS_JSON, encoding="utf-8") as f:
                 self.projets = json.load(f)
                 
                 for i in range(len(self.projets)): #recup tout les prjet en tant que class dans projetArray
@@ -215,6 +272,7 @@ class Project:
         self.description = data["description"]
         self.languages = " ".join(data.get("programming_languages", []))
         self.pwd = data["pwd"]
+        
 
         # Styles ANSI
         self.Tname = f"{BOLD}{BLUE}{self.name}{RESET}"
@@ -229,10 +287,7 @@ class Project:
         # NF
         self.icone_folder = ["󰉋", ""] # Need 2 spaces :  CLOSED | OPEN
 
-        # res = espacement TO DELETE (Old interface)
-        self.spacing = [] # [13, 9, 9, 9]A OPTI
-        for i in range(len(self.dataAnsi)):
-            self.spacing.append(len(self.dataAnsi[i]) - len(self.dataAnsiStr[i])) 
+
 
 
 
@@ -246,21 +301,11 @@ class Project:
         nf = main.parametre.use_nerd_font # True or False ..
         
         
-        if True:
-            select = [ "▶", ""]
-            arrow = "▶" if selected_index == my_index else ""
-            icone = (str(self.icone_folder[0]) + "  ") if nf else ""
-            print(arrow + " "+ icone + self.Tname )
-        else :  # Old interface  to delete
-            LINE = ["=" * 68, "-" * 68]
-            line = LINE[0 if selected_index == my_index else 1]
-            WIDTH = len(line)
-            print(line)
-            print("|" + " " * (WIDTH - 2) + "|")
-            for text in self.dataAnsi:
-                print("| " + text.ljust(WIDTH - 4 + self.spacing[self.dataAnsi.index(text)])  +  " |")
-                print("|" + " " * (WIDTH - 2) + "|")
-            print(line)
+    
+        
+        arrow = "▶" if selected_index == my_index else ""
+        icone = (str(self.icone_folder[0]) + "  ") if nf else ""
+        print(arrow + " "+ icone + self.Tname )
 
     def display_project_full(self, selected_index, my_index):
         carac = ["├─", "└─"]
@@ -274,7 +319,7 @@ class Project:
         for  text in self.dataAnsiStr[1::]:
             a = 1 if self.dataAnsiStr.index(text) == len(self.dataAnsiStr[1::]) else 0
             print("  " + carac[a] + " "+ txt[lang][self.dataAnsiStr.index(text)] + text)
-        #print("-------------------------") # End
+        
         print()
 
     def edit_project(self): # change info about prject like the name ...
@@ -282,7 +327,22 @@ class Project:
 
 
     def open_project(self):
-        subprocess.run(["code", "-n", self.pwd])
+
+        project_path = Path(self.pwd).expanduser().resolve()
+
+        # Chercher la commande "code"
+        code_cmd = shutil.which("code")
+
+        if code_cmd:
+            subprocess.run([code_cmd, "-n", str(project_path)])
+            return
+
+        # Fallback macOS
+        if os.name == "posix" and shutil.which("open"):
+            subprocess.run(["open", "-a", "Visual Studio Code", str(project_path)])
+            return
+
+        raise RuntimeError("VS Code n'est pas trouvé sur ce système")
 
     def archive(self):
         pass
@@ -334,9 +394,9 @@ class Param:
         
 
 
-    def load_param(self, file_path='parametres.json'):
+    def load_param(self):
         try:
-            with open(file_path, encoding="utf-8") as f:
+            with open(PARAMETRES_JSON, encoding="utf-8") as f:
                 data = json.load(f)
 
                 # Parcours des sections et assignation des valeurs aux variables correspondantes
@@ -361,7 +421,7 @@ class Param:
 
     def change_value(self, i):
         
-        print(i)
+        
         if i == 0:
             self.language = "fr" if self.language == "en" else "en"
         elif i == 1:
@@ -371,7 +431,7 @@ class Param:
 
 
 
-    def save_param(self, file_path='parametres.json'):
+    def save_param(self):
         data = {
             'app': {
                 'language': self.language,
@@ -390,23 +450,20 @@ class Param:
                 'sort_by_name': self.sort_by_name
             }
         }
-        with open(file_path, 'w', encoding="utf-8") as f:
+        with open(PARAMETRES_JSON, 'w', encoding="utf-8") as f:
             json.dump(data, f, indent=4)
+
+
+
 
 
 # INIT ---------
 main = Main()
-
-
 main.clear_terminal() # Voir si peut faire autrement ..
 main.load_projects()
 main.display_logo()
 main.display_projects()
-
-
-
 #print("Naviguez avec les flèches haut/bas, tapez 'q' pour quitter.")
-
 while True:
     key = get_key()
     if key == "q": # Always
@@ -424,12 +481,13 @@ while True:
             main.clear_from_line()
             main.display_projects()
         elif key == "DOWN":
-            print("Flèche bas")
             main.move_down()
             main.clear_from_line()
             main.display_projects()
         elif key == "ENTER": 
             main.projectsArray[main.selection].open_project()
+        elif key == "h":
+            main.help()
         elif key == "e":
             main.projectsArray[main.selection].edit_project()
         elif key == "p": # Parametre off app
@@ -467,4 +525,4 @@ while True:
             main.display_projects()
             
     else:
-        print("Touche ignorée")
+        print("key ignored")
