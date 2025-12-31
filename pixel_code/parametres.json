@@ -3,7 +3,8 @@
         "language": "fr",
         "use_nerd_font": false,
         "display_tutorial": false,
-        "theme": "default"
+        "theme": "default",
+        "versions" : "0.1.1"
     },
     "ui": {
         "details_mode_default": false,

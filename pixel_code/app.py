@@ -213,7 +213,7 @@ Raccourci clavier :
         if self.current_screen == "main":
             self.selection = self._selection - 1  # Utilisation du setter
         elif self.current_screen == "parametre":
-            self.parametre.selection_parametre = self.parametre.selection_parametre - 1
+            self.parametre.selection_parametre = max(0, self.parametre.selection_parametre - 1)
 
     def move_down(self):
         if self.current_screen == "main":
@@ -221,7 +221,7 @@ Raccourci clavier :
             self.selection = self._selection + 1  # Utilisation du setter
             
         elif self.current_screen == "parametre":
-            self.parametre.selection_parametre = self.parametre.selection_parametre + 1
+            self.parametre.selection_parametre =  min(self.parametre.selection_parametre +1, 2)
 
 
     def enter(self): # supr ?
