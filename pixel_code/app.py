@@ -2,8 +2,9 @@ import os
 import sys
 import json
 import subprocess
+import requests # Not standar library : in project.toml
 
-# Détection clavier selon OS
+# Détection of the keybord acording to the OS
 if os.name == "nt":# Windows ..
     import msvcrt
 else:
@@ -22,10 +23,7 @@ PARAMETRES_JSON   = BASE_DIR / "parametres.json"
 
 
 # todo :
-#   - make message for instruction
 #   - sys of pip => installer.py
-#   - def command => help ..
-#   - letter to see README
 #   - make option to add pixelcode.json so when install new code VIA pixel_code pop to add project on fork on pixel code
 #   -  make something cool with nerd font for icon
 #   -  think about integration in pixel_nav => pixelcode.json ? ..
@@ -36,6 +34,7 @@ PARAMETRES_JSON   = BASE_DIR / "parametres.json"
 #   - Do something cleaner at change_value() in Param
 #   - Improve translate systeme ... 
 #   - projet.json : icone = ["":iconed de base, "favortite : icone + cœur, "]
+#   - Use quit() func in main  instead of break in code
 
 # coeur : 󱃪
 # side project : 󰉌
@@ -47,6 +46,7 @@ PARAMETRES_JSON   = BASE_DIR / "parametres.json"
 
 # on macOs : pip install -e .
 # on Ubuntu use pipx and write : pipx install . 
+# on Windows 11 ... go see the README
 
 # CONST
 # Styles ANSI #Do ANSI.py for later ??
@@ -141,9 +141,106 @@ class Main:
 
         self.current_screen = "main" # > ["main", "parametre"]
 
-        self.parametre = Param()
+        self.parametre = Param(self)
         self.parametre.load_param()
         self.language = None # Param 
+        self.run()
+
+    def run(self):
+        # Lauch app
+
+        # INIT ---------
+        
+        self.clear_terminal() # Voir si peut faire autrement ..
+        self.load_projects()
+        self.display_logo()
+        self.display_projects()
+        self.get_update() # 
+
+        while True:
+            key = get_key()
+            if key == "q": # Always
+                if self.parametre.language == "en":
+                    print("End of programme")
+                else :
+                    print("Fermeture du programme...")
+                break
+                
+            elif self.current_screen == "main" : # Interface of Main
+                
+                if key == "UP" :
+                    #main.show_details = not main.show_details if main.show_details else main.show_details
+                    self.move_up()
+                    self.clear_from_line()
+                    self.display_projects()
+                elif key == "DOWN":
+                    self.move_down()
+                    self.clear_from_line()
+                    self.display_projects()
+                elif key == "ENTER": 
+                    self.projectsArray[self.selection].open_project()
+                elif key == "h":
+                    self.help()
+                elif key == "e":
+                    self.projectsArray[self.selection].edit_project()
+                elif key == "p": # Parametre off app
+                    self.clear_from_line()
+                    self.current_screen = "parametre"
+                    self.parametre.selection_parametre = 0 # Alwyas start slection at 0
+                    self.parametre.display_parametre()
+                elif key == "SPACE":
+                    self.toggle_view()
+                    self.clear_from_line() # To opti bcs 2 time projectS
+                    self.display_projects()
+                elif key == "r": # Reload all
+                    self.clear_terminal() # Clear all to reload logo too
+                    self.__init__()
+                    self.load_projects()
+                    self.display_logo()
+                    self.display_projects()
+            elif self.current_screen == "parametre" : # Interface of Parametre
+                if key == "DOWN" :
+                    self.move_down()
+                    self.clear_from_line()
+                    self.parametre.display_parametre()
+                elif key == "UP" :
+                    self.move_up()
+                    self.clear_from_line()
+                    self.parametre.display_parametre()
+                elif key == "SPACE": # Change value
+                    self.parametre.change_value(self.parametre.selection_parametre)
+                    self.clear_from_line()
+                    self.parametre.display_parametre()   
+                elif key == "p":
+                    self.parametre.save_param()
+                    self.current_screen = "main"            
+                    self.clear_from_line()
+                    self.display_projects()
+                    
+            else:
+                print("key ignored")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
 
     @property
     def selection(self):
@@ -239,7 +336,7 @@ Raccourci clavier :
                 self.projets = json.load(f)
                 
                 for i in range(len(self.projets)): #recup tout les prjet en tant que class dans projetArray
-                    self.projectsArray.append(Project(str(i), self.projets))
+                    self.projectsArray.append(Project(self, str(i), self.projets))
         except FileNotFoundError:
             print("Fichier projets.json introuvable.")
             # self.projet = {} so..
@@ -259,11 +356,19 @@ Raccourci clavier :
     def display_tutorial(self):
         pass # need langague before
 
+    def get_update(self):
+        url = "https://api.github.com/repos/OrAxelerator/Pixel_Code/releases"
+        releases = requests.get(url).json()
+        for r in releases:
+            if r["prerelease"]:
+                v = r["tag_name"]
+                return v
 
 
 
 class Project:
-    def __init__(self, number, projets):
+    def __init__(self, main, number, projets):
+        self.main = main
         self.number = number
         data = projets[self.number]
 
@@ -298,27 +403,23 @@ class Project:
         selected_index : index of the selectioned project
         my_index : index of this project
         """
-        nf = main.parametre.use_nerd_font # True or False ..
-        
-        
-    
-        
+        nf = self.main.parametre.use_nerd_font # True or False ..    
         arrow = "▶" if selected_index == my_index else ""
         icone = (str(self.icone_folder[0]) + "  ") if nf else ""
         print(arrow + " "+ icone + self.Tname )
 
+
     def display_project_full(self, selected_index, my_index):
         carac = ["├─", "└─"]
-        a = 0
-        lang = 0 if main.parametre.language == "fr" else 1
+        lang = 0 if self.main.parametre.language == "fr" else 1
         txt = [["","Descrption : ","Langages  :", "Chemin : " ], ["", "About : ", "Languages : ", "Path : "]] # bofffff
-        if not main.parametre.use_nerd_font:
+        if not self.main.parametre.use_nerd_font:
             pass
-        icone = (str(self.icone_folder[1]) + "  ") if main.parametre.use_nerd_font else ""
+        icone = (str(self.icone_folder[1]) + "  ") if self.main.parametre.use_nerd_font else ""
         print("▼" + " "+icone + self.Tname)
         for  text in self.dataAnsiStr[1::]:
-            a = 1 if self.dataAnsiStr.index(text) == len(self.dataAnsiStr[1::]) else 0
-            print("  " + carac[a] + " "+ txt[lang][self.dataAnsiStr.index(text)] + text)
+            is_last_index = 1 if self.dataAnsiStr.index(text) == len(self.dataAnsiStr[1::]) else 0
+            print("  " + carac[is_last_index] + " "+ txt[lang][self.dataAnsiStr.index(text)] + text)
         
         print()
 
@@ -351,13 +452,15 @@ class Project:
 
 
 class Param:
-    def __init__(self):
+    def __init__(self, main):
+        self.main = main
         self._selection_parametre = 0
         self.language = None
         self.use_nerd_font = False
         self.sort_by_name = False
         self.theme = "default"
         self.display_tutorial = False
+        self.version = None
         self.details_mode_default = False
         self.truncate_text = True
         self.path_truncate_mode = "middle"
@@ -380,6 +483,13 @@ class Param:
         #self.selection_parametre = 0 # Alwyas have selection at the start even after quit,open
         caract = ["", "▶"] # False : "" | True :  "▶"
         WIDTH = 48
+        print(self.version)
+        print( self.main.get_update())
+        if self.version != self.main.get_update():
+            print("Nouvelle verions disponilbe")
+        else :
+            print("Pixel-Code est a jour")
+        print()
         print(f"================== PARAMÈTRES ==================")
         for i in range(len(self.parametre_array)):
             arrow = False
@@ -388,8 +498,7 @@ class Param:
             print(f'{caract[arrow]}  {parametre_consigne[i].ljust(WIDTH - len(str(self.parametre_array[i])) + (0 if i == self.selection_parametre else 1) - 3)}{self.parametre_array[i]}')
         print(f"-" * WIDTH)
         txt = [["Navigation", "Change", "Quit"], ["Navigation", "Changer", "Quitter"]]
-        lang = 0 if self.language == "fr" else 1 # Do func ?
-        
+        lang = 1 if self.language == "fr" else 0 # Do func ?
         print(f"{txt[lang][0]} : ↑/↓    {txt[lang][1]} : SPACE    {txt[lang][2]} : p")
         
 
@@ -405,6 +514,7 @@ class Param:
                     self.use_nerd_font = data['app'].get('use_nerd_font', self.use_nerd_font)
                     self.display_tutorial = data['app'].get('display_tutorial', self.display_tutorial)
                     self.theme = data['app'].get('theme', self.theme)
+                    self.version = data['app'].get('version') # Cause in v0.1.1 parametres.json there is no argument "version" but "versionS" so since v0.1.2 it's "version"
 
                 if 'ui' in data:
                     self.details_mode_default = data['ui'].get('details_mode_default', self.details_mode_default)
@@ -452,77 +562,3 @@ class Param:
         }
         with open(PARAMETRES_JSON, 'w', encoding="utf-8") as f:
             json.dump(data, f, indent=4)
-
-
-
-
-
-# INIT ---------
-main = Main()
-main.clear_terminal() # Voir si peut faire autrement ..
-main.load_projects()
-main.display_logo()
-main.display_projects()
-#print("Naviguez avec les flèches haut/bas, tapez 'q' pour quitter.")
-while True:
-    key = get_key()
-    if key == "q": # Always
-        if main.parametre.language == "en":
-            print("End of programme")
-        else :
-            print("Fermeture du programme...")
-        break
-        
-    elif main.current_screen == "main" : # Interface of Main
-        
-        if key == "UP" :
-            #main.show_details = not main.show_details if main.show_details else main.show_details
-            main.move_up()
-            main.clear_from_line()
-            main.display_projects()
-        elif key == "DOWN":
-            main.move_down()
-            main.clear_from_line()
-            main.display_projects()
-        elif key == "ENTER": 
-            main.projectsArray[main.selection].open_project()
-        elif key == "h":
-            main.help()
-        elif key == "e":
-            main.projectsArray[main.selection].edit_project()
-        elif key == "p": # Parametre off app
-            main.clear_from_line()
-            main.current_screen = "parametre"
-            main.parametre.selection_parametre = 0 # Alwyas start slection at 0
-            main.parametre.display_parametre()
-        elif key == "SPACE":
-            main.toggle_view()
-            main.clear_from_line() # To opti bcs 2 time projectS
-            main.display_projects()
-        elif key == "r": # Reload all
-            main.clear_terminal() # Clear all to reload logo too
-            main.__init__()
-            main.load_projects()
-            main.display_logo()
-            main.display_projects()
-    elif main.current_screen == "parametre" : # Interface of Parametre
-        if key == "DOWN" :
-            main.move_down()
-            main.clear_from_line()
-            main.parametre.display_parametre()
-        elif key == "UP" :
-            main.move_up()
-            main.clear_from_line()
-            main.parametre.display_parametre()
-        elif key == "SPACE": # Change value
-            main.parametre.change_value(main.parametre.selection_parametre)
-            main.clear_from_line()
-            main.parametre.display_parametre()   
-        elif key == "p":
-            main.parametre.save_param()
-            main.current_screen = "main"            
-            main.clear_from_line()
-            main.display_projects()
-            
-    else:
-        print("key ignored")

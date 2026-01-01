@@ -13,7 +13,7 @@ $$ |      $$ |$$  /\$$\ \$$$$$$$\ $$ |      \$$$$$$  |\$$$$$$  |\$$$$$$$ |\$$$$$
 ### Qu'est-ce que Pixel_Code ?
 Pixel_Code est un outil en Python permettant de facilement enregistrer vos projets en cours, et de les ouvrir facilement depuis le terminal avec une petite interface.
 
-![](./Capture%20d’écran%202025-12-28%20à%2014.52.06.png)
+![](preview.png)
 
 > [!NOTE]
 >
