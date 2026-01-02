@@ -2,7 +2,7 @@ import os
 import sys
 import json
 import subprocess
-import requests # Not standar library : in project.toml
+import requests   # Not standar library : in project.toml
 
 # Détection of the keybord acording to the OS
 if os.name == "nt":# Windows ..
@@ -146,16 +146,34 @@ class Main:
         self.language = None # Param 
         self.run()
 
+    def is_update_available(self, current, latest) -> bool:
+        
+        return current.lstrip("v") != latest.lstrip("v") 
+        # Return True when coding with json with new value for version
+
+
+
+
+
+
+
+
     def run(self):
         # Lauch app
-
-        # INIT ---------
-        
+        last_version = self.get_update()
+        print(self.parametre.version)
+        if self.is_update_available(self.parametre.version, last_version):
+            txt_update = [[f"New version avaible {self.parametre.version} => {last_version}, would you like to update [Y/n]"], [f"Nouvelle version disponible {self.parametre.version} => {last_version}, voulez vous mettre a jour [O/n]"]]
+            lang = 0 if self.parametre.language == "en" else 1
+            rep = input(txt_update[lang])
+            if rep == "" or rep == "y" or rep == "o" or rep == "Y" or rep == "O":
+               print("Mis a jour")
+               # Update() <= todo
+          
         self.clear_terminal() # Voir si peut faire autrement ..
         self.load_projects()
         self.display_logo()
         self.display_projects()
-        self.get_update() # 
 
         while True:
             key = get_key()
@@ -259,7 +277,7 @@ class Main:
 
 
     def tr(self): # Translate function
-        return 0 if self.language == "fr" else 1
+        return 0 if self.parametre.language == "fr" else 1
 
     def help(self):
         help_message = ["""
@@ -302,7 +320,7 @@ Raccourci clavier :
         else:
             os.system("clear")
 
-    def clear_from_line(self, line=12): 
+    def clear_from_line(self, line : int =12): 
         """line = 12 (height of static render : logo.txt)"""
         print(f"\033[H\033[{line}B\033[J", end="")
 
@@ -356,13 +374,13 @@ Raccourci clavier :
     def display_tutorial(self):
         pass # need langague before
 
-    def get_update(self):
+    def get_update(self) -> str :
         url = "https://api.github.com/repos/OrAxelerator/Pixel_Code/releases"
         releases = requests.get(url).json()
         for r in releases:
             if r["prerelease"]:
                 v = r["tag_name"]
-                return v
+                return v    
 
 
 
@@ -461,12 +479,15 @@ class Param:
         self.theme = "default"
         self.display_tutorial = False
         self.version = None
+        self.last_version = None # To load from github
+        self.check_update = True # Check updae at lauch
         self.details_mode_default = False
         self.truncate_text = True
         self.path_truncate_mode = "middle"
         self.clear_mode = "partial"
         self.auto_reload = False
-        self.parametre_array = [self.language, self.use_nerd_font, self.display_tutorial] #here to get len() on setter
+        self.load_param()
+        self.parametre_array = [self.language, self.use_nerd_font, self.version] #here to get len() on setter
         
         # Tableau des paramètres modifiables depuis l'interface
         
@@ -478,17 +499,13 @@ class Param:
 
     
     def display_parametre(self):
-        self.parametre_array = [self.language, self.use_nerd_font, self.display_tutorial] # DONT DELETE => recacule data after load_param()
-        parametre_consigne = ["Language", "Use Nerd Font", "Display tutorial at launch", "Sort By Name" ]
+        
+        self.parametre_array = [self.language, self.use_nerd_font, self.version ] # DONT DELETE => recacule data after load_param()
+        parametre_consigne = ["Language", "Use Nerd Font", "Current version"]
         #self.selection_parametre = 0 # Alwyas have selection at the start even after quit,open
         caract = ["", "▶"] # False : "" | True :  "▶"
         WIDTH = 48
-        print(self.version)
-        print( self.main.get_update())
-        if self.version != self.main.get_update():
-            print("Nouvelle verions disponilbe")
-        else :
-            print("Pixel-Code est a jour")
+        
         print()
         print(f"================== PARAMÈTRES ==================")
         for i in range(len(self.parametre_array)):
@@ -497,9 +514,15 @@ class Param:
                 arrow = True
             print(f'{caract[arrow]}  {parametre_consigne[i].ljust(WIDTH - len(str(self.parametre_array[i])) + (0 if i == self.selection_parametre else 1) - 3)}{self.parametre_array[i]}')
         print(f"-" * WIDTH)
+        print(self.parametre_array)
+        txt_v = [["Current version : ", "Version actuelle"], ["Last version", "Derniere version"]]
+
+        print()
+
         txt = [["Navigation", "Change", "Quit"], ["Navigation", "Changer", "Quitter"]]
         lang = 1 if self.language == "fr" else 0 # Do func ?
         print(f"{txt[lang][0]} : ↑/↓    {txt[lang][1]} : SPACE    {txt[lang][2]} : p")
+
         
 
 
@@ -515,6 +538,7 @@ class Param:
                     self.display_tutorial = data['app'].get('display_tutorial', self.display_tutorial)
                     self.theme = data['app'].get('theme', self.theme)
                     self.version = data['app'].get('version') # Cause in v0.1.1 parametres.json there is no argument "version" but "versionS" so since v0.1.2 it's "version"
+                    self.check_update = data['app'].get('check_update', self.check_update)
 
                 if 'ui' in data:
                     self.details_mode_default = data['ui'].get('details_mode_default', self.details_mode_default)
@@ -547,7 +571,9 @@ class Param:
                 'language': self.language,
                 'use_nerd_font': self.use_nerd_font,
                 'display_tutorial': self.display_tutorial,
-                'theme': self.theme
+                'theme': self.theme,
+                'version': self.version,
+                'check_update': self.check_update
             },
             'ui': {
                 'details_mode_default': self.details_mode_default,
