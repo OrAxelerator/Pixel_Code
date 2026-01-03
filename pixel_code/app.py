@@ -37,6 +37,7 @@ PARAMETRES_JSON   = BASE_DIR / "parametres.json"
 #   - projet.json : icone = ["":iconed de base, "favortite : icone + cœur, "]
 #   - Use quit() func in main  instead of break in code
 #   - # Make error message if pwd is False in open_code (Project)
+#   - Use import color
 
 # coeur : 󱃪
 # side project : 󰉌
@@ -145,16 +146,22 @@ class Main:
 
         self.parametre = Param(self)
         self.parametre.load_param()
-        self.language = None # Param 
+        self.language = None # SUPR°
+        
         self.run()
 
     def is_update_available(self, current, latest) -> bool:
-        
         return current.lstrip("v") != latest.lstrip("v") 
         # Return True when coding with json with new value for version
 
 
-
+    def translate(self, text) -> str:
+        """
+        :param text: array: [0] = english, [1] = french
+        :return: array[0/1] according to the langague 
+        """
+        lang : int = 0 if self.parametre.language == "en" else 1
+        return text[lang]
 
 
 
@@ -167,8 +174,7 @@ class Main:
         print(self.parametre.version)
         if self.is_update_available(self.parametre.version, last_version):
             txt_update = [[f"New version avaible {self.parametre.version} => {last_version}, would you like to update [Y/n]"], [f"Nouvelle version disponible {self.parametre.version} => {last_version}, voulez vous mettre a jour [O/n]"]]
-            lang = 0 if self.parametre.language == "en" else 1
-            rep = input(txt_update[lang])
+            rep = input(self.translate(txt_update))
             if rep == "" or rep == "y" or rep == "o" or rep == "Y" or rep == "O":
                print("Mis a jour")
                # Update() <= todo
@@ -181,10 +187,9 @@ class Main:
         while True:
             key = get_key()
             if key == "q": # Always
-                if self.parametre.language == "en":
-                    print("End of programme")
-                else :
-                    print("Fermeture du programme...")
+                self.clear_terminal()
+                print(self.translate(["End of program", "Fin du programme"]))
+                
                 break
                 
             elif self.current_screen == "main" : # Interface of Main
@@ -240,27 +245,6 @@ class Main:
                     
             else:
                 print("key ignored")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         
 
     @property
@@ -279,8 +263,6 @@ class Main:
             self._selection = value
 
 
-    def tr(self) -> int: # Translate function
-        return 0 if self.parametre.language == "fr" else 1
 
     def help(self):
         help_message = ["""
@@ -302,8 +284,7 @@ Raccourci clavier :
    ESPACE : Changer un parametre
 """
 ]
-        help_message[0] if self.parametre.language == "en" else help_message[1]
-        print(help_message[0] if self.parametre.language == "en" else help_message[1])
+        print(self.translate(help_message))
 
     def display_logo(self): # Static
             try:
@@ -506,10 +487,11 @@ class Param:
     def display_parametre(self):
         
         self.parametre_array = [self.language, self.use_nerd_font, self.version ] # DONT DELETE => recacule data after load_param()
-        parametre_consigne = ["Language", "Use Nerd Font", "Current version"]
+        parametre_consigne = [["Language", "Use Nerd Font", "Current version"], ["Langage", "Utiliser Nerd Font", "Version actuelle"]]
         #self.selection_parametre = 0 # Alwyas have selection at the start even after quit,open
         caract = ["", "▶"] # False : "" | True :  "▶"
         WIDTH = 48
+        lang = 1 if self.language == "fr" else 0 # Do func ?
         
         print()
         print(f"================== PARAMÈTRES ==================")
@@ -517,16 +499,16 @@ class Param:
             arrow = False
             if i == self.selection_parametre:
                 arrow = True
-            print(f'{caract[arrow]}  {parametre_consigne[i].ljust(WIDTH - len(str(self.parametre_array[i])) + (0 if i == self.selection_parametre else 1) - 3)}{self.parametre_array[i]}')
+            print(f'{caract[arrow]}  {parametre_consigne[lang][i].ljust(WIDTH - len(str(self.parametre_array[i])) + (0 if i == self.selection_parametre else 1) - 3)}{self.parametre_array[i]}')
         print(f"-" * WIDTH)
-        print(self.parametre_array)
+        
         txt_v = [["Current version : ", "Version actuelle"], ["Last version", "Derniere version"]]
 
         print()
 
         txt = [["Navigation", "Change", "Quit"], ["Navigation", "Changer", "Quitter"]]
-        lang = 1 if self.language == "fr" else 0 # Do func ?
-        print(f"{txt[lang][0]} : ↑/↓    {txt[lang][1]} : SPACE    {txt[lang][2]} : p")
+        key = ["SPACE BAR", "ESPACE"]
+        print(f"{txt[lang][0]} : ↑/↓    {txt[lang][1]} : {key[lang]}    {txt[lang][2]} : p")
 
         
 
