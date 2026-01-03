@@ -24,6 +24,7 @@ PARAMETRES_JSON   = BASE_DIR / "parametres.json"
 
 # todo :
 #   - sys of pip => installer.py
+#   - Check if user have wifi
 #   - make option to add pixelcode.json so when install new code VIA pixel_code pop to add project on fork on pixel code
 #   -  make something cool with nerd font for icon
 #   -  think about integration in pixel_nav => pixelcode.json ? ..
@@ -35,6 +36,7 @@ PARAMETRES_JSON   = BASE_DIR / "parametres.json"
 #   - Improve translate systeme ... 
 #   - projet.json : icone = ["":iconed de base, "favortite : icone + cœur, "]
 #   - Use quit() func in main  instead of break in code
+#   - # Make error message if pwd is False in open_code (Project)
 
 # coeur : 󱃪
 # side project : 󰉌
@@ -59,7 +61,7 @@ RESET = "\033[0m"
 
 
 #put this in main ?
-def get_key():
+def get_key() -> str:
     """
     - "UP" for ^
     - "DOWN" for ˅
@@ -118,7 +120,7 @@ def get_key():
                 return "p"
             elif ch1 == ' ':
                 return "SPACE"
-            elif ch1 == '\x1b':  # séquence ANSI pour flèches
+            elif ch1 == '\x1b':  # ANSI sequence  for arrows
                 ch2 = sys.stdin.read(1)
                 ch3 = sys.stdin.read(1)
                 if ch3 == 'A':
@@ -160,7 +162,8 @@ class Main:
 
     def run(self):
         # Lauch app
-        last_version = self.get_update()
+
+        last_version = self.get_update() # Check if user have wifi
         print(self.parametre.version)
         if self.is_update_available(self.parametre.version, last_version):
             txt_update = [[f"New version avaible {self.parametre.version} => {last_version}, would you like to update [Y/n]"], [f"Nouvelle version disponible {self.parametre.version} => {last_version}, voulez vous mettre a jour [O/n]"]]
@@ -276,7 +279,7 @@ class Main:
             self._selection = value
 
 
-    def tr(self): # Translate function
+    def tr(self) -> int: # Translate function
         return 0 if self.parametre.language == "fr" else 1
 
     def help(self):
@@ -446,6 +449,8 @@ class Project:
 
 
     def open_project(self):
+        # Make error message if pwd is False
+        # Mabye make popup (os) to open a folder like app if it's possible
 
         project_path = Path(self.pwd).expanduser().resolve()
 
@@ -554,14 +559,12 @@ class Param:
             print("Fichier de paramètres introuvable.")
 
     def change_value(self, i):
-        
-        
         if i == 0:
             self.language = "fr" if self.language == "en" else "en"
         elif i == 1:
             self.use_nerd_font = not self.use_nerd_font
         elif i == 2:
-            self.display_tutorial = not self.display_tutorial 
+            pass
 
 
 
