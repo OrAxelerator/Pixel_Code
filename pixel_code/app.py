@@ -1,8 +1,12 @@
-import os
 import sys
+import os
 import json
 import subprocess
 import requests   # Not standar library : in project.toml
+import colorama  
+colorama.init()
+
+
 
 # Détection of the keybord acording to the OS
 if os.name == "nt":# Windows ..
@@ -38,6 +42,7 @@ PARAMETRES_JSON   = BASE_DIR / "parametres.json"
 #   - Use quit() func in main  instead of break in code
 #   - # Make error message if pwd is False in open_code (Project)
 #   - Use import color
+#   - Choose IDE 
 
 # coeur : 󱃪
 # side project : 󰉌
@@ -183,6 +188,8 @@ class Main:
         self.load_projects()
         self.display_logo()
         self.display_projects()
+        
+        
 
         while True:
             key = get_key()
@@ -242,6 +249,11 @@ class Main:
                     self.current_screen = "main"            
                     self.clear_from_line()
                     self.display_projects()
+                elif key == "r":
+                    self.parametre.__init__(self)
+                    self.clear_terminal()
+                    self.display_logo()
+                    self.parametre.display_parametre()
                     
             else:
                 print("key ignored")
@@ -372,17 +384,20 @@ class Project:
     def __init__(self, main, number, projets):
         self.main = main
         self.number = number
-        data = projets[self.number]
 
+        data = projets[self.number]
+        print(data)
         # Infos projet
         self.name = data["name"]
         self.description = data["description"]
+        self.editor = data["editor"]
         self.languages = " ".join(data.get("programming_languages", []))
         self.pwd = data["pwd"]
         
 
         # Styles ANSI
-        self.Tname = f"{BOLD}{BLUE}{self.name}{RESET}"
+        self.Tname = f"{colorama.Style.BRIGHT}{colorama.Fore.BLUE}{self.name}{colorama.Style.RESET_ALL}" # mArhce mais galere
+
         self.Tdescription = f"{GREEN}{self.description}{RESET}"
         self.Tlanguages = f"{YELLOW}{self.languages}{RESET}"
         self.Tpath = f"{GRAY}{self.pwd}{RESET}"
@@ -426,7 +441,7 @@ class Project:
         print()
 
     def edit_project(self): # change info about prject like the name ...
-        print("edit")
+        print(self.description)
 
 
     def open_project(self):
@@ -436,7 +451,7 @@ class Project:
         project_path = Path(self.pwd).expanduser().resolve()
 
         # Chercher la commande "code"
-        code_cmd = shutil.which("code")
+        code_cmd = shutil.which(self.editor)
 
         if code_cmd:
             subprocess.run([code_cmd, "-n", str(project_path)])
@@ -472,6 +487,7 @@ class Param:
         self.path_truncate_mode = "middle"
         self.clear_mode = "partial"
         self.auto_reload = False
+        self.editor = None
         self.load_param()
         self.parametre_array = [self.language, self.use_nerd_font, self.version] #here to get len() on setter
         
@@ -502,8 +518,6 @@ class Param:
             print(f'{caract[arrow]}  {parametre_consigne[lang][i].ljust(WIDTH - len(str(self.parametre_array[i])) + (0 if i == self.selection_parametre else 1) - 3)}{self.parametre_array[i]}')
         print(f"-" * WIDTH)
         
-        txt_v = [["Current version : ", "Version actuelle"], ["Last version", "Derniere version"]]
-
         print()
 
         txt = [["Navigation", "Change", "Quit"], ["Navigation", "Changer", "Quitter"]]
@@ -535,7 +549,8 @@ class Param:
 
                 if 'projects' in data:
                     self.auto_reload = data['projects'].get('auto_reload', self.auto_reload)
-                    self.sort_by_name = data['projects'].get('sort_by_name', self.sort_by_name)
+                    self.sort_by_name = data['projects'].get('sort_by_name', self.sort_by_name) 
+                    self.editor = data['projects'].get('editor', self.editor) 
 
         except FileNotFoundError:
             print("Fichier de paramètres introuvable.")
