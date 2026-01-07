@@ -1,20 +1,15 @@
-import sys
 import os
 import json
 import subprocess
-import requests   # Not standard library : in project.toml
 import colorama  
 colorama.init()
 
-from util.get_keys import *
-
-
-# Détection of the keybord acording to the OS
-if os.name == "nt":# Windows ..
-    import msvcrt
-else:
-    import termios
-    import tty
+from util.get_keys import get_key
+from util.translate import translate
+from util.is_update_available import is_update_available
+from util.get_update import get_update
+from util.terminal.clear_terminal import clear_terminal
+from util.terminal.clear_from_line import clear_from_line
 
 import shutil
 from pathlib import Path
@@ -58,18 +53,6 @@ PARAMETRES_JSON   = BASE_DIR  / "data/parametres.json"
 # on Ubuntu use pipx and write : pipx install . 
 # on Windows 11 ... go see the README
 
-# CONST
-# Styles ANSI #Do ANSI.py for later ??
-BOLD = "\033[1m"
-BLUE = "\033[34m"
-GRAY = "\033[90m"
-GREEN = "\033[32m"
-YELLOW = "\033[33m"
-RESET = "\033[0m"
-
-
-#put this in main ?
-
 
 
 
@@ -84,35 +67,29 @@ class Main:
 
         self.parametre = Param(self)
         self.parametre.load_param()
-        self.language = None # SUPR°
+
         
         self.run()
-
-    def is_update_available(self, current, latest) -> bool:
-        print(current)
-        print(self.parametre.version)
-        print()
-        return current.lstrip("v") != latest.lstrip("v") 
-        # Return True when coding with json with new value for version
-
-
-
-
 
 
     def run(self):
         # Lauch app
 
-        last_version = self.get_update() # Check if user have wifi
+        last_version = get_update() # Check if user have wifi
+        self.parametre.last_version = last_version
         
-        if self.is_update_available(self.parametre.version, last_version):
-            txt_update = [[f"New version avaible {self.parametre.version} => {last_version}, would you like to update [Y/n]"], [f"Nouvelle version disponible {self.parametre.version} => {last_version}, voulez vous mettre a jour [O/n]"]]
-            rep = input(self.translate(txt_update))
+        if is_update_available(self.parametre.version, last_version):
+            txt_update = {
+                "en" : [f"New version avaible {self.parametre.version} => {last_version}, would you like to update [Y/n]"],
+                "fr" : [f"Nouvelle version disponible {self.parametre.version} => {last_version}, voulez vous mettre a jour [O/n]"]
+            }
+            rep = input(translate(txt_update, self.parametre.language))
             if rep == "" or rep == "y" or rep == "o" or rep == "Y" or rep == "O":
-               print("Mis a jour")
+               update_txt = [["Update dowload"], ["Mis a jour"]]
+               print(translate(update_txt, self.parametre.language))
                # Update() <= todo
           
-        self.clear_terminal() # Voir si peut faire autrement ..
+        clear_terminal() # Voir si peut faire autrement ..
         self.load_projects()
         self.display_logo()
         self.display_projects()
@@ -122,8 +99,9 @@ class Main:
         while True:
             key = get_key()
             if key == "q": # Always
-                self.clear_terminal()
-                print(self.translate(["End of program", "Fin du programme"]))
+                clear_terminal()
+                last_txt = ["End of program", "Fin du programme"]
+                print(translate(last_txt, self.parametre.language))
                 
                 break
                 
@@ -132,11 +110,11 @@ class Main:
                 if key == "UP" :
                     #main.show_details = not main.show_details if main.show_details else main.show_details
                     self.move_up()
-                    self.clear_from_line()
+                    clear_from_line()
                     self.display_projects()
                 elif key == "DOWN":
                     self.move_down()
-                    self.clear_from_line()
+                    clear_from_line()
                     self.display_projects()
                 elif key == "ENTER": 
                     self.projectsArray[self.selection].open_project()
@@ -145,16 +123,16 @@ class Main:
                 elif key == "e":
                     self.projectsArray[self.selection].edit_project()
                 elif key == "p": # Parametre off app
-                    self.clear_from_line()
+                    clear_from_line()
                     self.current_screen = "parametre"
                     self.parametre.selection_parametre = 0 # Alwyas start slection at 0
                     self.parametre.display_parametre()
                 elif key == "SPACE":
                     self.toggle_view()
-                    self.clear_from_line() # To opti bcs 2 time projectS
+                    clear_from_line() # To opti bcs 2 time projectS
                     self.display_projects()
                 elif key == "r": # Reload all
-                    self.clear_terminal() # Clear all to reload logo too
+                    clear_terminal() # Clear all to reload logo too
                     self.__init__()
                     self.load_projects()
                     self.display_logo()
@@ -162,24 +140,24 @@ class Main:
             elif self.current_screen == "parametre" : # Interface of Parametre
                 if key == "DOWN" :
                     self.move_down()
-                    self.clear_from_line()
+                    clear_from_line()
                     self.parametre.display_parametre()
                 elif key == "UP" :
                     self.move_up()
-                    self.clear_from_line()
+                    clear_from_line()
                     self.parametre.display_parametre()
                 elif key == "SPACE": # Change value
                     self.parametre.change_value(self.parametre.selection_parametre)
-                    self.clear_from_line()
+                    clear_from_line()
                     self.parametre.display_parametre()   
                 elif key == "p":
                     self.parametre.save_param()
                     self.current_screen = "main"            
-                    self.clear_from_line()
+                    clear_from_line()
                     self.display_projects()
                 elif key == "r":
                     self.parametre.__init__(self)
-                    self.clear_terminal()
+                    clear_terminal()
                     self.display_logo()
                     self.parametre.display_parametre()
                     
@@ -224,7 +202,7 @@ Raccourci clavier :
    ESPACE : Changer un parametre
 """
 ]
-        print(self.translate(help_message))
+        print(translate(help_message, self.parametre.language))
 
     def display_logo(self): # Static
             try:
@@ -238,15 +216,9 @@ Raccourci clavier :
                 print("Logo introuvable.")
                 
 
-    def clear_terminal(self):
-        if os.name == "nt": # work ??
-            os.system("cls")
-        else:
-            os.system("clear")
 
-    def clear_from_line(self, line : int =12): 
-        """line = 12 (height of static render : logo.txt)"""
-        print(f"\033[H\033[{line}B\033[J", end="")
+
+
 
     def move_up(self):
         if self.current_screen == "main":
@@ -298,13 +270,7 @@ Raccourci clavier :
     def display_tutorial(self):
         pass # need langague before
 
-    def get_update(self) -> str :
-        url = "https://api.github.com/repos/OrAxelerator/Pixel_Code/releases"
-        releases = requests.get(url).json()
-        for r in releases:
-            if r["prerelease"]:
-                v = r["tag_name"]
-                return v    
+  
 
 
 
@@ -326,13 +292,10 @@ class Project:
         # Styles ANSI
         self.Tname = f"{colorama.Style.BRIGHT}{colorama.Fore.BLUE}{self.name}{colorama.Style.RESET_ALL}" # mArhce mais galere
 
-        self.Tdescription = f"{GREEN}{self.description}{RESET}"
-        self.Tlanguages = f"{YELLOW}{self.languages}{RESET}"
-        self.Tpath = f"{GRAY}{self.pwd}{RESET}"
+        
 
         # Stocke les textes formatés pour affichage
         self.dataAnsiStr = [self.name, self.description, self.languages, self.pwd]
-        self.dataAnsi = [self.Tname, self.Tdescription, self.Tlanguages, self.Tpath]
 
         # NF
         self.icone_folder = ["󰉋", ""] # Need 2 spaces :  CLOSED | OPEN
