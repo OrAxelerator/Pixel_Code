@@ -4,18 +4,18 @@ import subprocess
 import colorama  
 colorama.init()
 
-from util.get_keys import get_key
-from util.translate import translate
-from util.is_update_available import is_update_available
-from util.get_update import get_update
-from util.terminal.clear_terminal import clear_terminal
-from util.terminal.clear_from_line import clear_from_line
+from pixel_code.script.get_keys import get_key
+from pixel_code.script.get_update import get_update
+from pixel_code.script.is_update_available import is_update_available
+from pixel_code.script.translate import translate
+from pixel_code.script.terminal.clear_terminal import clear_terminal
+from pixel_code.script.terminal.clear_from_line import clear_from_line
 
 import shutil
 from pathlib import Path
 
-BASE_DIR = Path(__file__).resolve().parent.parent
-input(BASE_DIR)
+BASE_DIR = Path(__file__).resolve().parent
+
 
 LOGO_TXT   = BASE_DIR / "data/logo.txt"
 PROJECTS_JSON = BASE_DIR / "data/projects.json"
@@ -30,8 +30,6 @@ PARAMETRES_JSON   = BASE_DIR  / "data/parametres.json"
 #   -  make something cool with nerd font for icon
 #   -  think about integration in pixel_nav => pixelcode.json ? ..
 #   -  clearFormLine(line=12) hard-coded => bad, calcule height of logo ?
-#   -  getKey need to be centraliser
-#   - do function shortentext for pwd or descripttion too long
 #   - programme de mise a jour automatique
 #   - Do something cleaner at change_value() in Param
 #   - Improve translate systeme ... 

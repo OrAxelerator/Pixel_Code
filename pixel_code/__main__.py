@@ -5,13 +5,13 @@ import sys
 # otherwise try relative import (works when executed as package),
 # otherwise add parent dir to sys.path as a last resort (works when running file directly).
 try:
-    from script.app import Main
+    from app import Main
 except Exception:
     try:
         from .app import Main
     except Exception:
         sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
-        from script.app import Main
+        from app import Main
 
 
 def main(): 
