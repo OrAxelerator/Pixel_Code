@@ -4,9 +4,9 @@ import subprocess
 import colorama  
 colorama.init()
 
-from pixel_code.script.get_keys import get_key
+from pixel_code.script.keybord import get_key
 from pixel_code.script.get_update import get_update
-from pixel_code.script.is_update_available import is_update_available
+from pixel_code.script.update import is_update_available
 from pixel_code.script.translate import translate
 from pixel_code.script.terminal.clear_terminal import clear_terminal
 from pixel_code.script.terminal.clear_from_line import clear_from_line
