@@ -6,7 +6,7 @@ colorama.init()
 
 from pixel_code.script.keybord import get_key
 from pixel_code.script.get_update import get_update
-from pixel_code.script.update import is_update_available
+from pixel_code.script.is_update_available import is_update_available
 from pixel_code.script.translate import translate
 from pixel_code.script.terminal.clear_terminal import clear_terminal
 from pixel_code.script.terminal.clear_from_line import clear_from_line
@@ -78,13 +78,19 @@ class Main:
         
         if is_update_available(self.parametre.version, last_version):
             txt_update = {
-                "en" : [f"New version avaible {self.parametre.version} => {last_version}, would you like to update [Y/n]"],
-                "fr" : [f"Nouvelle version disponible {self.parametre.version} => {last_version}, voulez vous mettre a jour [O/n]"]
+                "en" : f"[Pixel-Code] A new version is here.",
+                "fr" : f"[Pixel-Code] Une nouvelle mise a jour est disponible."
             }
-            rep = input(translate(txt_update, self.parametre.language))
-            if rep == "" or rep == "y" or rep == "o" or rep == "Y" or rep == "O":
-               update_txt = [["Update dowload"], ["Mis a jour"]]
-               print(translate(update_txt, self.parametre.language))
+            txt_pass = {
+                "en" : "[Enter to pass]",
+                "fr" : "[Tapez pour passer]"
+            }
+            # [Pixel-Code] Une nouvelle mise a jour est disponible.
+            print(translate(txt_update, self.parametre.language))
+            input(translate(txt_pass, self.parametre.language))
+            #if rep == "" or rep == "y" or rep == "o" or rep == "Y" or rep == "O":
+            #   update_txt = [["Update dowload"], ["Mis a jour"]]
+            #   print(translate(update_txt, self.parametre.language))
                # Update() <= todo
           
         clear_terminal() # Voir si peut faire autrement ..
@@ -267,6 +273,18 @@ Raccourci clavier :
 
     def display_tutorial(self):
         pass # need langague before
+
+
+
+    def add_project(self):
+        name = input("name : ")
+        description = input("description : ")
+        langage = input("lang : ")
+        pwd = input("pwd")
+
+        #self.projectsArray.append(Project(self, len(self.projectsArray), ))
+        pass
+
 
   
 
