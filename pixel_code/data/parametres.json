@@ -1,10 +1,11 @@
 {
     "app": {
         "language": "fr",
-        "use_nerd_font": false,
+        "use_nerd_font": true,
         "display_tutorial": false,
         "theme": "default",
-        "versions" : "0.1.1"
+        "version": "v0.1.2",
+        "check_update": true
     },
     "ui": {
         "details_mode_default": false,
