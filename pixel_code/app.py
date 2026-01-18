@@ -2,6 +2,7 @@ import os
 import json
 import subprocess
 import colorama  
+import sys
 colorama.init()
 
 from pixel_code.script.keybord import get_key
@@ -38,6 +39,7 @@ PARAMETRES_JSON   = BASE_DIR  / "data/parametres.json"
 #   - # Make error message if pwd is False in open_code (Project)
 #   - Use import color
 #   - Choose IDE 
+#   - print_bottom_txt()
 
 # coeur : 󱃪
 # side project : 󰉌
@@ -86,6 +88,7 @@ class Main:
                 "fr" : "[Tapez pour passer]"
             }
             # [Pixel-Code] Une nouvelle mise a jour est disponible.
+            
             print(translate(txt_update, self.parametre.language))
             input(translate(txt_pass, self.parametre.language))
             #if rep == "" or rep == "y" or rep == "o" or rep == "Y" or rep == "O":
@@ -94,6 +97,7 @@ class Main:
                # Update() <= todo
           
         clear_terminal() # Voir si peut faire autrement ..
+
         self.load_projects()
         self.display_logo()
         self.display_projects()
@@ -102,11 +106,13 @@ class Main:
 
         while True:
             key = get_key()
-            if key == "q": # Always
+            if key == "q": # Always check
                 clear_terminal()
-                last_txt = ["End of program", "Fin du programme"]
+                last_txt = {
+                    "en" : "End of program",
+                    "fr" : "Fin du programme"
+                }
                 print(translate(last_txt, self.parametre.language))
-                
                 break
                 
             elif self.current_screen == "main" : # Interface of Main
@@ -140,6 +146,15 @@ class Main:
                     self.__init__()
                     self.load_projects()
                     self.display_logo()
+                    self.display_projects()
+                elif key == "a":
+                    self.add_project()
+                    clear_from_line()
+                    self.display_projects()
+                elif key == "d":
+                    self.delete_project()
+                    clear_from_line()
+                    self.move_down() # selection not display
                     self.display_projects()
             elif self.current_screen == "parametre" : # Interface of Parametre
                 if key == "DOWN" :
@@ -185,6 +200,16 @@ class Main:
             self._selection = value
 
 
+    def print_bottom_txt(self):
+        size = os.get_terminal_size()
+        columns = size.columns
+
+        sys.stdout.write("\033[s")
+        sys.stdout.write("\033[999;1H") 
+        sys.stdout.write(f"\033[2K{ '-' * columns}")
+        sys.stdout.write("\033[u")   
+
+
 
     def help(self):
         help_message = ["""
@@ -194,6 +219,8 @@ Keybinds :
     p : Open parametre
     r : refresh display (only work for screen main)
     e : edit project inside Pixel_Code (doesnt work for the moment)
+    a : add a new project
+    d : delete a project
    ESPACE : Change a parametre
 """,
 """
@@ -203,6 +230,8 @@ Raccourci clavier :
     p : ouvrir les parametres
     r : rafraichir l'affichage (marche seulement sur main)
     e : chager les info sur un projet (marche pas pour le moment)
+    a : ajoutez un projet
+    d : suprimmer un projet
    ESPACE : Changer un parametre
 """
 ]
@@ -239,11 +268,6 @@ Raccourci clavier :
             self.parametre.selection_parametre =  min(self.parametre.selection_parametre +1, 2)
 
 
-    def enter(self): # supr ?
-        pass
-
-    def quit(self):
-        pass
 
     def edit(self):# supr ?
         pass
@@ -271,22 +295,104 @@ Raccourci clavier :
         """Reverse the value of self.show_details"""
         self.show_details = not self.show_details 
 
-    def display_tutorial(self):
-        pass # need langague before
-
 
 
     def add_project(self):
-        name = input("name : ")
-        description = input("description : ")
-        langage = input("lang : ")
-        pwd = input("pwd")
+        txt_create_project = {
+            "en" : {
+                "name" : "Name of the project",
+                "description" : "Description of the project",
+                "langage" : "Langages (separated by commas)",
+                "pwd" : "Directory of the project"
+            },
+            "fr" : {
+                "name" : "Nom du projet",
+                "description" : "Description du projet",
+                "langage" : "Langages (séparés par des virgules)",
+                "pwd" : "Chemin du projet"
+            }
+        }
+        try:
+            txt = translate(txt_create_project, self.parametre.language)
+            name = input(f"{txt['name']} : ")
+            description = input(f"{txt['description']} : ")
+            languages = input(f"{txt['langage']} : ").split(',')
+            pwd = input(f"{txt['pwd']} : ")
+            if pwd == "":
+                pwd = os.getcwd()
 
-        #self.projectsArray.append(Project(self, len(self.projectsArray), ))
+            with open(PROJECTS_JSON, encoding="utf-8") as f:
+                projets = json.load(f)
+
+            new_project = {
+                "name": name,
+                "description": description,
+                "programming_languages": [lang.strip() for lang in languages],
+                "pwd": pwd,
+                "editor": "code"  
+            }
+            projets[str(len(projets))] = new_project
+
+            with open(PROJECTS_JSON, 'w', encoding="utf-8") as f:
+                json.dump(projets, f, indent=4, ensure_ascii=False)
+
+
+            self.projectsArray.append(Project(self, str(len(projets) - 1), projets))
+        except FileNotFoundError:
+            print("Fichier projects.json introuvable.")
+        except Exception as e:
+            print(f"Une erreur est survenue : {e}")
+
+    def delete_project(self):
+        try:
+            txt_confirm = {
+                "en": f"Do you want to delete {self.projectsArray[self.selection]} : [y/N]",
+                "fr": f"Voulez vous supprimer {self.projectsArray[self.selection]} : [y/N]"
+            }
+            txt_error = {
+                "en": "Invalid project number.",
+                "fr": "Numéro de projet invalide."
+            }
+            txt_success = {
+                "en": "Project deleted successfully!",
+                "fr": "Projet supprimé avec succès !"
+            }
+
+            
+            project_number = str(self.selection)
+            
+            res = input(translate(txt_confirm, self.parametre.language))
+            if res == "n" or res == "":
+                print("no")
+                return False
+            elif res == "y":
+                
+
+                with open(PROJECTS_JSON, encoding="utf-8") as f:
+                    projets = json.load(f)
+
+                if project_number not in projets:
+                    print(translate(txt_error, self.parametre.language))
+                    return
+
+                del projets[project_number]
+
+                projets = {str(i): v for i, v in enumerate(projets.values())}
+
+                with open(PROJECTS_JSON, 'w', encoding="utf-8") as f:
+                    json.dump(projets, f, indent=4, ensure_ascii=False)
+
+                print(translate(txt_success, self.parametre.language))
+
+                self.projectsArray = [Project(self, str(i), projets) for i in range(len(projets))]
+        except FileNotFoundError:
+            print("Fichier projects.json introuvable.")
+        except Exception as e:
+            print(f"Une erreur est survenue : {e}")
+
+    def archive(self):
         pass
 
-
-  
 
 
 
@@ -297,7 +403,6 @@ class Project:
 
         data = projets[self.number]
         
-        # Infos projet
         self.name = data["name"]
         self.description = data["description"]
         self.editor = data["editor"]
@@ -310,12 +415,15 @@ class Project:
 
         
 
-        # Stocke les textes formatés pour affichage
         self.dataAnsiStr = [self.name, self.description, self.languages, self.pwd]
 
         # NF
         self.icone_folder = ["󰉋", ""] # Need 2 spaces :  CLOSED | OPEN
 
+
+
+    def __str__(self):
+        return f"{self.name}"
 
 
 
@@ -371,7 +479,6 @@ class Project:
 
         project_path = Path(self.pwd).expanduser().resolve()
 
-        # Chercher la commande "code"
         code_cmd = shutil.which(self.editor)
 
         if code_cmd:
