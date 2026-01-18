@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pixel-code"
-version = "0.2.0"
+version = "0.2.1"
 description = "Pixel_Code - TUI pour gérer et ouvrir des projets"
 requires-python = ">=3.8"
 dependencies = [
