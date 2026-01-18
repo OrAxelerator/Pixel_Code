@@ -126,5 +126,7 @@ Objectif => faciliter l’ouverture via VS Code et une meilleure organisation et
 > * **p** : ouvrir les paramètres
 > * **r** : recharger l’affichage (marche seulement dans main)
 > * **e** : éditer les données d’un projet depuis Pixel_Code (pas encore fonctionnel)
+> * **a** : ajoutez un projet
+> * **d** : suprimer un projet
 
 ---

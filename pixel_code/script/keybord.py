@@ -17,7 +17,6 @@ def get_key() -> str:
     """
     if os.name == "nt":  # Windowsn WORK ?
         key = msvcrt.getch()
-    # touches simples
         if key == b'q':
             return "q"
         elif key == b'p':
@@ -40,6 +39,11 @@ def get_key() -> str:
                 return "UP"
             elif key == b'P':
                 return "DOWN"
+
+        elif key == b'a':
+            return "a"
+        elif key == b'd':
+            return "d"
 
         return None
     else:  # Linux / macOS
@@ -65,6 +69,10 @@ def get_key() -> str:
                 return "e"
             elif ch1 == 'p':
                 return "p"
+            elif ch1 == 'a':
+                return "a"
+            elif ch1 == 'd':
+                return "d"
             elif ch1 == ' ':
                 return "SPACE"
             elif ch1 == '\x1b':  # ANSI sequence  for arrows
