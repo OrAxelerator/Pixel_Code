@@ -12,10 +12,10 @@ def get_key() -> str:
     """
     - "UP" for ^
     - "DOWN" for ˅
-    - "q" for quit
-    - None for others ...
+    - "SPACE" for space
+    - "ENTER" for enter
     """
-    if os.name == "nt":  # Windowsn WORK ?
+    if os.name == "nt": 
         key = msvcrt.getch()
         if key == b'q':
             return "q"
@@ -29,6 +29,8 @@ def get_key() -> str:
             return "r"
         elif key == b'e':
             return "e"
+        elif key == b'g':
+            return "g"
         elif key == b'\r':   
             return "ENTER"
 
@@ -73,6 +75,8 @@ def get_key() -> str:
                 return "a"
             elif ch1 == 'd':
                 return "d"
+            elif ch1 == 'g':
+                return "g"
             elif ch1 == ' ':
                 return "SPACE"
             elif ch1 == '\x1b':  # ANSI sequence  for arrows
