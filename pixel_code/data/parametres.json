@@ -4,7 +4,7 @@
         "use_nerd_font": true,
         "display_tutorial": false,
         "theme": "default",
-        "version": "v0.2.0",
+        "version": "v0.2.2",
         "check_update": true
     },
     "ui": {
