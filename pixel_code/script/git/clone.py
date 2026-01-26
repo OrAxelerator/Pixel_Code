@@ -8,7 +8,7 @@ from script.name import is_dir_empty
 from script.git.repo_name import get_name_repo
 from script.delete import delete_dir
         
-def clone_repo(url):
+def clone_repo(url : str):
     name = get_name_repo(url)
     if is_dir_empty(name):
         if not delete_dir(name):
