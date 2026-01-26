@@ -11,6 +11,7 @@ from pixel_code.script.is_update_available import is_update_available
 from pixel_code.script.translate import translate
 from pixel_code.script.terminal.clear_terminal import clear_terminal
 from pixel_code.script.terminal.clear_from_line import clear_from_line
+from pixel_code.script.git.clone import clone_repo
 
 import shutil
 from pathlib import Path
@@ -62,6 +63,7 @@ class Main:
         self.projets = {}
         self.projectsArray = []
         self.show_details = False 
+        self.show_git = False # clone, git pull
 
         self.current_screen = "main" # > ["main", "parametre"]
 
@@ -132,6 +134,7 @@ class Main:
                     self.help()
                 elif key == "e":
                     self.projectsArray[self.selection].edit_project()
+                    print("edit")
                 elif key == "p": # Parametre off app
                     clear_from_line()
                     self.current_screen = "parametre"
@@ -139,6 +142,7 @@ class Main:
                     self.parametre.display_parametre()
                 elif key == "SPACE":
                     self.toggle_view()
+                    self.show_git = False # toggle
                     clear_from_line() # To opti bcs 2 time projectS
                     self.display_projects()
                 elif key == "r": # Reload all
@@ -156,6 +160,32 @@ class Main:
                     clear_from_line()
                     self.move_down() # selection not display
                     self.display_projects()
+                elif key == "g":
+                    self.show_details = False
+                    self.show_git = not self.show_git 
+                    clear_from_line()
+                    self.display_projects()
+                    txt = {"en" : "c : clone \np : git pull\nothers : notihng ",
+                           "fr" : "c : clone \np : git pull\autre : rien "
+                    }
+                    if self.show_git:
+                        res = input(translate(txt, self.parametre.language))
+                        if res == "c":
+                            
+                            url = self.projectsArray[self.selection].get_depo_url()
+                            if url == None:
+                                txt_error = {"en" : "No url found",
+                                             "fr": "Aucune url trouvé"}
+                            else :
+                                clone_repo(url)
+                        elif res == "p":
+                            from pixel_code.script.git.pull import git_pull
+                            dir = self.projectsArray[self.selection].pwd
+                            git_pull(dir)
+                        else:
+                            clear_from_line()
+                            self.show_git = False
+                            self.display_projects()
             elif self.current_screen == "parametre" : # Interface of Parametre
                 if key == "DOWN" :
                     self.move_down()
@@ -285,11 +315,18 @@ Raccourci clavier :
 
 
     def display_projects(self): # Not static
+        size = os.get_terminal_size()
+        height = size.lines
+        #print(height)
         for i, project in enumerate(self.projectsArray):
-            if self.selection == i and self.show_details: # Works
-                project.display_project_full(selected_index=self.selection, my_index=i)
-            else :
+            if i != self.selection:
                 project.display_project_compacte(selected_index=self.selection, my_index=i)
+            elif  self.selection == i and not self.show_details and not self.show_git:
+                project.display_project_compacte(selected_index=self.selection, my_index=i)
+            elif self.show_details and i == self.selection:
+                project.display_project_full(selected_index=self.selection, my_index=i)
+            elif self.show_git and i == self.selection:
+                project.display_git()
 
     def toggle_view(self):
         """Reverse the value of self.show_details"""
@@ -303,13 +340,15 @@ Raccourci clavier :
                 "name" : "Name of the project",
                 "description" : "Description of the project",
                 "langage" : "Langages (separated by commas)",
-                "pwd" : "Directory of the project"
+                "pwd" : "Directory of the project",
+                "repo" : "Url of the github repo"
             },
             "fr" : {
                 "name" : "Nom du projet",
                 "description" : "Description du projet",
                 "langage" : "Langages (séparés par des virgules)",
-                "pwd" : "Chemin du projet"
+                "pwd" : "Chemin du projet",
+                "repo" : "Url du dépot github"
             }
         }
         try:
@@ -318,6 +357,7 @@ Raccourci clavier :
             description = input(f"{txt['description']} : ")
             languages = input(f"{txt['langage']} : ").split(',')
             pwd = input(f"{txt['pwd']} : ")
+            repo = input(f'{txt["repo"]} : ')
             if pwd == "":
                 pwd = os.getcwd()
 
@@ -329,7 +369,8 @@ Raccourci clavier :
                 "description": description,
                 "programming_languages": [lang.strip() for lang in languages],
                 "pwd": pwd,
-                "editor": "code"  
+                "editor": "code",
+                "repo" : repo
             }
             projets[str(len(projets))] = new_project
 
@@ -408,6 +449,7 @@ class Project:
         self.editor = data["editor"]
         self.languages = " ".join(data.get("programming_languages", []))
         self.pwd = data["pwd"]
+        self.repo = data["repo"]
         
 
         # Styles ANSI
@@ -469,9 +511,27 @@ class Project:
         
         print()
 
+    def display_git(self):
+        carac = ["├─", "└─"]
+        lang = 0 if self.main.parametre.language == "en" else 1
+        values = ["","c", "g"]
+        total = len(values)
+        icone = (str(self.icone_folder[1]) + "  ") if self.main.parametre.use_nerd_font else "" # Some space for the icone
+        txt = [[ "clone", "pull"], ["clone","pull" ]] # bofffff
+        for i, values in enumerate(values):
+            if i == 0:
+                print(f"▼ {icone}{self.Tname}")
+                is_last_index = 1 if i == total - 1 else 0 # total - 1 cause values[0] = name                 
+            else :
+                print(f"  {carac[is_last_index]} {txt[lang][i-1]} : {values}")
+        
+
     def edit_project(self): # change info about prject like the name ...
         print(self.description)
-
+        project = BASE_DIR  /"data/projects.json"
+        line = 10
+        subprocess.run(["nano", f"+{line}", project])
+        #subprocess.call(['nano', project])
 
     def open_project(self):
         # Make error message if pwd is False
@@ -491,6 +551,12 @@ class Project:
             return
 
         raise RuntimeError("VS Code n'est pas trouvé sur ce système")
+
+    def get_depo_url(self) -> str | None:
+        if self.repo == "":
+            return None
+        else :
+            return self.repo
 
     def archive(self):
         pass
