@@ -4,14 +4,15 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pixel-code"
-version = "0.3.0"
+version = "0.3.1"
 description = "Pixel_Code - TUI pour gérer et ouvrir des projets"
 requires-python = ">=3.8"
 dependencies = [
     "colorama",
-    "requests"
+    "requests",
+    "windows-curses"
 ]
-
+windows-curses = { version = "^2.4", optional = true }
 [project.scripts]
 pixel-code = "pixel_code.__main__:main"
 

@@ -1,7 +1,7 @@
 import os
 import json
 import subprocess
-import colorama  
+import colorama
 import sys
 colorama.init()
 
@@ -34,13 +34,11 @@ PARAMETRES_JSON   = BASE_DIR  / "data/parametres.json"
 #   -  clearFormLine(line=12) hard-coded => bad, calcule height of logo ?
 #   - programme de mise a jour automatique
 #   - Do something cleaner at change_value() in Param
-#   - Improve translate systeme ... 
 #   - projet.json : icone = ["":iconed de base, "favortite : icone + cœur, "]
 #   - Use quit() func in main  instead of break in code
 #   - # Make error message if pwd is False in open_code (Project)
 #   - Use import color
 #   - Choose IDE 
-#   - print_bottom_txt()
 
 # coeur : 󱃪
 # side project : 󰉌
@@ -82,12 +80,12 @@ class Main:
         
         if is_update_available(self.parametre.version, last_version):
             txt_update = {
-                "en" : f"[Pixel-Code] A new version is here.",
-                "fr" : f"[Pixel-Code] Une nouvelle mise a jour est disponible."
+                "en" : f"[Pixel-Code] A new version is here ({last_version})",
+                "fr" : f"[Pixel-Code] Une nouvelle mise a jour est disponible ({last_version})"
             }
             txt_pass = {
                 "en" : "[Enter to pass]",
-                "fr" : "[Tapez pour passer]"
+                "fr" : "[Tapez entrer pour passer]"
             }
             # [Pixel-Code] Une nouvelle mise a jour est disponible.
             
@@ -230,14 +228,10 @@ class Main:
             self._selection = value
 
 
-    def print_bottom_txt(self):
+    def print_bottom_txt(self, txt):
         size = os.get_terminal_size()
         columns = size.columns
-
-        sys.stdout.write("\033[s")
-        sys.stdout.write("\033[999;1H") 
-        sys.stdout.write(f"\033[2K{ '-' * columns}")
-        sys.stdout.write("\033[u")   
+        # use curses
 
 
 
@@ -568,24 +562,28 @@ class Param:
     def __init__(self, main):
         self.main = main
         self._selection_parametre = 0
-        self.language = None
+
+        # "app"
+        self.language = "en" # Default value if error to read parametre.json
         self.use_nerd_font = False
-        self.sort_by_name = False
-        self.theme = "default"
-        self.display_tutorial = False
         self.version = None
+        self.check_update = True
+        self.allow_prerelease = True
+
+        # "ui"
+        self.theme = "default"
+
+        # "projects"
+        self.sort_by_last_opened = True
+        self.sort_by_name = False
+        self.editor = "code"
+        
         self.last_version = None # To load from github
-        self.check_update = True # Check updae at lauch
-        self.details_mode_default = False
-        self.truncate_text = True
-        self.path_truncate_mode = "middle"
-        self.clear_mode = "partial"
-        self.auto_reload = False
-        self.editor = None
+                 
         self.load_param()
         self.parametre_array = [self.language, self.use_nerd_font, self.version] #here to get len() on setter
         
-        # Tableau des paramètres modifiables depuis l'interface
+        # Tableau des paramètres modifiables depuis l'interface param
         
 
 
@@ -626,25 +624,21 @@ class Param:
             with open(PARAMETRES_JSON, encoding="utf-8") as f:
                 data = json.load(f)
 
-                # Parcours des sections et assignation des valeurs aux variables correspondantes
                 if 'app' in data:
                     self.language = data['app'].get('language')
                     self.use_nerd_font = data['app'].get('use_nerd_font', self.use_nerd_font)
-                    self.display_tutorial = data['app'].get('display_tutorial', self.display_tutorial)
-                    self.theme = data['app'].get('theme', self.theme)
                     self.version = data['app'].get('version') # Cause in v0.1.1 parametres.json there is no argument "version" but "versionS" so since v0.1.2 it's "version"
-                    self.check_update = data['app'].get('check_update', self.check_update)
+                    self.check_update = data['app'].get('check_update', self.check_update),
+                    self.allow_prerelease = data['app'].get('allow_prerelease', self.allow_prerelease)
 
                 if 'ui' in data:
-                    self.details_mode_default = data['ui'].get('details_mode_default', self.details_mode_default)
-                    self.truncate_text = data['ui'].get('truncate_text', self.truncate_text)
-                    self.path_truncate_mode = data['ui'].get('path_truncate_mode', self.path_truncate_mode)
-                    self.clear_mode = data['ui'].get('clear_mode', self.clear_mode)
+                    self.theme = data['ui'].get('theme', self.theme)
+         
 
                 if 'projects' in data:
-                    self.auto_reload = data['projects'].get('auto_reload', self.auto_reload)
+                    self.sort_by_last_opened = data['projects'].get('sort_by_last_opened', self.sort_by_last_opened) 
                     self.sort_by_name = data['projects'].get('sort_by_name', self.sort_by_name) 
-                    self.editor = data['projects'].get('editor', self.editor) 
+                    self.editor = data['projects'].get('editor', self.editor)
 
         except FileNotFoundError:
             print("Fichier de paramètres introuvable.")
@@ -664,20 +658,17 @@ class Param:
             'app': {
                 'language': self.language,
                 'use_nerd_font': self.use_nerd_font,
-                'display_tutorial': self.display_tutorial,
-                'theme': self.theme,
                 'version': self.version,
-                'check_update': self.check_update
+                'check_update': self.check_update,
+                'allow_prerelease': self.allow_prerelease
             },
             'ui': {
-                'details_mode_default': self.details_mode_default,
-                'truncate_text': self.truncate_text,
-                'path_truncate_mode': self.path_truncate_mode,
-                'clear_mode': self.clear_mode
+                'theme': self.theme,
             },
             'projects': {
-                'auto_reload': self.auto_reload,
-                'sort_by_name': self.sort_by_name
+                'sort_by_last_opened': self.sort_by_last_opened,
+                'sort_by_name': self.sort_by_name,
+                'editor': self.editor
             }
         }
         with open(PARAMETRES_JSON, 'w', encoding="utf-8") as f:
