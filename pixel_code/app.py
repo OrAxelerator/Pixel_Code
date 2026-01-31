@@ -1,3 +1,6 @@
+import locale
+locale.setlocale(locale.LC_ALL, "")
+
 import os
 import json
 import subprocess
@@ -12,6 +15,11 @@ from pixel_code.script.translate import translate
 from pixel_code.script.terminal.clear_terminal import clear_terminal
 from pixel_code.script.terminal.clear_from_line import clear_from_line
 from pixel_code.script.git.clone import clone_repo
+
+from pixel_code.script.input_curses import prompt_text_wrapper
+from pixel_code.script.input_curses import prompt_text
+import curses
+from render import Renderer
 
 import shutil
 from pathlib import Path
@@ -57,46 +65,58 @@ PARAMETRES_JSON   = BASE_DIR  / "data/parametres.json"
 
 class Main:
     def __init__(self):
+        import curses
+        from render import Renderer
+        curses.wrapper(self._start)
+
+    def _start(self, stdscr):
+        self.renderer = Renderer(stdscr)
+
         self._selection = 0
         self.projets = {}
         self.projectsArray = []
         self.show_details = False 
-        self.show_git = False # clone, git pull
+        self.show_git = False
 
-        self.current_screen = "main" # > ["main", "parametre"]
+        self.current_screen = "main"
 
         self.parametre = Param(self)
         self.parametre.load_param()
 
-        
         self.run()
+
+    #def _start(self, stdscr):
+        
+
 
 
     def run(self):
-        # Lauch app
+        # Launch app
+        self.renderer.clear()  # Clear the screen before starting
+        self.renderer.refresh()  # Refresh the screen to show changes
 
-        last_version = get_update() # Check if user have wifi
+        last_version = get_update()  # Check if user has Wi-Fi
         self.parametre.last_version = last_version
-        
+
         if is_update_available(self.parametre.version, last_version):
             txt_update = {
-                "en" : f"[Pixel-Code] A new version is here ({last_version})",
-                "fr" : f"[Pixel-Code] Une nouvelle mise a jour est disponible ({last_version})"
+                "en": f"[Pixel-Code] A new version is here ({last_version})",
+                "fr": f"[Pixel-Code] Une nouvelle mise à jour est disponible ({last_version})"
             }
             txt_pass = {
-                "en" : "[Enter to pass]",
-                "fr" : "[Tapez entrer pour passer]"
+                "en": "[Enter to pass]",
+                "fr": "[Tapez entrer pour passer]"
             }
-            # [Pixel-Code] Une nouvelle mise a jour est disponible.
-            
-            print(translate(txt_update, self.parametre.language))
-            input(translate(txt_pass, self.parametre.language))
-            #if rep == "" or rep == "y" or rep == "o" or rep == "Y" or rep == "O":
-            #   update_txt = [["Update dowload"], ["Mis a jour"]]
-            #   print(translate(update_txt, self.parametre.language))
-               # Update() <= todo
-          
-        clear_terminal() # Voir si peut faire autrement ..
+
+            self.renderer.addstr(translate(txt_update, self.parametre.language))
+            self.renderer.addstr(translate(txt_pass, self.parametre.language))
+            self.renderer.refresh()
+            self.renderer.getch()
+            self.renderer.clear()
+            #input(translate(txt_pass, self.parametre.language))
+
+        #clear_terminal()  # Clear terminal after update check
+        self.renderer.clear()
 
         self.load_projects()
         self.display_logo()
@@ -167,7 +187,7 @@ class Main:
                            "fr" : "c : clone \np : git pull\autre : rien "
                     }
                     if self.show_git:
-                        res = input(translate(txt, self.parametre.language))
+                        res = prompt_text_wrapper(translate(txt, self.parametre.language))
                         if res == "c":
                             
                             url = self.projectsArray[self.selection].get_depo_url()
@@ -265,12 +285,13 @@ Raccourci clavier :
             try:
                 with open(LOGO_TXT, encoding="utf-8") as l:
                     logo = l.read()
-                    print()
-                    print(logo)
-                    print("_____________________________________________________________________________________")
-                    print()
+                    #self.renderer.clear()  # Clear the screen before displaying the logo
+                    self.renderer.addstr(logo+"\n")
+                    self.renderer.addstr("\n" + "-" * 80 + "\n")  # Add a separator line
+                    self.renderer.refresh()  # Refresh to show the logo
             except FileNotFoundError:
-                print("Logo introuvable.")
+                self.renderer.addstr("Logo introuvable.\n")
+                self.renderer.refresh()
                 
 
 
@@ -329,6 +350,7 @@ Raccourci clavier :
 
 
     def add_project(self):
+        #from input_curses import prompt_text_wrapper
         txt_create_project = {
             "en" : {
                 "name" : "Name of the project",
@@ -346,12 +368,16 @@ Raccourci clavier :
             }
         }
         try:
+            #user_input = prompt_text_wrapper("")
             txt = translate(txt_create_project, self.parametre.language)
-            name = input(f"{txt['name']} : ")
-            description = input(f"{txt['description']} : ")
-            languages = input(f"{txt['langage']} : ").split(',')
-            pwd = input(f"{txt['pwd']} : ")
-            repo = input(f'{txt["repo"]} : ')
+            name = prompt_text(self.renderer.stdscr, f"{txt['name']} : ")
+            description = prompt_text(self.renderer.stdscr, f"{txt['description']} : ")
+            languages = prompt_text(self.renderer.stdscr, f"{txt['langage']} : ").split(',')
+            pwd = prompt_text(self.renderer.stdscr, f"{txt['pwd']} : ")
+            repo = prompt_text(self.renderer.stdscr, f'{txt["repo"]} : ')
+            
+           # self.renderer.stdscr.clear()
+            
             if pwd == "":
                 pwd = os.getcwd()
 
@@ -396,7 +422,7 @@ Raccourci clavier :
             
             project_number = str(self.selection)
             
-            res = input(translate(txt_confirm, self.parametre.language))
+            res = prompt_text_wrapper(translate(txt_confirm, self.parametre.language))
             if res == "n" or res == "":
                 print("no")
                 return False
@@ -467,14 +493,18 @@ class Project:
 
     def display_project_compacte(self, selected_index, my_index):
         """
-        Display the name project
-        selected_index : index of the selectioned project
+        Display the name of the project in a compact format.
+        selected_index : index of the selected project
         my_index : index of this project
         """
-        nf = self.main.parametre.use_nerd_font # True or False ..    
+        nf = self.main.parametre.use_nerd_font  # True or False
         arrow = "▶" if selected_index == my_index else ""
         icone = (str(self.icone_folder[0]) + "  ") if nf else ""
-        print(arrow + " "+ icone + self.Tname )
+        #self.main.renderer.addstr(f"{arrow}", 0, 11)
+        self.main.renderer.addstr(f"     {self.name}", 0, 13+my_index)
+        self.main.renderer.addstr(f"  {icone}", 0, 13+my_index)
+        self.main.renderer.addstr(f"{arrow}", 0, 13+my_index)
+        self.main.renderer.refresh()
 
 
     def display_project_full(self, selected_index, my_index):
