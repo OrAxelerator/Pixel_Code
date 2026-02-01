@@ -1,21 +1,25 @@
 import os
 import sys
+import curses
 
-# Try absolute import (works when package is installed or run with -m),
-# otherwise try relative import (works when executed as package),
-# otherwise add parent dir to sys.path as a last resort (works when running file directly).
+# Import robuste (installé / -m / fichier direct)
 try:
-    from app import Main
+    from app import App
 except Exception:
     try:
-        from .app import Main
+        from .app import App
     except Exception:
         sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
-        from app import Main
+        from app import App
 
 
-def main(): 
-    Main()
+def run(stdscr):
+    App(stdscr)
+    
+
+
+def main():
+    curses.wrapper(run)
 
 
 if __name__ == "__main__":
