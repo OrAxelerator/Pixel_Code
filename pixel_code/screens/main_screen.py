@@ -1,38 +1,206 @@
 import curses
 import shutil
 from pathlib import Path
+import json
+from pixel_code.screens.input_curses import Input
+import os
+from pixel_code.utils.translate import translate
 
-BASE_DIR = Path(__file__).resolve().parent
+
+BASE_DIR = Path(__file__).resolve().parent.parent
 PROJECTS_JSON = BASE_DIR / "data/projects.json"
 PARAMETRES_JSON   = BASE_DIR  / "data/parametres.json"
 
 class MainScreen:
     def __init__(self, main_app):
         self.main_app = main_app
+        self.param = main_app.param
+        
         h, w = main_app.stdscr.getmaxyx()
 
         self.win = curses.newwin(h-10, w, 10, 0)
+
+        self.input = Input(main_app)
         
 
-        self.array = ["salut", "test", "pixel", "code"]
 
+        self._selection = 0
+        self.projets = {}
+        self.projectsArray = []
+        self.show_details = False 
+        self.show_git = False # clone, git pull
+
+        self.load_projects()
+
+
+    def load_projects(self):
+        try:
+            with open(PROJECTS_JSON, encoding="utf-8") as f:
+                self.projets = json.load(f)
+            
+                for i in range(len(self.projets)): #recup tout les prjet en tant que class dans projetArray
+                    self.projectsArray.append(Project(self, str(i), self.projets))
+        except FileNotFoundError:
+            #"Fichier projets.json introuvable.
+            # self.projet = {} so..
+            pass
 
 
     def display_main(self):
         self.win.clear()
         self.win.addstr(0,0, "MAIN SCREEN")
-        for i, item in enumerate(self.array):
-            self.win.addstr(i+1, 2, item)
+        for i, item in enumerate(self.projectsArray):
+            #self.win.addstr(i+1, 2, f'{item}')
+            item.display_project_compacte(selected_index=self._selection, my_index=i)
         self.win.refresh()
         
 
-        def load_projects(self):
-            try:
-                with open(PROJECTS_JSON, encoding="utf-8") as f:
-                    self.projets = json.load(f)
+
+    def move_up(self):
+        self._selection -= 1
+    
+    def move_down(self):
+        self._selection += 1
+
+
+    
+
+    def display_projects(self):
+        for i, project in enumerate(self.projectsArray):
+            if i != self._selection:
+                project.display_project_compacte(selected_index=self._selection, my_index=i)
+            elif  self._selection == i and not self.show_details and not self.show_git:
+                project.display_project_compacte(selected_index=self._selection, my_index=i)
+            elif self.show_details and i == self._selection:
+                project.display_project_full(selected_index=self._selection, my_index=i)
+            elif self.show_git and i == self._selection:
+                project.display_git()
+
+
+
+    def add_project(self):
+        txt_create_project = {
+            "en" : {
+                "name" : "Name of the project",
+                "description" : "Description of the project",
+                "langage" : "Langages (separated by commas)",
+                "pwd" : "Directory of the project",
+                "repo" : "Url of the github repo"
+            },
+            "fr" : {
+                "name" : "Nom du projet",
+                "description" : "Description du projet",
+                "langage" : "Langages (séparés par des virgules)",
+                "pwd" : "Chemin du projet",
+                "repo" : "Url du dépot github"
+            }
+        }
+        try:
+            txt = translate(txt_create_project, self.main_app.param.language)
+            name = self.input.display_input(f"{txt['name']} : ")
+            description = self.input.display_input(f"{txt['description']} : ")
+            languages = self.input.display_input(f"{txt['langage']} : ").split(',')
+            pwd = self.input.display_input(f"{txt['pwd']} : ")
+            repo = self.input.display_input(f'{txt["repo"]} : ')
+            if pwd == "":
+                pwd = os.getcwd()
+
+            with open(PROJECTS_JSON, encoding="utf-8") as f:
+                projets = json.load(f)
+
+            new_project = {
+                "name": name,
+                "description": description,
+                "programming_languages": [lang.strip() for lang in languages],
+                "pwd": pwd,
+                "editor": "code",
+                "repo" : repo
+            }
+            projets[str(len(projets))] = new_project
+
+            with open(PROJECTS_JSON, 'w', encoding="utf-8") as f:
+                json.dump(projets, f, indent=4, ensure_ascii=False)
+
+
+            self.projectsArray.append(Project(self, str(len(projets) - 1), projets))
+        except FileNotFoundError:
+            print("Fichier projects.json introuvable.")
+        except Exception as e:
+            print(f"Une erreur est survenue : {e}")
+
+
+    def delete_project(self):
+        try:
+            txt_confirm = {
+                "en": f"Do you want to delete {self.projectsArray[self._selection]} : [y/N]",
+                "fr": f"Voulez vous supprimer {self.projectsArray[self._selection]} : [y/N]"
+            }
+            txt_error = {
+                "en": "Invalid project number.",
+                "fr": "Numéro de projet invalide."
+            }
+            txt_success = {
+                "en": "Project deleted successfully!",
+                "fr": "Projet supprimé avec succès !"
+            }
+            
+            project_number = str(self._selection)
+            
+            res = self.input.display_input(translate(txt_confirm, self.param.get_language()))
+            if res == "n" or res == "":
+                h, w = self.win.getmaxyx()
+                self.win.addstr(h-1, 0, "no delete")
+                self.win.refresh()
                 
-                    for i in range(len(self.projets)): #recup tout les prjet en tant que class dans projetArray
-                        self.projectsArray.append(Project(self, str(i), self.projets))
-            except FileNotFoundError:
-                print("Fichier projets.json introuvable.")
-                # self.projet = {} so..
+                return False
+            elif res == "y":
+            
+                with open(PROJECTS_JSON, encoding="utf-8") as f:
+                    projets = json.load(f)
+                if project_number not in projets:
+                    h, w = self.win.getmaxyx()
+                    self.win.addstr(h-1, 0, translate(txt_error, self.param.get_language()))
+                    self.win.refresh()
+                    return
+
+                del projets[project_number]
+
+                projets = {str(i): v for i, v in enumerate(projets.values())}
+                with open(PROJECTS_JSON, 'w', encoding="utf-8") as f:
+                    json.dump(projets, f, indent=4, ensure_ascii=False)
+                h, w = self.win.getmaxyx()
+                self.win.addstr(h-1, 0, translate(txt_success, self.param.get_language()))
+                self.win.refresh()
+                self.projectsArray = [Project(self, str(i), projets) for i in range(len(projets))]
+        except FileNotFoundError:
+            print("Fichier projects.json introuvable.")
+        except Exception as e:
+            print(f"Une erreur est survenue : {e}")
+
+
+class Project:
+    def __init__(self, main_app, number, projets):
+        self.main_app = main_app
+        self.number = number
+
+        data = projets[self.number]
+
+        self.name = data["name"]
+        self.description = data["description"]
+        self.editor = data["editor"]
+        self.languages = " ".join(data.get("programming_languages", []))
+        self.pwd = data["pwd"]
+        self.repo = data["repo"]
+
+        self.dataAnsiStr = [self.name, self.description, self.languages, self.pwd]
+
+        self.icone_folder = ["󰉋", ""] # Need 2 spaces :  CLOSED | OPEN
+
+    def __str__(self):
+        return f'{self.name}'
+    
+    def display_project_compacte(self,selected_index, my_index):
+        #nf = self.main_app.param.use_nerd_font # True or False ..    
+        arrow = "▶" if selected_index == my_index else ""
+        #icone = (str(self.icone_folder[0]) + "  ") if nf else ""
+        self.main_app.win.addstr(my_index+1, 3, f"{arrow} {self.name}")
