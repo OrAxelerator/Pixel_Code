@@ -21,6 +21,8 @@ class MainScreen:
         h, w = main_app.stdscr.getmaxyx()
 
         self.win = curses.newwin(h-10, w, 10, 0)
+        curses.init_pair(1, curses.COLOR_BLUE, curses.COLOR_BLACK)
+        curses.init_pair(2, curses.COLOR_GREEN, curses.COLOR_BLACK)
 
         self.input = Input(main_app)
 
@@ -61,8 +63,8 @@ class MainScreen:
             if i == self._selection and self.show_details:
                 #item.display_project_compacte(selected_index=self._selection, my_index=i, space=space)
                 item.display_project_full("lol", i) # side panel to exept for projet[0]
+                
                 #item.detail_panel.win.clear()
-                #item.display_side(item.__str__())
             else:
 
                 space = 4  if self.show_details else space
@@ -176,6 +178,7 @@ class MainScreen:
                     projets = json.load(f)
                 if project_number not in projets:
                     h, w = self.win.getmaxyx()
+                    self.main_app._selection = self.main_app._selection - 1 if self.main_app._selection > 0 else 0
                     self.win.addstr(h-1, 0, translate(txt_error, self.param.get_language()))
                     self.win.refresh()
                     return
@@ -189,6 +192,8 @@ class MainScreen:
                 self.win.addstr(h-1, 0, translate(txt_success, self.param.get_language()))
                 self.win.refresh()
                 self.projectsArray = [Project(self, str(i), projets) for i in range(len(projets))]
+                
+                
         except FileNotFoundError:
             print("Fichier projects.json introuvable.")
         except Exception as e:
@@ -200,14 +205,14 @@ class Project:
         self.main_app = main_app
         self.number = number
 
-        data = projets[self.number]
+        self.data = projets[self.number]
 
-        self.name = data["name"]
-        self.description = data["description"]
-        self.editor = data["editor"]
-        self.languages = " ".join(data.get("programming_languages", []))
-        self.pwd = data["pwd"]
-        self.repo = data["repo"]
+        self.name = self.data["name"]
+        self.description = self.data["description"]
+        self.editor = self.data["editor"]
+        self.languages = " ".join(self.data.get("programming_languages", []))
+        self.pwd = self.data["pwd"]
+        self.repo = self.data["repo"]
 
         self.dataAnsiStr = [self.name, self.description, self.languages, self.pwd]
 
@@ -218,30 +223,24 @@ class Project:
 
     def __str__(self):
         return f'{self.name}'
-    
 
-    def display_side(self, item):
-        self.detail_panel.win.clear()
-        
-        self.detail_panel.win.addstr(3,4, f"{item} test")
-        self.detail_panel.win.refresh()
 
 
     def display_project_compacte(self,selected_index, my_index, space):
         #nf = self.main_app.param.use_nerd_font # True or False ..    
         arrow = "▶" if selected_index == my_index else ""
-        #icone = (str(self.icone_folder[0]) + "  ") if nf else ""
-        self.main_app.win.addstr(my_index+space, 3, f"{arrow} {self.name}")
+        icone_folder = ["󰉋", ""]
+        icone = (str(icone_folder[0]) + "  ") if self.main_app.param.use_nerd_font else ""
+        if selected_index == my_index:
+            self.main_app.win.addstr(my_index+space, 3, f"{arrow} {icone}{self.name}", curses.color_pair(2))
+        else:
+            self.main_app.win.addstr(my_index+space, 3, f"{arrow} {icone}{self.name}", curses.color_pair(1))
         #self.detail_panel.win.addstr(0,0, f"Project side panel {self.__str__()} ")
         
         self.main_app.win.refresh()
 
     def display_project_full(self, selected_index, my_index):
-            self.detail_panel.win.clear()
-            self.detail_panel.win.border()
-            self.detail_panel.win.addstr(1,1, f"Project side panel { self.__str__()} ")
-            self.detail_panel.win.addstr(11,20, f"YOOOOOOO ")
-            self.detail_panel.win.refresh()
+
             carac = ["├─", "└─"]
             lang = 0 if self.main_app.param.get_language() == "en" else 1
             txt = [[ "About", "Languages", "Path"], ["Descrption","Langages", "Chemin" ]] # bofffff
@@ -256,7 +255,7 @@ class Project:
 
             for i, values in enumerate(values):
                 if i == 0:
-                    self.main_app.win.addstr(i+1+my_index, 3, f"▼ {icone}{self.__str__()}")
+                    self.main_app.win.addstr(i+1+my_index, 3, f"▼ {icone}{self.__str__()}", curses.color_pair(2))
                 is_last_index = 1 if i == total - 1 else 0 # total - 1 cause values[0] = name 
                 self.main_app.win.addstr(i+2+my_index, 5, f"  {carac[is_last_index]} {txt[lang][i]} : {values}")
                 #self.main_app.win.refresh()
@@ -264,7 +263,40 @@ class Project:
                 #    part = round(columns * 0.34)
                 #    
                 #    print(f"  {carac[is_last_index]} {txt[lang][i]} : {values[0:part:]}...{values[total - part::]}")
-                #else :
+            self.detail_panel.win.clear()
+  
+            h, w = self.detail_panel.win.getmaxyx()
+            #y_center = win.getmaxyx()[0] // 2
+            
+            self.main_app.win.refresh()     
+            #self.detail_panel.win.addstr(1,1, f"Project side panel { self.__str__()} ")
+            self.detail_panel.win.addstr(11,w//5, f"{w, h} ")
+            #self.detail_panel.win.addstr(12,w//5, f"{len(self.data)} ")
+            #self.detail_panel.win.addstr(14,w//5, f"{list(self.data.keys())} ")
+
+            middle_x_name = self.detail_panel.get_middle_x(self.data['name'])
+            self.detail_panel.win.addstr(2,middle_x_name, f"{self.data['name']} ", curses.A_BOLD)
+
+            space = 0
+            ligne = len(self.data['description']) // (w - 4) + 1
+            if ligne == 0:
+                space = -3
+            for i in range(ligne):
+                self.detail_panel.win.addstr(4 + i, 2, f"{self.data['description']}")
+            if  len(self.data['programming_languages']) == 0:
+                space -= 2
+                pass
+            else:
+                self.detail_panel.win.addstr(4 + ligne + 2 + space, 2, f"programming_languages : {', '.join(self.data['programming_languages'])}")
+
+            self.detail_panel.win.addstr(4 + ligne + 4 + space, 2, f"Path : {self.data['pwd']}")                
+            #for i in range()
+            self.detail_panel.win.addstr(4 + ligne + 6 + space, 2, f"[Repo] : [{self.data['repo']}]")                
+
+
+            self.detail_panel.win.border()
+            self.detail_panel.win.refresh()
+
                 
     def open_project(self):
             # Make error message if pwd is False

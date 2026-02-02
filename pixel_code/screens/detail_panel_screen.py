@@ -15,7 +15,10 @@ class DetailPanel:
         h, w = self.stdscr.getmaxyx()
         self.win = curses.newwin(h-10, w//2, 10, w//2)
         self.win.border()
+        self.win.refresh()
         
+    def get_middle_x(self, text):
+        return (self.win.getmaxyx()[1] // 2) - (len(text) // 2)
 
     #def display_detail(self, projet):
     #    self.win.clear()

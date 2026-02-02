@@ -8,7 +8,7 @@ class Input:
 
         h, w = self.stdscr.getmaxyx()
 
-        self.height = 3
+        self.height = 3 
         self.width = w
         self.y = h - self.height
         self.x = 0
@@ -38,8 +38,16 @@ class Input:
         box = Textbox(edit_win)
         text = box.edit().strip()
 
-        self.win.clear()
-        self.win.refresh()
-        curses.curs_set(0)
+        if text.endswith(chr(27)):  # Si Échap a été pressé (peu probable avec Textbox)
+            text = None
+            self.win.clear()
+            self.win.refresh()    
+            self.main_app.stdscr.refresh()
+        else:
+            
 
-        return text
+            self.win.clear()
+            self.win.refresh()
+            curses.curs_set(0)
+
+            return text
