@@ -2,7 +2,9 @@ import curses
 import shutil
 from pathlib import Path
 import json
+import subprocess
 from pixel_code.screens.input_curses import Input
+from pixel_code.screens.detail_panel_screen import DetailPanel
 import os
 from pixel_code.utils.translate import translate
 
@@ -15,12 +17,14 @@ class MainScreen:
     def __init__(self, main_app):
         self.main_app = main_app
         self.param = main_app.param
-        
+        self.stdscr = main_app.stdscr
         h, w = main_app.stdscr.getmaxyx()
 
         self.win = curses.newwin(h-10, w, 10, 0)
 
         self.input = Input(main_app)
+
+        
         
 
 
@@ -48,51 +52,64 @@ class MainScreen:
 
     def display_main(self):
         self.win.clear()
-        self.win.addstr(0,0, "MAIN SCREEN")
+        
         for i, item in enumerate(self.projectsArray):
             #self.win.addstr(i+1, 2, f'{item}')
-            item.display_project_compacte(selected_index=self._selection, my_index=i)
+            
+            space = 0
+            
+            if i == self._selection and self.show_details:
+                #item.display_project_compacte(selected_index=self._selection, my_index=i, space=space)
+                item.display_project_full("lol", i) # side panel to exept for projet[0]
+                #item.detail_panel.win.clear()
+                #item.display_side(item.__str__())
+            else:
+
+                space = 4  if self.show_details else space
+                if self.show_details and self._selection > i:
+                    item.display_project_compacte(selected_index=self._selection, my_index=i, space=+1)
+                else:                        
+                    item.display_project_compacte(selected_index=self._selection, my_index=i, space=space+1)
         self.win.refresh()
         
 
 
     def move_up(self):
-        self._selection -= 1
+        if len(self.projectsArray) == 0:
+            pass
+        elif self._selection - 1 < 0:
+            pass
+        else:
+            self._selection -= 1
     
     def move_down(self):
-        self._selection += 1
+        if len(self.projectsArray) == 0:
+            pass
+        elif self._selection + 1 >= len(self.projectsArray):
+            pass
+        else:
+            self._selection += 1
 
 
     
-
-    def display_projects(self):
-        for i, project in enumerate(self.projectsArray):
-            if i != self._selection:
-                project.display_project_compacte(selected_index=self._selection, my_index=i)
-            elif  self._selection == i and not self.show_details and not self.show_git:
-                project.display_project_compacte(selected_index=self._selection, my_index=i)
-            elif self.show_details and i == self._selection:
-                project.display_project_full(selected_index=self._selection, my_index=i)
-            elif self.show_git and i == self._selection:
-                project.display_git()
 
 
 
     def add_project(self):
         txt_create_project = {
             "en" : {
-                "name" : "Name of the project",
-                "description" : "Description of the project",
-                "langage" : "Langages (separated by commas)",
-                "pwd" : "Directory of the project",
-                "repo" : "Url of the github repo"
+                "name" : "  - Name of the project",
+                "description" : "  - Description of the project",
+                "langage" : "  - Langages (separated by commas)",
+                "pwd" : "  - Directory of the project",
+                "repo" : "  - Url of the github repo"
             },
             "fr" : {
-                "name" : "Nom du projet",
-                "description" : "Description du projet",
-                "langage" : "Langages (séparés par des virgules)",
-                "pwd" : "Chemin du projet",
-                "repo" : "Url du dépot github"
+                "name" : "  - Nom du projet",
+                "description" : "  - Description du projet",
+                "langage" : "  - Langages (séparés par des virgules)",
+                "pwd" : "  - Chemin du projet",
+                "repo" : "  - Url du dépot github"
             }
         }
         try:
@@ -196,11 +213,74 @@ class Project:
 
         self.icone_folder = ["󰉋", ""] # Need 2 spaces :  CLOSED | OPEN
 
+        h, w = self.main_app.win.getmaxyx()
+        self.detail_panel = DetailPanel(main_app)
+
     def __str__(self):
         return f'{self.name}'
     
-    def display_project_compacte(self,selected_index, my_index):
+
+    def display_side(self, item):
+        self.detail_panel.win.clear()
+        
+        self.detail_panel.win.addstr(3,4, f"{item} test")
+        self.detail_panel.win.refresh()
+
+
+    def display_project_compacte(self,selected_index, my_index, space):
         #nf = self.main_app.param.use_nerd_font # True or False ..    
         arrow = "▶" if selected_index == my_index else ""
         #icone = (str(self.icone_folder[0]) + "  ") if nf else ""
-        self.main_app.win.addstr(my_index+1, 3, f"{arrow} {self.name}")
+        self.main_app.win.addstr(my_index+space, 3, f"{arrow} {self.name}")
+        #self.detail_panel.win.addstr(0,0, f"Project side panel {self.__str__()} ")
+        
+        self.main_app.win.refresh()
+
+    def display_project_full(self, selected_index, my_index):
+            self.detail_panel.win.clear()
+            self.detail_panel.win.border()
+            self.detail_panel.win.addstr(1,1, f"Project side panel { self.__str__()} ")
+            self.detail_panel.win.addstr(11,20, f"YOOOOOOO ")
+            self.detail_panel.win.refresh()
+            carac = ["├─", "└─"]
+            lang = 0 if self.main_app.param.get_language() == "en" else 1
+            txt = [[ "About", "Languages", "Path"], ["Descrption","Langages", "Chemin" ]] # bofffff
+            if not self.main_app.param.use_nerd_font:
+                pass
+
+            icone = (str(self.icone_folder[1]) + "  ") if self.main_app.param.use_nerd_font else "" # Some space for the icone
+            values = self.dataAnsiStr[1::]
+            total = len(values)
+            size = os.get_terminal_size()
+            columns = size.columns
+
+            for i, values in enumerate(values):
+                if i == 0:
+                    self.main_app.win.addstr(i+1+my_index, 3, f"▼ {icone}{self.__str__()}")
+                is_last_index = 1 if i == total - 1 else 0 # total - 1 cause values[0] = name 
+                self.main_app.win.addstr(i+2+my_index, 5, f"  {carac[is_last_index]} {txt[lang][i]} : {values}")
+                #self.main_app.win.refresh()
+                #if len(values) >= size.columns: # Reduce/shorten path of a project
+                #    part = round(columns * 0.34)
+                #    
+                #    print(f"  {carac[is_last_index]} {txt[lang][i]} : {values[0:part:]}...{values[total - part::]}")
+                #else :
+                
+    def open_project(self):
+            # Make error message if pwd is False
+            # Mabye make popup (os) to open a folder like app if it's possible
+
+            project_path = Path(self.pwd).expanduser().resolve()
+
+            code_cmd = shutil.which(self.editor)
+
+            if code_cmd:
+                subprocess.run([code_cmd, "-n", str(project_path)])
+                return
+
+            # Fallback macOS
+            if os.name == "posix" and shutil.which("open"):
+                subprocess.run(["open", "-a", "Visual Studio Code", str(project_path)])
+                return
+
+            raise RuntimeError("VS Code n'est pas trouvé sur ce système")   

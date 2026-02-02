@@ -92,11 +92,20 @@ class ParamScreen:
             pass
     
     def move_up(self):
-        self._selection_parametre -= 1
-
-
+        if len(self.parametre_array) == 0:
+            pass
+        elif self._selection_parametre - 1 < 0:
+            pass
+        else:
+            self._selection_parametre -= 1
+    
     def move_down(self):
-        self._selection_parametre += 1
+        if len(self.parametre_array) == 0:
+            pass
+        elif self._selection_parametre + 1 >= len(self.parametre_array):
+            pass
+        else:
+            self._selection_parametre += 1
 
 
 

@@ -4,6 +4,7 @@ from pixel_code.script.keybord import get_key
 from pixel_code.screens.logo_screen import Logo
 from pixel_code.screens.main_screen import MainScreen
 from pixel_code.screens.param_screen import ParamScreen
+from pixel_code.screens.detail_panel_screen import DetailPanel
 from pixel_code.screens.input_curses import Input
 
 class App:
@@ -17,6 +18,7 @@ class App:
         self.logo = Logo(self)
         self.param = ParamScreen(self)
         self.main = MainScreen(self)
+        self.detail_panel = DetailPanel(self)
         #self.input = Input(self)
  
 
@@ -33,7 +35,7 @@ class App:
         while True:
             key = get_key()
 
-            if key == "q" or key == "ENTER":
+            if key == "q":
                 break
 
             if "main"== self.current :
@@ -43,16 +45,21 @@ class App:
                     self.param.display()
                 elif key == "a":
                     self.main.add_project()
-                    self.main.display_projects() # or display main ?? seem lagy
+                    self.main.display_main() # or display main ?? seem lagy display_proj
                 elif key == "d":
                     self.main.delete_project()
-                    self.main.display_projects()
+                    self.main.display_main()
                 elif key == "UP":
                     self.main.move_up()
                     self.main.display_main()
                 elif key == "DOWN":
                     self.main.move_down()
                     self.main.display_main()
+                elif key == "SPACE":
+                    self.main.show_details = not self.main.show_details
+                    self.main.display_main()
+                elif key == "ENTER":
+                    self.main.projectsArray[self.main._selection].open_project()
                 
             elif "param" == self.current :
                 if key == "p":
