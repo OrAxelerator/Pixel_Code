@@ -8,7 +8,6 @@
             "HTML",
             "CSS"
         ],
-        "editor": "code",
         "icon": "",
         "repo": "",
         "avancement": {
@@ -23,7 +22,6 @@
         "programming_languages": [
             "Python"
         ],
-        "editor": "code",
         "icon": "side",
         "repo": "https://github.com/OrAxelerator/Pixel_Code.git",
         "avancement": {
@@ -38,7 +36,6 @@
             ""
         ],
         "pwd": "/Users/Axel/Pixel_Code",
-        "editor": "code",
         "repo": ""
     },
     "3": {
@@ -48,7 +45,6 @@
             ""
         ],
         "pwd": "/Users/Axel/Pixel_Code",
-        "editor": "code",
         "repo": ""
     }
 }

@@ -6,6 +6,7 @@ from pixel_code.screens.main_screen import MainScreen
 from pixel_code.screens.param_screen import ParamScreen
 from pixel_code.screens.detail_panel_screen import DetailPanel
 from pixel_code.screens.input_curses import Input
+from pixel_code.script.data.param_manager import ParamManager
 
 class App:
     def __init__(self, stdscr):
@@ -14,7 +15,7 @@ class App:
         curses.curs_set(0)
 
         h, w = stdscr.getmaxyx()
-
+        self.param_manager = ParamManager()
         self.logo = Logo(self)
         self.param = ParamScreen(self)
         self.main = MainScreen(self)
@@ -49,6 +50,9 @@ class App:
                 elif key == "d":
                     self.main.delete_project()
                     self.main.display_main()
+                elif key == "g":
+                    pass #gt clone, git pull, git reset
+                    #electon input like main with arrow
                 elif key == "UP":
                     self.main.move_up()
                     self.main.display_main()
@@ -75,10 +79,3 @@ class App:
                 elif key == "DOWN":
                     self.param.move_down()
                     self.param.display()
-
-                #self.stdscr.addstr(5, 0, f"Vous avez saisi: {text}")
-                #self.stdscr.refresh()
-
-                #res = prompt_text(self.stdscr, "Entrez du texte")
-                #self.stdscr.addstr(16,0, f"Vous avez entré: {res}")
-                #self.stdscr.refresh()

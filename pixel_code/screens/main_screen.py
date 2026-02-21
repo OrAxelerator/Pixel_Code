@@ -71,8 +71,12 @@ class MainScreen:
                 if self.show_details and self._selection > i:
                     item.display_project_compacte(selected_index=self._selection, my_index=i, space=+1)
                 else:                        
+        
                     item.display_project_compacte(selected_index=self._selection, my_index=i, space=space+1)
+        
+        
         self.win.refresh()
+
         
 
 
@@ -132,7 +136,6 @@ class MainScreen:
                 "description": description,
                 "programming_languages": [lang.strip() for lang in languages],
                 "pwd": pwd,
-                "editor": "code",
                 "repo" : repo
             }
             projets[str(len(projets))] = new_project
@@ -209,7 +212,7 @@ class Project:
 
         self.name = self.data["name"]
         self.description = self.data["description"]
-        self.editor = self.data["editor"]
+
         self.languages = " ".join(self.data.get("programming_languages", []))
         self.pwd = self.data["pwd"]
         self.repo = self.data["repo"]
@@ -230,7 +233,7 @@ class Project:
         #nf = self.main_app.param.use_nerd_font # True or False ..    
         arrow = "▶" if selected_index == my_index else ""
         icone_folder = ["󰉋", ""]
-        icone = (str(icone_folder[0]) + "  ") if self.main_app.param.use_nerd_font else ""
+        icone = (str(icone_folder[0]) + "  ") if self.main_app.main_app.param_manager.get_data("app", "use_nerd_font") else ""
         if selected_index == my_index:
             self.main_app.win.addstr(my_index+space, 3, f"{arrow} {icone}{self.name}", curses.color_pair(2))
         else:
@@ -238,16 +241,17 @@ class Project:
         #self.detail_panel.win.addstr(0,0, f"Project side panel {self.__str__()} ")
         
         self.main_app.win.refresh()
+        
 
     def display_project_full(self, selected_index, my_index):
 
             carac = ["├─", "└─"]
             lang = 0 if self.main_app.param.get_language() == "en" else 1
             txt = [[ "About", "Languages", "Path"], ["Descrption","Langages", "Chemin" ]] # bofffff
-            if not self.main_app.param.use_nerd_font:
+            if not self.main_app.main_app.param_manager.get_data("app", "use_nerd_font"):
                 pass
 
-            icone = (str(self.icone_folder[1]) + "  ") if self.main_app.param.use_nerd_font else "" # Some space for the icone
+            icone = (str(self.icone_folder[1]) + "  ") if self.main_app.main_app.param_manager.get_data("app", "use_nerd_font") else "" # Some space for the icone
             values = self.dataAnsiStr[1::]
             total = len(values)
             size = os.get_terminal_size()
@@ -302,17 +306,19 @@ class Project:
             # Make error message if pwd is False
             # Mabye make popup (os) to open a folder like app if it's possible
 
+            #self.main_app.param_manager.get_data
+            editor = self.main_app.main_app.param_manager.get_data("projects", "editor")
+
             project_path = Path(self.pwd).expanduser().resolve()
-
-            code_cmd = shutil.which(self.editor)
-
-            if code_cmd:
-                subprocess.run([code_cmd, "-n", str(project_path)])
+            
+            if editor == "vim":
+                subprocess.run(["vim", ".", str(project_path)])
                 return
-
-            # Fallback macOS
-            if os.name == "posix" and shutil.which("open"):
-                subprocess.run(["open", "-a", "Visual Studio Code", str(project_path)])
+            elif editor == "code":
+                subprocess.run(["code", "-n", str(project_path)])
                 return
-
-            raise RuntimeError("VS Code n'est pas trouvé sur ce système")   
+            error_msg = {
+                "en":"error while lauching projects in your IDE, check value of 'editor' in parametes.json",
+                "fr":"erreur pedant lancement du projets dans votre IDE, regardez la valeur de 'editor' dans parametres.json"
+            }
+            

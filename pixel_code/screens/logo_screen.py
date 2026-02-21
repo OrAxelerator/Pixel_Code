@@ -15,16 +15,25 @@ class Logo():
                 lignes = f.readlines()
                 height, width = self.logo_window.getmaxyx()
                 y = 0  # Initialiser y ici
-
+                param_logo = self.main_app.param_manager.get_data("ui", "logo")# work
                 for ligne in lignes:
                     if y >= height:
-                        break  # ne pas dépasser la hauteur de l'écran
-                    # On affiche la ligne en entier, ou tronquée si trop longue
-                    self.logo_window.addstr(y, 0, ligne[:width-1])
-                    y += 1  # passer à la ligne suivante à l'écran
+                        break  # don't write out in the screen
+                    if  param_logo == "center": 
+                        x = max((w - len(ligne)) // 2, 0)
+                    else :
+                        x = 0
+                    
+                    self.logo_window.addstr(y, x, ligne[:width-1])
+                    y += 1  # pass to next ligne
 
         except FileNotFoundError:
-            self.logo_window.addstr(0, 0, "Logo introuvable.")
+            from utils.translate import translate
+            error_msg = {
+                "en":"logo not found",
+                "fr":"logo introuvable"
+            }
+            self.logo_window.addstr(0, 0, translate(error_msg, "en"))
 
         h, w = self.logo_window.getmaxyx()
         self.logo_window.addstr(h-1, 0, f"{'-' * (w - 1)}")

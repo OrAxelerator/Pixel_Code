@@ -1,47 +1,14 @@
 {
     "app": {
-        "language": "en",
-        "use_nerd_font": false,
+        "language": "fr",
+        "use_nerd_font": true,
         "version": "v0.3.1",
-        "check_update": [
-            [
-                [
-                    [
-                        [
-                            [
-                                [
-                                    [
-                                        [
-                                            [
-                                                [
-                                                    [
-                                                        [
-                                                            [
-                                                                [
-                                                                    [
-                                                                        [
-                                                                            true
-                                                                        ]
-                                                                    ]
-                                                                ]
-                                                            ]
-                                                        ]
-                                                    ]
-                                                ]
-                                            ]
-                                        ]
-                                    ]
-                                ]
-                            ]
-                        ]
-                    ]
-                ]
-            ]
-        ],
+        "check_update": true,
         "allow_prerelease": true
     },
     "ui": {
-        "theme": "default"
+        "theme": "default",
+        "logo": "center"
     },
     "projects": {
         "sort_by_last_opened": true,
