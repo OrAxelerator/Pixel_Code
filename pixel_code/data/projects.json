@@ -1,50 +1,14 @@
 {
-    "0": {
-        "name": "Clavier NSI",
-        "pwd": "/home/oraxelerator/Bureau/Cours/Nsi/1209/edit",
-        "description": "Clavier html 3 langues",
-        "programming_languages": [
-            "JavaScript",
-            "HTML",
-            "CSS"
-        ],
-        "icon": "",
-        "repo": "",
-        "avancement": {
-            "code": "true",
-            "git": "False"
+    "projects": [
+        {
+            "id": "72b38123",
+            "path": "/Users/Axel/Pixel_Code",
+            "status": "todo"
+        },
+        {
+            "id": "26eb7bac",
+            "path": "/Users/Axel/test_pc/proj1",
+            "status": "todo"
         }
-    },
-    "1": {
-        "name": "Pixel Code",
-        "pwd": "/home/oraxelerator/Scripts/Pixel_code",
-        "description": "TODOLIST mais pour projet code",
-        "programming_languages": [
-            "Python"
-        ],
-        "icon": "side",
-        "repo": "https://github.com/OrAxelerator/Pixel_Code.git",
-        "avancement": {
-            "code": "False",
-            "git": "False"
-        }
-    },
-    "2": {
-        "name": "Ent",
-        "description": "",
-        "programming_languages": [
-            ""
-        ],
-        "pwd": "/Users/Axel/Pixel_Code",
-        "repo": ""
-    },
-    "3": {
-        "name": "jeu",
-        "description": "",
-        "programming_languages": [
-            ""
-        ],
-        "pwd": "/Users/Axel/Pixel_Code",
-        "repo": ""
-    }
+    ]
 }

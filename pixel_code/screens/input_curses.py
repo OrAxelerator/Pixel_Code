@@ -12,14 +12,14 @@ class Input:
         self.width = w
         self.y = h - self.height
         self.x = 0
-
+        # self.win = main_app
         # Fenêtre principale de l’input
         self.win = curses.newwin(self.height, self.width, self.y, self.x)
         self.win.keypad(True)
 
     def display_input(self, title="Input"):
-        curses.curs_set(1)
 
+        curses.curs_set(1)
         self.win.clear()
         self.win.border()
         self.win.addstr(0, 2, f" {title} ")
@@ -44,8 +44,6 @@ class Input:
             self.win.refresh()    
             self.main_app.stdscr.refresh()
         else:
-            
-
             self.win.clear()
             self.win.refresh()
             curses.curs_set(0)

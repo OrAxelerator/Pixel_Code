@@ -10,9 +10,7 @@ requires-python = ">=3.8"
 dependencies = [
     "colorama",
     "requests",
-    "windows-curses"
 ]
-windows-curses = { version = "^2.4", optional = true }
 [project.scripts]
 pixel-code = "pixel_code.__main__:main"
 

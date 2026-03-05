@@ -1,3 +1,31 @@
+# todo :
+#   - sys of pip => installer.py
+#   - Check if user have wifi
+#   - make option to add pixelcode.json so when install new code VIA pixel_code pop to add project on fork on pixel code
+#   -  make something cool with nerd font for icon
+#   -  think about integration in pixel_nav => pixelcode.json ? ..
+#   -  clearFormLine(line=12) hard-coded => bad, calcule height of logo ?
+#   - programme de mise a jour automatique
+#   - Do something cleaner at change_value() in Param
+#   - projet.json : icone = ["":iconed de base, "favortite : icone + cœur, "]
+#   - Use quit() func in main  instead of break in code
+#   - # Make error message if pwd is False in open_code (Project)
+#   - Use import color
+#   - Choose IDE 
+
+# coeur : 󱃪
+# side project : 󰉌
+# add folder : 
+
+# icone (NF) : https://www.nerdfonts.com/cheat-sheet
+
+# Call the code : "pixel-code"
+
+# on macOs : pip install -e .
+# on Ubuntu use pipx and write : pipx install . 
+# on Windows 11 ... go see the README
+
+
 import curses
 import shutil
 from pathlib import Path
@@ -7,6 +35,9 @@ from pixel_code.screens.input_curses import Input
 from pixel_code.screens.detail_panel_screen import DetailPanel
 import os
 from pixel_code.utils.translate import translate
+from pixel_code.script.load_project_local import get_project_data
+from pixel_code.script.add_project import create_pixelcode_config
+from pixel_code.script.add_project_global import add_project_global
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -41,11 +72,14 @@ class MainScreen:
 
     def load_projects(self):
         try:
+            
             with open(PROJECTS_JSON, encoding="utf-8") as f:
                 self.projets = json.load(f)
+                #for path in self.projets:
             
-                for i in range(len(self.projets)): #recup tout les prjet en tant que class dans projetArray
-                    self.projectsArray.append(Project(self, str(i), self.projets))
+                for i, project in enumerate(self.projets["projects"]): #recup tout les prjet en tant que class dans projetArray
+                    DATA = get_project_data(project["path"])
+                    self.projectsArray.append(Project(self, project["id"], DATA))
         except FileNotFoundError:
             #"Fichier projets.json introuvable.
             # self.projet = {} so..
@@ -57,23 +91,19 @@ class MainScreen:
         
         for i, item in enumerate(self.projectsArray):
             #self.win.addstr(i+1, 2, f'{item}')
-            
             space = 0
-            
             if i == self._selection and self.show_details:
                 #item.display_project_compacte(selected_index=self._selection, my_index=i, space=space)
                 item.display_project_full("lol", i) # side panel to exept for projet[0]
                 
                 #item.detail_panel.win.clear()
             else:
-
                 space = 4  if self.show_details else space
                 if self.show_details and self._selection > i:
                     item.display_project_compacte(selected_index=self._selection, my_index=i, space=+1)
                 else:                        
         
                     item.display_project_compacte(selected_index=self._selection, my_index=i, space=space+1)
-        
         
         self.win.refresh()
 
@@ -107,44 +137,41 @@ class MainScreen:
                 "name" : "  - Name of the project",
                 "description" : "  - Description of the project",
                 "langage" : "  - Langages (separated by commas)",
-                "pwd" : "  - Directory of the project",
+                "path" : "  - Directory of the project",
                 "repo" : "  - Url of the github repo"
             },
             "fr" : {
                 "name" : "  - Nom du projet",
                 "description" : "  - Description du projet",
                 "langage" : "  - Langages (séparés par des virgules)",
-                "pwd" : "  - Chemin du projet",
+                "path" : "  - Chemin du projet",
                 "repo" : "  - Url du dépot github"
             }
         }
         try:
-            txt = translate(txt_create_project, self.main_app.param.language)
+            
+            txt = translate(txt_create_project, self.main_app.param_manager.get_data("app", "language")) #chasj le prog ?
+            
             name = self.input.display_input(f"{txt['name']} : ")
             description = self.input.display_input(f"{txt['description']} : ")
             languages = self.input.display_input(f"{txt['langage']} : ").split(',')
-            pwd = self.input.display_input(f"{txt['pwd']} : ")
+            pwd = self.input.display_input(f"{txt['path']} : ")
             repo = self.input.display_input(f'{txt["repo"]} : ')
             if pwd == "":
                 pwd = os.getcwd()
-
-            with open(PROJECTS_JSON, encoding="utf-8") as f:
-                projets = json.load(f)
-
+            
             new_project = {
                 "name": name,
                 "description": description,
-                "programming_languages": [lang.strip() for lang in languages],
-                "pwd": pwd,
+                "languages": [lang.strip() for lang in languages],
+                "path": pwd,
                 "repo" : repo
             }
-            projets[str(len(projets))] = new_project
+            create_pixelcode_config(new_project)
 
-            with open(PROJECTS_JSON, 'w', encoding="utf-8") as f:
-                json.dump(projets, f, indent=4, ensure_ascii=False)
+            add_project_global(PROJECTS_JSON,pwd) # add to projects.json
 
-
-            self.projectsArray.append(Project(self, str(len(projets) - 1), projets))
+            self.projectsArray.append(Project(self, str(4), new_project))
         except FileNotFoundError:
             print("Fichier projects.json introuvable.")
         except Exception as e:
@@ -155,66 +182,67 @@ class MainScreen:
         try:
             txt_confirm = {
                 "en": f"Do you want to delete {self.projectsArray[self._selection]} : [y/N]",
-                "fr": f"Voulez vous supprimer {self.projectsArray[self._selection]} : [y/N]"
+                "fr": f"Voulez-vous supprimer {self.projectsArray[self._selection]} : [y/N]"
             }
-            txt_error = {
-                "en": "Invalid project number.",
-                "fr": "Numéro de projet invalide."
-            }
-            txt_success = {
-                "en": "Project deleted successfully!",
-                "fr": "Projet supprimé avec succès !"
-            }
-            
-            project_number = str(self._selection)
-            
-            res = self.input.display_input(translate(txt_confirm, self.param.get_language()))
-            if res == "n" or res == "":
-                h, w = self.win.getmaxyx()
-                self.win.addstr(h-1, 0, "no delete")
-                self.win.refresh()
-                
-                return False
-            elif res == "y":
-            
-                with open(PROJECTS_JSON, encoding="utf-8") as f:
-                    projets = json.load(f)
-                if project_number not in projets:
-                    h, w = self.win.getmaxyx()
-                    self.main_app._selection = self.main_app._selection - 1 if self.main_app._selection > 0 else 0
-                    self.win.addstr(h-1, 0, translate(txt_error, self.param.get_language()))
-                    self.win.refresh()
-                    return
 
-                del projets[project_number]
+            confirmation_message = translate(txt_confirm, self.main_app.param_manager.get_data("app", "language"))
+            res = self.input.display_input(confirmation_message)
+            self.win.addstr(0,0,"QWERTY")
+            self.win.refresh()#do nothing
+            if res.lower() not in ("y", "yes"):
+                self.popup("Action annulée. Projet non supprimé.")
+                return
 
-                projets = {str(i): v for i, v in enumerate(projets.values())}
-                with open(PROJECTS_JSON, 'w', encoding="utf-8") as f:
-                    json.dump(projets, f, indent=4, ensure_ascii=False)
-                h, w = self.win.getmaxyx()
-                self.win.addstr(h-1, 0, translate(txt_success, self.param.get_language()))
-                self.win.refresh()
-                self.projectsArray = [Project(self, str(i), projets) for i in range(len(projets))]
-                
-                
+            with open(PROJECTS_JSON, encoding="utf-8") as f:
+                projets = json.load(f)
+
+            target_path = self.projectsArray[self._selection].pwd
+            projets["projects"] = [
+                p for p in projets["projects"] if p["path"] != target_path
+            ]
+
+            with open(PROJECTS_JSON, "w", encoding="utf-8") as f:
+                json.dump(projets, f, indent=4, ensure_ascii=False)
+
+            self.projectsArray.pop(self._selection)
+            self._selection = max(0, self._selection - 1)
+            self.popup("Projet supprimé avec succès !")
+
         except FileNotFoundError:
-            print("Fichier projects.json introuvable.")
+            self.popup("Fichier projects.json introuvable.")
         except Exception as e:
-            print(f"Une erreur est survenue : {e}")
+            self.popup(f"Erreur : {e}")
 
+
+
+    def pull_project(self):
+        from pixel_code.script.git import git_pull_reset_hard
+        res = self.input.display_input("sur ? [y/N]")
+        if res == "y":
+            git_pull_reset_hard(self.projectsArray[self._selection].repo)
+
+
+    def popup(self, msg: str): # do nothing whyyyy
+        h, w = self.win.getmaxyx()
+        self.win.clear()
+        self.win.border()
+        self.win.addstr(h - 1, 0, msg)
+        self.win.refresh()
+        # Debugging line to ensure the popup is displayed
+        self.win.addstr(h - 2, 0, "DEBUG: Popup called")#...
+        self.win.refresh()
 
 class Project:
     def __init__(self, main_app, number, projets):
         self.main_app = main_app
-        self.number = number
 
-        self.data = projets[self.number]
+        self.data = projets
 
         self.name = self.data["name"]
         self.description = self.data["description"]
 
-        self.languages = " ".join(self.data.get("programming_languages", []))
-        self.pwd = self.data["pwd"]
+        self.languages = " ".join(self.data.get("languages", []))
+        self.pwd = self.data["path"]
         self.repo = self.data["repo"]
 
         self.dataAnsiStr = [self.name, self.description, self.languages, self.pwd]
@@ -287,13 +315,13 @@ class Project:
                 space = -3
             for i in range(ligne):
                 self.detail_panel.win.addstr(4 + i, 2, f"{self.data['description']}")
-            if  len(self.data['programming_languages']) == 0:
+            if  len(self.data['languages']) == 0:
                 space -= 2
                 pass
             else:
-                self.detail_panel.win.addstr(4 + ligne + 2 + space, 2, f"programming_languages : {', '.join(self.data['programming_languages'])}")
+                self.detail_panel.win.addstr(4 + ligne + 2 + space, 2, f"languages : {', '.join(self.data['languages'])}")
 
-            self.detail_panel.win.addstr(4 + ligne + 4 + space, 2, f"Path : {self.data['pwd']}")                
+            self.detail_panel.win.addstr(4 + ligne + 4 + space, 2, f"Path : {self.data['path']}")                
             #for i in range()
             self.detail_panel.win.addstr(4 + ligne + 6 + space, 2, f"[Repo] : [{self.data['repo']}]")                
 
@@ -304,15 +332,12 @@ class Project:
                 
     def open_project(self):
             # Make error message if pwd is False
-            # Mabye make popup (os) to open a folder like app if it's possible
-
             #self.main_app.param_manager.get_data
             editor = self.main_app.main_app.param_manager.get_data("projects", "editor")
-
-            project_path = Path(self.pwd).expanduser().resolve()
+            project_path = Path(self.pwd)
             
             if editor == "vim":
-                subprocess.run(["vim", ".", str(project_path)])
+                subprocess.run(["vim",str(project_path)])
                 return
             elif editor == "code":
                 subprocess.run(["code", "-n", str(project_path)])
@@ -321,4 +346,3 @@ class Project:
                 "en":"error while lauching projects in your IDE, check value of 'editor' in parametes.json",
                 "fr":"erreur pedant lancement du projets dans votre IDE, regardez la valeur de 'editor' dans parametres.json"
             }
-            

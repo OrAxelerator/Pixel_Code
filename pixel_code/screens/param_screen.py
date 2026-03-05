@@ -16,7 +16,7 @@ class ParamScreen:
         self.win.border()
         self.win.refresh()
         self.array = ["option1", "option2", "option3", "option4"]
-        
+        self.language = None# load in load_param() 
 
         # ---------------
 

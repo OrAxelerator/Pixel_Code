@@ -20,7 +20,9 @@ class App:
         self.param = ParamScreen(self)
         self.main = MainScreen(self)
         self.detail_panel = DetailPanel(self)
-        #self.input = Input(self)
+        
+        # self.win_input = curses.newwin(3, w, h - 3, 0)
+        # self.input = Input(self,)
  
 
         self.current = "main"
@@ -50,7 +52,9 @@ class App:
                 elif key == "d":
                     self.main.delete_project()
                     self.main.display_main()
+                    # self.main.popup("jsspppp")
                 elif key == "g":
+                    self.main.pull_project()
                     pass #gt clone, git pull, git reset
                     #electon input like main with arrow
                 elif key == "UP":
