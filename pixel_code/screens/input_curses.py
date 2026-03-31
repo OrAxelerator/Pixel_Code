@@ -28,7 +28,8 @@ class Input:
         box_x = 3
         box_y = 2
 
-        # Fenêtre de saisie (sans bordure)
+        # Fenêtre de saisie (sansd
+        #  bordure)
         edit_win = self.win.derwin(1, box_width, box_y-1, box_x)
         edit_win.clear()
 

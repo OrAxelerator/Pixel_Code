@@ -43,6 +43,12 @@ from pixel_code.script.add_project_global import add_project_global
 BASE_DIR = Path(__file__).resolve().parent.parent
 PROJECTS_JSON = BASE_DIR / "data/projects.json"
 PARAMETRES_JSON   = BASE_DIR  / "data/parametres.json"
+path_txt   = BASE_DIR  / "data/debug.txt"
+def append_line(path_txt, line):
+    """Ajoute une ligne à la fin du fichier, avec saut de ligne automatique."""
+    with open(path_txt, "a", encoding="utf-8") as f:
+        f.write(line + "\n")
+
 
 class MainScreen:
     def __init__(self, main_app):
@@ -87,25 +93,24 @@ class MainScreen:
 
 
     def display_main(self):
+        h, w = self.win.getmaxyx()
+        append_line(path_txt, f"Display main called. Window dimensions: h={h}, w={w}")  # Log dimensions
         self.win.clear()
-        
+        append_line(path_txt, "Main window cleared.")  # Log clear
+
         for i, item in enumerate(self.projectsArray):
-            #self.win.addstr(i+1, 2, f'{item}')
             space = 0
             if i == self._selection and self.show_details:
-                #item.display_project_compacte(selected_index=self._selection, my_index=i, space=space)
-                item.display_project_full("lol", i) # side panel to exept for projet[0]
-                
-                #item.detail_panel.win.clear()
+                item.display_project_full("lol", i)
             else:
-                space = 4  if self.show_details else space
+                space = 4 if self.show_details else space
                 if self.show_details and self._selection > i:
                     item.display_project_compacte(selected_index=self._selection, my_index=i, space=+1)
-                else:                        
-        
+                else:
                     item.display_project_compacte(selected_index=self._selection, my_index=i, space=space+1)
-        
+
         self.win.refresh()
+        append_line(path_txt, "Main window refreshed.")  # Log refresh
 
         
 
@@ -222,15 +227,19 @@ class MainScreen:
             git_pull_reset_hard(self.projectsArray[self._selection].repo)
 
 
-    def popup(self, msg: str): # do nothing whyyyy
-        h, w = self.win.getmaxyx()
-        self.win.clear()
-        self.win.border()
-        self.win.addstr(h - 1, 0, msg)
-        self.win.refresh()
-        # Debugging line to ensure the popup is displayed
-        self.win.addstr(h - 2, 0, "DEBUG: Popup called")#...
-        self.win.refresh()
+    def popup(self, msg: str):
+            h, w = self.win.getmaxyx()
+            # self.win.clear()
+            # self.win.border()
+            
+            # x_center = max(1, (w - len(msg)) // 2)
+            # y_center = h // 2
+            
+            # self.win.addstr(y_center, x_center, msg)
+            self.win.addstr(h - 2, 2, "[Appuyez sur une touche pour continuer...]")
+            
+            self.win.refresh()
+            # self.win.getch()
 
 class Project:
     def __init__(self, main_app, number, projets):
