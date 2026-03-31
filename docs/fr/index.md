@@ -1,4 +1,4 @@
-# List of the doc
+# Liste de la doc
 
 * [readme](/docs/fr/README_FR.md)
 * [instalation](/docs/fr/install.md)
