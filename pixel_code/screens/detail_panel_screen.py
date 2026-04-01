@@ -20,11 +20,5 @@ class DetailPanel:
     def get_middle_x(self, text):
         return (self.win.getmaxyx()[1] // 2) - (len(text) // 2)
 
-    #def display_detail(self, projet):
-    #    self.win.clear()
-    #    self.win.addstr(0,0, f"test{projet.__str__()}")
-    #    self.win.refresh()
 
-
-    # TO DELETE
 

@@ -38,6 +38,7 @@ from pixel_code.utils.translate import translate
 from pixel_code.script.load_project_local import get_project_data
 from pixel_code.script.add_project import create_pixelcode_config
 from pixel_code.script.add_project_global import add_project_global
+import logging
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -227,19 +228,10 @@ class MainScreen:
             git_pull_reset_hard(self.projectsArray[self._selection].repo)
 
 
-    def popup(self, msg: str):
+    def popup(self, msg: str):#debug fonction to delete
             h, w = self.win.getmaxyx()
-            # self.win.clear()
-            # self.win.border()
-            
-            # x_center = max(1, (w - len(msg)) // 2)
-            # y_center = h // 2
-            
-            # self.win.addstr(y_center, x_center, msg)
-            self.win.addstr(h - 2, 2, "[Appuyez sur une touche pour continuer...]")
-            
+            self.win.addstr(h - 2, 2, f"{msg}")
             self.win.refresh()
-            # self.win.getch()
 
 class Project:
     def __init__(self, main_app, number, projets):
@@ -281,62 +273,79 @@ class Project:
         
 
     def display_project_full(self, selected_index, my_index):
-
-            carac = ["├─", "└─"]
-            lang = 0 if self.main_app.param.get_language() == "en" else 1
             txt = [[ "About", "Languages", "Path"], ["Descrption","Langages", "Chemin" ]] # bofffff
-            if not self.main_app.main_app.param_manager.get_data("app", "use_nerd_font"):
-                pass
-
+            txt = {
+                "en": ["About", "Languages", "Path"],
+                "fr":["Description", "Langages", "Chemin"]
+            }
+            lang = self.main_app.param.get_language() 
             icone = (str(self.icone_folder[1]) + "  ") if self.main_app.main_app.param_manager.get_data("app", "use_nerd_font") else "" # Some space for the icone
             values = self.dataAnsiStr[1::]
             total = len(values)
             size = os.get_terminal_size()
             columns = size.columns
+            carac = ["├─", "└─"] # Each string is actually 2 charactere
+            display = self.main_app.main_app.param_manager.get_data("ui", "display_project")
 
-            for i, values in enumerate(values):
-                if i == 0:
-                    self.main_app.win.addstr(i+1+my_index, 3, f"▼ {icone}{self.__str__()}", curses.color_pair(2))
-                is_last_index = 1 if i == total - 1 else 0 # total - 1 cause values[0] = name 
-                self.main_app.win.addstr(i+2+my_index, 5, f"  {carac[is_last_index]} {txt[lang][i]} : {values}")
-                #self.main_app.win.refresh()
-                #if len(values) >= size.columns: # Reduce/shorten path of a project
-                #    part = round(columns * 0.34)
-                #    
-                #    print(f"  {carac[is_last_index]} {txt[lang][i]} : {values[0:part:]}...{values[total - part::]}")
-            self.detail_panel.win.clear()
-  
-            h, w = self.detail_panel.win.getmaxyx()
-            #y_center = win.getmaxyx()[0] // 2
+            if display == "bottom":
+                for i, values in enumerate(values):
+                    if i == 0:
+                        self.main_app.win.addstr(i+1+my_index, 3, f"▼ {icone}{self.__str__()}", curses.color_pair(2))
+                    is_last_index = 1 if i == total - 1 else 0 # total - 1 cause values[0] = name 
+                    self.main_app.win.addstr(i+2+my_index, 5, f"  {carac[is_last_index]} {txt[lang][i]} : {values}")
+            elif display == "side":
+                self.detail_panel.win.clear() # clear at "init"
+                h, w = self.detail_panel.win.getmaxyx()
+                # self.detail_panel.win.refresh()
+                self.detail_panel.win.addstr(11,w//5, f"{w,  h} ") #debug, to delete
+
+                middle_x_name = self.detail_panel.get_middle_x(self.data['name'])
+                self.detail_panel.win.addstr(2,middle_x_name, f"{self.data['name']} ", curses.A_BOLD) # Name in BOLD
+                logging.debug("--------- SIDE MODE ----------")
+                space = 0
+                description_str = self.data['description']
+                ligne = len(self.data['description']) // (w - 4) + 1
+                div = ligne+1
+                description_cut = []
+                for i in range(1, div): #div=2, outpout 1, 2
+                    logging.debug(f"valeur de i :{i} ")
+                    logging.debug(f"valeur de description cut :{description_str[(w-3)*(i-1):(w-3)*i]} ")
+                    description_cut.append(description_str[(w-3)*(i-1):(w-3)*i])
+                # description_cut.append(description_str[ligne::])#rest of the description # CAUSE BUg ?
+                
+                logging.debug("debut écriture")
+                for i, sentence in enumerate(description_cut):
+                    logging.debug(repr(sentence))
+                    if len(sentence) >= w:
+                        logging.debug("PUPPSSIIII")
+                    self.detail_panel.win.addstr(4 + i, 2, f"{sentence}")
+                    # description_cut.append(description_str[0 + i*(w-2):w-2])
+                
+                
+                # self.main_app.popup(ligne)
+                if ligne == 0:
+                    space = -3
+                # for i in range(ligne):
+
+                #     self.detail_panel.win.addstr(4 + i, 2, f"{self.data['description']}") # after 1line not 2 space right
+                if  len(self.data['languages']) == 0:
+                    space -= 2
+                    pass
+                else:
+                    self.detail_panel.win.addstr(4 + ligne + 2 + space, 2, f"languages : {', '.join(self.data['languages'])}")
+
+                self.detail_panel.win.addstr(4 + ligne + 4 + space, 2, f"Path : {self.data['path']}")                
+                self.detail_panel.win.addstr(4 + ligne + 6 + space, 2, f"[Repo] : [{self.data['repo']}]")                
+
+
+                self.detail_panel.win.border()
+                self.main_app.popup(len(description_cut))
+                self.detail_panel.win.refresh()
             
-            self.main_app.win.refresh()     
-            #self.detail_panel.win.addstr(1,1, f"Project side panel { self.__str__()} ")
-            self.detail_panel.win.addstr(11,w//5, f"{w, h} ")
-            #self.detail_panel.win.addstr(12,w//5, f"{len(self.data)} ")
-            #self.detail_panel.win.addstr(14,w//5, f"{list(self.data.keys())} ")
-
-            middle_x_name = self.detail_panel.get_middle_x(self.data['name'])
-            self.detail_panel.win.addstr(2,middle_x_name, f"{self.data['name']} ", curses.A_BOLD)
-
-            space = 0
-            ligne = len(self.data['description']) // (w - 4) + 1
-            if ligne == 0:
-                space = -3
-            for i in range(ligne):
-                self.detail_panel.win.addstr(4 + i, 2, f"{self.data['description']}")
-            if  len(self.data['languages']) == 0:
-                space -= 2
+            if not self.main_app.main_app.param_manager.get_data("app", "use_nerd_font"):
                 pass
-            else:
-                self.detail_panel.win.addstr(4 + ligne + 2 + space, 2, f"languages : {', '.join(self.data['languages'])}")
-
-            self.detail_panel.win.addstr(4 + ligne + 4 + space, 2, f"Path : {self.data['path']}")                
-            #for i in range()
-            self.detail_panel.win.addstr(4 + ligne + 6 + space, 2, f"[Repo] : [{self.data['repo']}]")                
 
 
-            self.detail_panel.win.border()
-            self.detail_panel.win.refresh()
 
                 
     def open_project(self):

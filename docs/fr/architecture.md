@@ -42,7 +42,7 @@
 
 ## Fonctionnement des écrans (`screens`)
 
-Les écrans dans Pixel Code sont des interfaces utilisateur construites avec la bibliothèque `curses`. Chaque écran est encapsulé dans une classe Python et est conçu pour gérer une partie spécifique de l'application. Deplus chaque écran est initialisé avec une référence à l'application principale (`main_app`) depuis ``app.py`` pour accéder aux ressources partagées comme `stdscr` (l'écran principal de `curses`) et les gestionnaires de données. Les écrans utilisent des fenêtres (`newwin`) pour afficher leurs contenus et interagir avec l'utilisateur.
+Les écrans dans Pixel Code sont des interfaces utilisateur construites avec la bibliothèque `curses`. Chaque écran est encapsulé dans une classe Python et est conçu pour gérer une partie spécifique de l'application. Deplus chaque écran est initialisé avec une référence à l'application principale (`main_app`) depuis ``app.py`` pour accéder aux ressources partagées comme `stdscr` (l'écran principal de `curses`) et les gestionnaires de données. Les écrans utilisent des fenêtres (`newwin`) pour afficher leurs contenus et interagir avec l'utilisateur. L'écran active (main/parametre) est enregistré dans la variable self.current dans la class App et peut prendre comme valeur: "main" et "parametre"
 
 Voici une liste des écrans  de ``/screens``:
 

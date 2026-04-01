@@ -8,6 +8,18 @@ from pixel_code.screens.detail_panel_screen import DetailPanel
 from pixel_code.screens.input_curses import Input
 from pixel_code.script.data.param_manager import ParamManager
 
+
+import logging
+# Start debug mod with python3 pixel_code/__main__.py --debug
+logging.basicConfig(filename="debug.log", level=logging.DEBUG)
+import sys
+level = logging.DEBUG if "--debug" in sys.argv else logging.INFO
+
+logging.basicConfig(
+    filename="debug.log",
+    level=level
+)
+
 class App:
     def __init__(self, stdscr):
         self.stdscr = stdscr
@@ -25,7 +37,7 @@ class App:
         # self.input = Input(self,)
  
 
-        self.current = "main"
+        self.current = "main" #("main", "parametre")
         self.run()
 
 
