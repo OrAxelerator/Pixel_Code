@@ -9,7 +9,7 @@
         "language": "fr", ("fr", "en")
         "use_nerd_font": true, # Icone
         "version": "v0.4.0",
-        "check_update": true,
+        "check_update_at_launch": true,
         "allow_prerelease": true
     },
     "ui": {
@@ -83,3 +83,8 @@ Voici une liste des écrans  de ``/screens``:
 
 Représenttion des fenètres dans le terminal : 
 <img src="/docs/assets/interface.png" style='with:300px; height:220px; margin:0 auto;'>
+
+---
+
+### Param manager
+Toute les donnés des parametres utilisateur sont enregistrer dans ``parametre.json`` et gérer par ``pixel_code/script/data/param_manager.py``

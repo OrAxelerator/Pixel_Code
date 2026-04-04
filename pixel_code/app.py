@@ -86,6 +86,8 @@ class App:
                     self.param.save_param()
                     self.current = "main"
                     self.main.display_main()
+                    self.logo.display_logo() # if in param change ""ui" : "logo"
+                    # self.main.popup(f"logo :{self.logo.param_logo}")
                 elif key == "SPACE":
                     self.param.change_value(self.param.get_selection_parametre())
                     self.param.display()

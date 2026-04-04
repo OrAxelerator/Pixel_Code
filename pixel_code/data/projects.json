@@ -2,17 +2,17 @@
     "projects": [
         {
             "id": "72b38123",
-            "path": "/Users/Axel/Pixel_Code",
+            "path": "/home/oraxelerator/Pixel_Code",
             "status": "todo"
         },
         {
-            "id": "26eb7bac",
-            "path": "/Users/Axel/test_pc/proj1",
+            "id": "1365c49d",
+            "path": "/home/oraxelerator/pix_test",
             "status": "todo"
         },
         {
-            "id": "26eb1bac",
-            "path": "/Users/Axel/test_pc/proj2",
+            "id": "08ec69f6",
+            "path": "/home/oraxelerator/Pixeltest2",
             "status": "todo"
         }
     ]

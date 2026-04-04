@@ -1,0 +1,36 @@
+Display main called. Window dimensions: h=30, w=147
+Main window cleared.
+Main window refreshed.
+Display main called. Window dimensions: h=30, w=147
+Main window cleared.
+Main window refreshed.
+Display main called. Window dimensions: h=30, w=147
+Main window cleared.
+Main window refreshed.
+Display main called. Window dimensions: h=30, w=147
+Main window cleared.
+Main window refreshed.
+Display main called. Window dimensions: h=30, w=147
+Main window cleared.
+Main window refreshed.
+Display main called. Window dimensions: h=30, w=147
+Main window cleared.
+Main window refreshed.
+Display main called. Window dimensions: h=30, w=147
+Main window cleared.
+Main window refreshed.
+Display main called. Window dimensions: h=30, w=147
+Main window cleared.
+Main window refreshed.
+Display main called. Window dimensions: h=30, w=147
+Main window cleared.
+Main window refreshed.
+Display main called. Window dimensions: h=30, w=147
+Main window cleared.
+Main window refreshed.
+Display main called. Window dimensions: h=30, w=147
+Main window cleared.
+Main window refreshed.
+Display main called. Window dimensions: h=30, w=147
+Main window cleared.
+Main window refreshed.

@@ -39,12 +39,13 @@ class ParamManager():
                 "language": "en",
                 "use_nerd_font": False,
                 "version": None,
-                "check_update": True,
+                "check_update_at_launch": True,
                 "allow_prerelease": True,
             },
             "ui": {
                 "theme": "default",
-                "logo":"center"
+                "logo":"center",
+                "display_project":"side"
             },
             "projects": {
                 "sort_by_last_opened": False,
@@ -82,8 +83,6 @@ class ParamManager():
         with open(PARAMETRES_JSON, "w", encoding="utf-8") as f:
             json.dump(data_to_save, f, indent=4, ensure_ascii=False)
 
-# print()
-# print()
 # a = ParamManager()  
 # a.get_data("apeeep", "version")
 # print(a.get_data("app", "version"))

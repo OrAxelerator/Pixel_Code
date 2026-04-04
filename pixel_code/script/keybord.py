@@ -2,7 +2,7 @@ import os
 import sys
 
 # Detection of the keybord acording to the OS
-if os.name == "nt":# Windows ..
+if os.name == "nt":# Windows
     import msvcrt
 else:
     import termios
@@ -34,7 +34,7 @@ def get_key() -> str:
         elif key == b'\r':   
             return "ENTER"
 
-        # touches spéciales (flèches)
+        # Special keys (arrows)
         elif key == b'\xe0':
             key = msvcrt.getch()
             if key == b'H':
@@ -55,7 +55,7 @@ def get_key() -> str:
             tty.setraw(fd)
             ch1 = sys.stdin.read(1)
 
-            # Détection touche Entrée
+            # Detection ENTER key
             if ch1 in ('\n', '\r'):
                 return "ENTER"
             

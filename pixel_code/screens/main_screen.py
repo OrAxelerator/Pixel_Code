@@ -39,16 +39,15 @@ from pixel_code.script.load_project_local import get_project_data
 from pixel_code.script.add_project import create_pixelcode_config
 from pixel_code.script.add_project_global import add_project_global
 import logging
+import math
+
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
+# input(BASE_DIR) #debug
 PROJECTS_JSON = BASE_DIR / "data/projects.json"
 PARAMETRES_JSON   = BASE_DIR  / "data/parametres.json"
-path_txt   = BASE_DIR  / "data/debug.txt"
-def append_line(path_txt, line):
-    """Ajoute une ligne à la fin du fichier, avec saut de ligne automatique."""
-    with open(path_txt, "a", encoding="utf-8") as f:
-        f.write(line + "\n")
+
 
 
 class MainScreen:
@@ -95,13 +94,12 @@ class MainScreen:
 
     def display_main(self):
         h, w = self.win.getmaxyx()
-        append_line(path_txt, f"Display main called. Window dimensions: h={h}, w={w}")  # Log dimensions
         self.win.clear()
-        append_line(path_txt, "Main window cleared.")  # Log clear
 
         for i, item in enumerate(self.projectsArray):
             space = 0
             if i == self._selection and self.show_details:
+                item.display_project_compacte(selected_index=self._selection, my_index=i, space=space+1) # why reverse display_compacte and full don't display the first project on side mod
                 item.display_project_full("lol", i)
             else:
                 space = 4 if self.show_details else space
@@ -111,7 +109,6 @@ class MainScreen:
                     item.display_project_compacte(selected_index=self._selection, my_index=i, space=space+1)
 
         self.win.refresh()
-        append_line(path_txt, "Main window refreshed.")  # Log refresh
 
         
 
@@ -131,6 +128,7 @@ class MainScreen:
             pass
         else:
             self._selection += 1
+        # max(0,min(x, 100))
 
 
     
@@ -193,10 +191,9 @@ class MainScreen:
 
             confirmation_message = translate(txt_confirm, self.main_app.param_manager.get_data("app", "language"))
             res = self.input.display_input(confirmation_message)
-            self.win.addstr(0,0,"QWERTY")
-            self.win.refresh()#do nothing
+            self.win.refresh()#do nothing?
             if res.lower() not in ("y", "yes"):
-                self.popup("Action annulée. Projet non supprimé.")
+                self.popup("Action cancelled. Project not delete.")
                 return
 
             with open(PROJECTS_JSON, encoding="utf-8") as f:
@@ -259,11 +256,14 @@ class Project:
 
 
     def display_project_compacte(self,selected_index, my_index, space):
-        #nf = self.main_app.param.use_nerd_font # True or False ..    
+        if self.main_app.main_app.param_manager.get_data("ui", "display_project") == "side":
+            space = 0
+        
         arrow = "▶" if selected_index == my_index else ""
         icone_folder = ["󰉋", ""]
         icone = (str(icone_folder[0]) + "  ") if self.main_app.main_app.param_manager.get_data("app", "use_nerd_font") else ""
         if selected_index == my_index:
+            # self.main_app.popup("la")
             self.main_app.win.addstr(my_index+space, 3, f"{arrow} {icone}{self.name}", curses.color_pair(2))
         else:
             self.main_app.win.addstr(my_index+space, 3, f"{arrow} {icone}{self.name}", curses.color_pair(1))
@@ -281,6 +281,7 @@ class Project:
             lang = self.main_app.param.get_language() 
             icone = (str(self.icone_folder[1]) + "  ") if self.main_app.main_app.param_manager.get_data("app", "use_nerd_font") else "" # Some space for the icone
             values = self.dataAnsiStr[1::]
+            
             total = len(values)
             size = os.get_terminal_size()
             columns = size.columns
@@ -288,62 +289,58 @@ class Project:
             display = self.main_app.main_app.param_manager.get_data("ui", "display_project")
 
             if display == "bottom":
-                for i, values in enumerate(values):
+                for i, val in enumerate(values):
+                    len_text_and_display = len(str(values[0])) + 11
+                    self.main_app.popup(f"len:{len_text_and_display} col: {columns} truc:{len(str(val))} val : {values[0]}")
                     if i == 0:
                         self.main_app.win.addstr(i+1+my_index, 3, f"▼ {icone}{self.__str__()}", curses.color_pair(2))
                     is_last_index = 1 if i == total - 1 else 0 # total - 1 cause values[0] = name 
-                    self.main_app.win.addstr(i+2+my_index, 5, f"  {carac[is_last_index]} {txt[lang][i]} : {values}")
+                    if len_text_and_display > columns:#w pas déclaré
+                        self.main_app.popup("TOO LOONG")
+                        self.main_app.win.addstr(i+2+my_index, 3, f"  {carac[is_last_index]} {txt[lang][i]} : {values[i][0:columns:]}")  
+                    self.main_app.win.addstr(i+3+my_index, 3, f"  {carac[is_last_index]} {values[i]}")
+
             elif display == "side":
                 self.detail_panel.win.clear() # clear at "init"
                 h, w = self.detail_panel.win.getmaxyx()
-                # self.detail_panel.win.refresh()
                 self.detail_panel.win.addstr(11,w//5, f"{w,  h} ") #debug, to delete
 
-                middle_x_name = self.detail_panel.get_middle_x(self.data['name'])
-                self.detail_panel.win.addstr(2,middle_x_name, f"{self.data['name']} ", curses.A_BOLD) # Name in BOLD
-                logging.debug("--------- SIDE MODE ----------")
+                center_name_x = self.detail_panel.get_middle_x(self.data['name'])
+                self.detail_panel.win.addstr(2,center_name_x, f"{self.data['name']} ", curses.A_BOLD) # Name in BOLD
                 space = 0
                 description_str = self.data['description']
-                ligne = len(self.data['description']) // (w - 4) + 1
-                div = ligne+1
-                description_cut = []
-                for i in range(1, div): #div=2, outpout 1, 2
-                    logging.debug(f"valeur de i :{i} ")
-                    logging.debug(f"valeur de description cut :{description_str[(w-3)*(i-1):(w-3)*i]} ")
-                    description_cut.append(description_str[(w-3)*(i-1):(w-3)*i])
-                # description_cut.append(description_str[ligne::])#rest of the description # CAUSE BUg ?
-                
-                logging.debug("debut écriture")
-                for i, sentence in enumerate(description_cut):
-                    logging.debug(repr(sentence))
-                    if len(sentence) >= w:
-                        logging.debug("PUPPSSIIII")
-                    self.detail_panel.win.addstr(4 + i, 2, f"{sentence}")
-                    # description_cut.append(description_str[0 + i*(w-2):w-2])
-                
-                
-                # self.main_app.popup(ligne)
-                if ligne == 0:
-                    space = -3
-                # for i in range(ligne):
+                overfloww:int = math.ceil(len(description_str) / (w - 3)) #calc number of line over w
+                description_cut = [] # cut description in multiple str (sentence)
+                #math seuil : 41.1 = 42
+                # Calc sentence
+                max_width = w - 3 #2 ch border + 1space left
+                for i in range(0, len(description_str), max_width):
+                    description_cut.append(description_str[i:i + max_width])
 
-                #     self.detail_panel.win.addstr(4 + i, 2, f"{self.data['description']}") # after 1line not 2 space right
+                # Display
+                for i, sentence in enumerate(description_cut):
+                    self.detail_panel.win.addstr(4 + i, 2, sentence)
+
+                # each overflow is +1 space for the rest of the data to show
+                if overfloww == 0:
+                    space = -3
+                
+                text = {
+                    "en": ["Languages", "Path", "Repo"],
+                    "fr":["Langages", "Chemin", "Depo"]
+                }
+                text_description = translate(text, self.main_app.main_app.param_manager.get_data("app", "language"))
                 if  len(self.data['languages']) == 0:
                     space -= 2
                     pass
-                else:
-                    self.detail_panel.win.addstr(4 + ligne + 2 + space, 2, f"languages : {', '.join(self.data['languages'])}")
+                else:                
+                    self.detail_panel.win.addstr(4 + overfloww + 2 + space, 2, f"{text_description[0]} : {', '.join(self.data['languages'])}")
 
-                self.detail_panel.win.addstr(4 + ligne + 4 + space, 2, f"Path : {self.data['path']}")                
-                self.detail_panel.win.addstr(4 + ligne + 6 + space, 2, f"[Repo] : [{self.data['repo']}]")                
-
+                self.detail_panel.win.addstr(4 + overfloww + 4 + space, 2, f"{text_description[1]} : {self.data['path']}")                
+                self.detail_panel.win.addstr(4 + overfloww + 6 + space, 2, f"{text_description[2]} : [{self.data['repo']}]")                
 
                 self.detail_panel.win.border()
-                self.main_app.popup(len(description_cut))
                 self.detail_panel.win.refresh()
-            
-            if not self.main_app.main_app.param_manager.get_data("app", "use_nerd_font"):
-                pass
 
 
 
@@ -360,7 +357,49 @@ class Project:
             elif editor == "code":
                 subprocess.run(["code", "-n", str(project_path)])
                 return
-            error_msg = {
+                error_msg = {
                 "en":"error while lauching projects in your IDE, check value of 'editor' in parametes.json",
                 "fr":"erreur pedant lancement du projets dans votre IDE, regardez la valeur de 'editor' dans parametres.json"
-            }
+                }
+            elif editor == "cmd":
+                if os.path.exists(project_path) and os.path.isdir(project_path):
+                #cd into directory?
+                    self.main_app.popup("path existe")
+                    import platform
+                    import sys
+                    system = platform.system()
+                    try:
+                        if system == "Linux":
+                            # try several terminal
+                            terminals = [
+                                ["gnome-terminal", "--working-directory", project_path],
+                                ["konsole", "--workdir", project_path],
+                                ["xfce4-terminal", "--working-directory", project_path],
+                                ["x-terminal-emulator", "--working-directory", project_path],
+                                ["xterm", "-e", f'cd "{project_path}" && bash']
+                            ]
+
+                            for cmd in terminals:
+                                try:
+                                    subprocess.Popen(cmd)
+                                    break
+                                except FileNotFoundError:
+                                    continue
+
+                        elif system == "Darwin":  # macOS
+                            subprocess.Popen([
+                                "open", "-a", "Terminal", project_path
+                            ])
+
+                        elif system == "Windows":
+                            subprocess.Popen([
+                                "cmd.exe", "/K", f'cd /d "{project_path}"'
+                            ])
+
+                        else:
+                            self.main_app.popup(f"OS not  supported: {system}")
+
+                    except Exception as e:
+                        self.main_app.popup(f"Error opening terminal : {e}")
+
+                    sys.exit() # quit Pixel_Code

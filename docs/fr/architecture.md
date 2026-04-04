@@ -9,7 +9,7 @@
         "language": "fr", ("fr", "en")
         "use_nerd_font": true, # Icone
         "version": "v0.4.0",
-        "check_update": true,
+        "check_update_at_launch": true,
         "allow_prerelease": true
     },
     "ui": {
@@ -60,11 +60,13 @@ Voici une liste des écrans  de ``/screens``:
 - **Caractéristiques** :
   - Coordonne les différents écrans.
 
-### 3. `DetailPanel`
+### 3. `DetailPanel` 
 - **Fichier** : `screens/detail_panel_screen.py`
 - **Description** : Affiche un panneau avec les détails du projet selectionné dans une fenêtre dédiée sur le coté gauche de la fenetre main
 - **Caractéristiques** :
   - Crée une fenêtre avec des bordures.
+
+> [voir plus](/docs/fr/screens/detailPannel.md)
 
 ### 4. `ParamScreen`
 - **Fichier** : `screens/param_screen.py`
@@ -83,3 +85,7 @@ Voici une liste des écrans  de ``/screens``:
 
 Représenttion des fenètres dans le terminal : 
 <img src="/docs/assets/interface.png" style='with:300px; height:220px; margin:0 auto;'>
+
+
+
+

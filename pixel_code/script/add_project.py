@@ -4,6 +4,7 @@ from pathlib import Path
 
 def create_pixelcode_config(data_projects: dict):
     """
+    Create .pixelcode.json file in the folder of the project.
     Crée un fichier .pixelcode.json dans le dossier du projet.
     """
 
@@ -20,7 +21,7 @@ def create_pixelcode_config(data_projects: dict):
         raise FileExistsError(f"BRUH")
         
 
-    # Contenu par défaut
+    # default config
     config_data = { 
         "name": data_projects["name"],
         "description": data_projects["description"],

@@ -18,6 +18,47 @@ class ParamScreen:
         self.array = ["option1", "option2", "option3", "option4"]
         self.language = None# load in load_param() 
 
+        self.settings_config = [
+            {
+                "key": "language",
+                "type": "cycle",
+                "values": ["en", "fr"],
+                "section":"app"
+            },
+            {
+                "key": "use_nerd_font",
+                "type": "toggle",
+                "section":"app"
+            },
+            {
+                "key": "display_project",
+                "type": "cycle",
+                "values": ["side", "bottom"],
+                "section":"ui"
+            },
+            {
+                "key": "editor",
+                "type": "cycle",
+                "values": ["code", "vim", "cmd"],
+                "section":"projects"
+            },
+            {
+                "key": "check_update_at_launch",
+                "type": "toggle",
+                "section":"app"
+            },
+            {
+                "key": "logo",
+                "type": "cycle",
+                "values": ["center", "left"],
+                "section":"ui"
+            },
+            {
+                "key": "version",
+                "type": "readonly",
+                "section":"app"
+            }
+        ]
         # ---------------
 
         self._selection_parametre = 0
@@ -37,37 +78,84 @@ class ParamScreen:
     def display(self):
         self.win.clear()
 
-        self.parametre_array = [self.data["app"]["language"], self.data["app"]["use_nerd_font"], self.data["app"]["version"] ] # DONT DELETE => recacule data after load_param()
-        parametre_consigne = [["Language", "Use Nerd Font", "Current version"], ["Langage", "Utiliser Nerd Font", "Version actuelle"]]
-        #self.selection_parametre = 0 # Alwyas have selection at the start even after quit,open
-        caract = ["", "▶"] # False : "" | True :  "▶"
-        WIDTH = 48
-        lang = 1 if self.data["app"]["language"] == "fr" else 0 # Do func ?
-        
-        self.win.addstr(0, 0, f"================== PARAMÈTRES ==================")
-        for i in range(len(self.parametre_array)):
-            arrow = False
-            if i == self._selection_parametre:
-                arrow = True
-            self.win.addstr(i+1, 2, f'{caract[arrow]}  {parametre_consigne[lang][i].ljust(WIDTH - len(str(self.parametre_array[i])) + (0 if i == self._selection_parametre else 1) - 3)}{self.parametre_array[i]}')
-        self.win.addstr(len(self.parametre_array)+1, 0, f"-" * WIDTH)
-        
-        txt = [["Navigation", "Change", "Quit"], ["Navigation", "Changer", "Quitter"]]
-        key = ["SPACE BAR", "ESPACE"]
-        self.win.addstr(len(self.parametre_array)+2, 0, f"{txt[lang][0]} : ↑/↓    {txt[lang][1]} : {key[lang]}    {txt[lang][2]} : p")
+        max_y, max_x = self.win.getmaxyx()
 
-        self.win.border()
+        self.parametre_array = [
+            self.data["app"]["language"],
+            self.data["app"]["use_nerd_font"],
+            self.data["ui"]["display_project"],
+            self.data["projects"]["editor"],
+            self.data["app"]["check_update_at_launch"],
+            self.data["ui"]["logo"],
+            self.data["app"]["version"]
+        ]
+        # * langage
+        # * icone (NF)
+        # * affichage (side, bottom)
+        # * editor (code, vim, cmd)
+        # * check update at lauch
+        # * logo (left, center)
+        parametre_consigne = {
+            "en": ["Language", "Use Nerd Font", "Display projects", "Editor", "Check update at lauch", "Logo", "Actual versions"],
+            "fr": ["Langage", "Utiliser Nerd Font", "Afficher projets", "Editeur", "Regarder update au lancement", "Logo", "Version actuelle"]
+        }
+
+        caract = ["", "▶"]
+        WIDTH = 48
+        HEIGHT = len(self.parametre_array) + 4
+
+        lang = "fr" if self.data["app"]["language"] == "fr" else "en"
+
+        self.win.box()
+
+        start_y = (max_y - HEIGHT) // 2
+        start_x = (max_x - WIDTH) // 2
+
+        self.win.addstr(start_y + 0, start_x, "================== PARAMÈTRES ==================")
+
+        for i in range(len(self.parametre_array)):
+            arrow = (i == self._selection_parametre)
+            self.win.addstr(
+                start_y + i + 1,
+                start_x + 2,
+                f'{caract[arrow]}  {parametre_consigne[lang][i].ljust(WIDTH - len(str(self.parametre_array[i])) + (0 if arrow else 1) - 3)}{self.parametre_array[i]}'
+            )
+
+        self.win.addstr(start_y + len(self.parametre_array) + 1, start_x, "-" * WIDTH)
+        txt = {
+            "en":["Navigation", "Change", "Quit"],
+            "fr":["Navigation", "Changer", "Quitter"]
+        }
+        key = {
+            "en":"SPACE BAR",
+            "fr":"ESPACE"
+        }
+        
+
+        self.win.addstr(
+            start_y + len(self.parametre_array) + 2,
+            start_x,
+            f"{txt[lang][0]} : ↑/↓    {txt[lang][1]} : {key[lang]}    {txt[lang][2]} : p"
+        )
 
         self.win.refresh()
 
-
     def change_value(self, i):
-        if i == 0:
-            self.data["app"]["language"] = "fr" if self.data["app"]["language"] == "en" else "en"
-        elif i == 1:
-            self.data["app"]["use_nerd_font"] = not self.data["app"]["use_nerd_font"]
-        elif i == 2:
+        setting = self.settings_config[i]
+        key = setting["key"]
+
+        if setting["type"] == "toggle":
+            self.data[setting["section"]][key] = not self.data[setting["section"]][key]
+
+        elif setting["type"] == "cycle":
+            values = setting["values"]
+            current = self.data[setting["section"]][key]
+            idx = values.index(current)
+            self.data[setting["section"]][key] = values[(idx + 1) % len(values)]
+
+        elif setting["type"] == "readonly":
             pass
+
     
     def move_up(self):
         if len(self.parametre_array) == 0:
@@ -96,7 +184,7 @@ class ParamScreen:
                     self.language = data['app'].get('language')
                     self.use_nerd_font = data['app'].get('use_nerd_font', self.use_nerd_font)
                     self.version = data['app'].get('version', self.version) # Cause in v0.1.1 parametres.json there is no argument "version" but "versionS" so since v0.1.2 it's "version"
-                    self.check_update = data['app'].get('check_update', self.check_update)
+                    self.check_update_at_launch = data['app'].get('check_update_at_launch', self.check_update_at_launch)
                     self.allow_prerelease = data['app'].get('allow_prerelease', self.allow_prerelease)
 
                 if 'ui' in data:

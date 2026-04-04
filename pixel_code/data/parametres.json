@@ -3,7 +3,7 @@
         "language": "en",
         "use_nerd_font": true,
         "version": "v0.4.0",
-        "check_update": true,
+        "check_update_at_launch": true,
         "allow_prerelease": true
     },
     "ui": {
@@ -14,6 +14,6 @@
     "projects": {
         "sort_by_last_opened": true,
         "sort_by_name": false,
-        "editor": "code"
+        "editor": "cmd"
     }
 }
