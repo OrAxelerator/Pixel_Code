@@ -11,7 +11,7 @@ $$ |      $$ |$$  /\$$\ \$$$$$$$\ $$ |      \$$$$$$  |\$$$$$$  |\$$$$$$$ |\$$$$$
 ```
 # 🇬🇧/🇺🇸 - English Version
 
-[see the 🇫🇷 README](/docs/fr/README_FR.md)
+[See the 🇫🇷 README](/docs/fr/README_FR.md)
 
 
 ### What is Pixel_Code?
@@ -42,7 +42,7 @@ see **documentation** : [here](/docs/eng/index.md)
 
     ```bash
     git clone https://github.com/OrAxelerator/Pixel_Code.git
-    cd Downloads/Pixel_Code
+    cd Pixel_Code
     pipx install .
     ```
 </details>
@@ -71,7 +71,7 @@ see **documentation** : [here](/docs/eng/index.md)
 * Download the project and install the tool:
     ```cmd
     git clone https://github.com/OrAxelerator/Pixel_Code.git
-    cd ./Downloads/Pixel_Code
+    cd ./Pixel_Code
     py -m pip install -e .
     ```
     * If you get an error:

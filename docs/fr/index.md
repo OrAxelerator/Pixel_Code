@@ -1,7 +1,7 @@
 # Liste de la doc
 
-* [readme](/docs/fr/README_FR.md)
-* [instalation](/docs/fr/install.md)
-* [raccourci_clavier](/docs/fr/raccourci_clavier.md)
-* [config](/docs/fr/config.md)
-* [architecture](/docs/fr/architecture.md)
+* [Readme](/docs/fr/README_FR.md)
+* [Instalation](/docs/fr/install.md)
+* [Raccourci_clavier](/docs/fr/raccourci_clavier.md)
+* [Configuration](/docs/fr/config.md)
+* [Architecture](/docs/fr/architecture.md)

@@ -9,17 +9,22 @@ from pixel_code.screens.input_curses import Input
 from pixel_code.script.data.param_manager import ParamManager
 
 
+
 import logging
-# Start debug mod with python3 pixel_code/__main__.py --debug
-logging.basicConfig(filename="debug.log", level=logging.DEBUG)
 import sys
+# Start debug mod with python3 pixel_code/__main__.py --debug
+
 level = logging.DEBUG if "--debug" in sys.argv else logging.INFO
 
 logging.basicConfig(
     filename="debug.log",
-    level=level
+    level=level,
+    format="%(asctime)s [%(levelname)s] %(message)s"
 )
 
+# logging.debug("Valeur de x ")   # affiché seulement en --debug
+# logging.info("APP LAUNCH")   # affiché en --debug ET mode normal
+# logging.warning("Problème détecté")    # toujours affiché
 class App:
     def __init__(self, stdscr):
         self.stdscr = stdscr

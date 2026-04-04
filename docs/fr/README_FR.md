@@ -38,7 +38,7 @@ Voir la **documentation** : [ici](/docs/fr/index.md)
 
     ```bash
     git clone https://github.com/OrAxelerator/Pixel_Code.git
-    cd Téléchargemts/Pixel_Code
+    cd Pixel_Code
     pipx install .
     ```
 </details>
@@ -67,26 +67,30 @@ Voir la **documentation** : [ici](/docs/fr/index.md)
 *  Téléchargez le projet et installez l’outil :
      ```cmd
         git clone https://github.com/OrAxelerator/Pixel_Code.git
-        cd ./Downloads/Pixel_Code
+        cd ./Pixel_Code
         py -m pip install -e .
     ```
-    * Si vous recevez une erreur :
-    **Allez voir instalation avancé windows [en cliquant ici](/docs/fr/install.md)
+    >[!WARNING]
+    >
+    > * Si vous recevez une erreur :
+    > **Allez voir instalation avancé windows [en cliquant ici](/docs/fr/install.md)**
         
     </details>
 
 ---
 
+> [!NOTE]
+>
 > Appelez l'app en tapant la commande : **pixel-code**
 
 
-> [!IMPORTANT]
+> [!TIP]
 >
 > Pour que les icônes marchent, il faut mettre la police **"0xProto Nerd Font"** dans votre terminal, et si vous souhaitez exécuter le code dans VS Code, il faut aussi définir **Terminal › Integrated: Font Family** = `"0xProto Nerd Font"`
 >
 > Lien pour installer la police : https://github.com/ryanoasis/nerd-fonts/releases/download/v3.4.0/0xProto.zip
 
-> [!NOTE]
+> [!TIP]
 >
 > Raccourcis clavier :
 > 
