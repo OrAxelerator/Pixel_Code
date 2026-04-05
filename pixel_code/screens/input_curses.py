@@ -17,7 +17,7 @@ class Input:
         self.win = curses.newwin(self.height, self.width, self.y, self.x)
         self.win.keypad(True)
 
-    def display_input(self, title="Input"):
+    def display_input(self, title="Input", prefill=""):
 
         curses.curs_set(1)
         self.win.clear()
@@ -33,6 +33,8 @@ class Input:
         edit_win = self.win.derwin(1, box_width, box_y-1, box_x)
         edit_win.clear()
 
+        edit_win.addstr(prefill)
+        # edit_win.clear()
         self.win.refresh()
         edit_win.refresh()
 

@@ -8,12 +8,13 @@
     },
     "ui": {
         "theme": "default",
-        "logo": "left",
+        "logo": "center",
         "display_project": "side"
     },
     "projects": {
         "sort_by_last_opened": true,
         "sort_by_name": false,
-        "editor": "cmd"
+        "editor": "code",
+        "repo": "github"
     }
 }

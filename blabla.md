@@ -1,1 +1,0 @@
-get data in param : self.main_app.param_manager.get_data("app", "language")

@@ -43,6 +43,12 @@ class ParamScreen:
                 "section":"projects"
             },
             {
+                "key": "repo",
+                "type": "cycle",
+                "values": ["github", "null"],
+                "section":"projects"
+            },
+            {
                 "key": "check_update_at_launch",
                 "type": "toggle",
                 "section":"app"
@@ -85,6 +91,7 @@ class ParamScreen:
             self.data["app"]["use_nerd_font"],
             self.data["ui"]["display_project"],
             self.data["projects"]["editor"],
+            self.data["projects"]["repo"],
             self.data["app"]["check_update_at_launch"],
             self.data["ui"]["logo"],
             self.data["app"]["version"]
@@ -96,8 +103,8 @@ class ParamScreen:
         # * check update at lauch
         # * logo (left, center)
         parametre_consigne = {
-            "en": ["Language", "Use Nerd Font", "Display projects", "Editor", "Check update at lauch", "Logo", "Actual versions"],
-            "fr": ["Langage", "Utiliser Nerd Font", "Afficher projets", "Editeur", "Regarder update au lancement", "Logo", "Version actuelle"]
+            "en": ["Language", "Use Nerd Font", "Display projects", "Editor", "Repo", "Check update at lauch", "Logo", "Actual versions"],
+            "fr": ["Langage", "Utiliser Nerd Font", "Afficher projets", "Editeur", "Depo", "Regarder update au lancement", "Logo", "Version actuelle"]
         }
 
         caract = ["", "▶"]

@@ -4,14 +4,10 @@
 #   - make option to add pixelcode.json so when install new code VIA pixel_code pop to add project on fork on pixel code
 #   -  make something cool with nerd font for icon
 #   -  think about integration in pixel_nav => pixelcode.json ? ..
-#   -  clearFormLine(line=12) hard-coded => bad, calcule height of logo ?
 #   - programme de mise a jour automatique
-#   - Do something cleaner at change_value() in Param
 #   - projet.json : icone = ["":iconed de base, "favortite : icone + cœur, "]
 #   - Use quit() func in main  instead of break in code
 #   - # Make error message if pwd is False in open_code (Project)
-#   - Use import color
-#   - Choose IDE 
 
 # coeur : 󱃪
 # side project : 󰉌
@@ -77,6 +73,7 @@ class MainScreen:
 
 
     def load_projects(self):
+        logging.debug("load_project in MainScreen")
         try:
             
             with open(PROJECTS_JSON, encoding="utf-8") as f:
@@ -94,42 +91,43 @@ class MainScreen:
 
     def display_main(self):
         h, w = self.win.getmaxyx()
+        self.main_app.h
         self.win.clear()
+#self.porjetArray[difCurseurExt::] #jusqu'a condition bloue le reste
+        gap_curror_over = self._selection -h +1
+        if gap_curror_over > 0: # if positive
+            logging.debug(f"CUSOR OVERFLOW, : {gap_curror_over}")
+        else :
+            gap_curror_over = 0
 
-        for i, item in enumerate(self.projectsArray):
-            space = 0
-            if i == self._selection and self.show_details:
-                item.display_project_compacte(selected_index=self._selection, my_index=i, space=space+1) # why reverse display_compacte and full don't display the first project on side mod
-                item.display_project_full("lol", i)
-            else:
-                space = 4 if self.show_details else space
-                if self.show_details and self._selection > i:
-                    item.display_project_compacte(selected_index=self._selection, my_index=i, space=+1)
+        for i, item in enumerate(self.projectsArray[gap_curror_over::]):
+            # i par rapport début lsite et pa par rapoort premier el affiché
+            logging.debug("-------")
+            logging.debug(f'i : {i}, h : {self.main_app.h}')
+            if 10 + i < self.main_app.h:
+                # logging.debug("condition pass")
+                space = 0
+                if i == self._selection and self.show_details:
+                    item.display_project_compacte(selected_index=self._selection, my_index=i, space=space+1) # why reverse display_compacte and full don't display the first project on side mod
+                    item.display_project_full("lol", i)
                 else:
-                    item.display_project_compacte(selected_index=self._selection, my_index=i, space=space+1)
+                    space = 4 if self.show_details else space
+                    if self.show_details and self._selection > i:
+                        item.display_project_compacte(selected_index=self._selection, my_index=i+gap_curror_over, space=+1)
+                    else:
+                        item.display_project_compacte(selected_index=self._selection, my_index=i+gap_curror_over, space=space+1) # put gap here ?
 
-        self.win.refresh()
+            self.win.refresh()
 
         
 
 
     def move_up(self):
-        if len(self.projectsArray) == 0:
-            pass
-        elif self._selection - 1 < 0:
-            pass
-        else:
-            self._selection -= 1
-    
-    def move_down(self):
-        if len(self.projectsArray) == 0:
-            pass
-        elif self._selection + 1 >= len(self.projectsArray):
-            pass
-        else:
-            self._selection += 1
-        # max(0,min(x, 100))
+        self._selection = max(0, self._selection -1)
 
+    def move_down(self):
+        # self._selection = max(1, min(self._selection+1, len(self.projectsArray)))
+        self._selection = min(len(self.projectsArray)-1, self._selection + 1)
 
     
 
@@ -160,9 +158,17 @@ class MainScreen:
             description = self.input.display_input(f"{txt['description']} : ")
             languages = self.input.display_input(f"{txt['langage']} : ").split(',')
             pwd = self.input.display_input(f"{txt['path']} : ")
-            repo = self.input.display_input(f'{txt["repo"]} : ')
             if pwd == "":
-                pwd = os.getcwd()
+                pwd = os.getcwd() # get pwd path
+
+            if self.main_app.param_manager.get_data("projects", "repo") == "github":
+                link = "https://github.com/"
+            else:
+                link= "https://"
+            repo = self.input.display_input(f'{txt["repo"]} : ', prefill=link)
+
+            
+            
             
             new_project = {
                 "name": name,
@@ -177,9 +183,9 @@ class MainScreen:
 
             self.projectsArray.append(Project(self, str(4), new_project))
         except FileNotFoundError:
-            print("Fichier projects.json introuvable.")
+            logging.warning("File projects.json not found.")
         except Exception as e:
-            print(f"Une erreur est survenue : {e}")
+            logging.warning(f"Error append : {e}")
 
 
     def delete_project(self):
@@ -210,11 +216,12 @@ class MainScreen:
             self.projectsArray.pop(self._selection)
             self._selection = max(0, self._selection - 1)
             self.popup("Projet supprimé avec succès !")
+            logging.info("Project deleted")
 
         except FileNotFoundError:
-            self.popup("Fichier projects.json introuvable.")
+            logging.warning("File projects.json not found.")
         except Exception as e:
-            self.popup(f"Erreur : {e}")
+            logging.warning(f"Error append : {e}")
 
 
 
@@ -258,7 +265,11 @@ class Project:
     def display_project_compacte(self,selected_index, my_index, space):
         if self.main_app.main_app.param_manager.get_data("ui", "display_project") == "side":
             space = 0
-        
+
+        logging.debug(f"select : {selected_index}   my{my_index}")
+        if selected_index == my_index:
+            logging.debug(f"CHECK ARE EQUALS")
+
         arrow = "▶" if selected_index == my_index else ""
         icone_folder = ["󰉋", ""]
         icone = (str(icone_folder[0]) + "  ") if self.main_app.main_app.param_manager.get_data("app", "use_nerd_font") else ""
@@ -273,7 +284,6 @@ class Project:
         
 
     def display_project_full(self, selected_index, my_index):
-            txt = [[ "About", "Languages", "Path"], ["Descrption","Langages", "Chemin" ]] # bofffff
             txt = {
                 "en": ["About", "Languages", "Path"],
                 "fr":["Description", "Langages", "Chemin"]
@@ -397,9 +407,11 @@ class Project:
                             ])
 
                         else:
+                            logging.warning(f"OS not  supported: {system}") # user on temple os ?
                             self.main_app.popup(f"OS not  supported: {system}")
 
                     except Exception as e:
+                        logging.warning(f"Error opening terminal : {e}")
                         self.main_app.popup(f"Error opening terminal : {e}")
 
                     sys.exit() # quit Pixel_Code

@@ -31,7 +31,7 @@ class App:
         self.stdscr.keypad(True)
         curses.curs_set(0)
 
-        h, w = stdscr.getmaxyx()
+        self.h, self.w = stdscr.getmaxyx()
         self.param_manager = ParamManager()
         self.logo = Logo(self)
         self.param = ParamScreen(self)
@@ -52,14 +52,17 @@ class App:
     def run(self):
         self.logo.display_logo()
         self.main.display_main()
+        logging.info("main loop launched")
         while True:
             key = get_key()
 
             if key == "q":
+                logging.info("user quit pixel_code")
                 break
 
             if "main"== self.current :
                 if key == "p":
+                    logging.info("user open parametre windows")
                     self.current = "param"
                     self.param._selection_parametre = 0
                     self.param.display()
@@ -88,6 +91,7 @@ class App:
                 
             elif "param" == self.current :
                 if key == "p":
+                    logging.info("user open main windows")
                     self.param.save_param()
                     self.current = "main"
                     self.main.display_main()
