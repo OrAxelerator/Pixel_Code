@@ -1,6 +1,6 @@
 {
     "app": {
-        "language": "fr",
+        "language": "en",
         "use_nerd_font": true,
         "version": "v0.4.0",
         "check_update_at_launch": true,
@@ -8,13 +8,13 @@
     },
     "ui": {
         "theme": "default",
-        "logo": "center",
+        "logo": "left",
         "display_project": "side"
     },
     "projects": {
         "sort_by_last_opened": true,
         "sort_by_name": false,
-        "editor": "code",
+        "editor": "vim",
         "repo": "github"
     }
 }

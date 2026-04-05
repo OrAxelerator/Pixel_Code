@@ -165,20 +165,10 @@ class ParamScreen:
 
     
     def move_up(self):
-        if len(self.parametre_array) == 0:
-            pass
-        elif self._selection_parametre - 1 < 0:
-            pass
-        else:
-            self._selection_parametre -= 1
+        self._selection_parametre = max(0, self._selection_parametre -1)
     
     def move_down(self):
-        if len(self.parametre_array) == 0:
-            pass
-        elif self._selection_parametre + 1 >= len(self.parametre_array):
-            pass
-        else:
-            self._selection_parametre += 1
+        self._selection_parametre = min(len(self.parametre_array)-1, self._selection_parametre + 1)
 
 
 

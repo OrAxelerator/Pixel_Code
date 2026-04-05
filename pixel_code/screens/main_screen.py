@@ -130,7 +130,9 @@ class MainScreen:
         self._selection = min(len(self.projectsArray)-1, self._selection + 1)
 
     
-
+    def edit_project(self):
+        """Edit info project in nano or vim or notepad or create a interface for this"""
+        pass
 
 
     def add_project(self):

@@ -73,6 +73,8 @@ class App:
                     self.main.delete_project()
                     self.main.display_main()
                     # self.main.popup("jsspppp")
+                elif key == "e":
+                    self.main.edit_project()
                 elif key == "g":
                     self.main.pull_project()
                     pass #gt clone, git pull, git reset
