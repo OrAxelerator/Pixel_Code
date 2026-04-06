@@ -30,12 +30,7 @@ class ParamScreen:
                 "type": "toggle",
                 "section":"app"
             },
-            {
-                "key": "display_project",
-                "type": "cycle",
-                "values": ["side", "bottom"],
-                "section":"ui"
-            },
+            
             {
                 "key": "editor",
                 "type": "cycle",
@@ -89,7 +84,6 @@ class ParamScreen:
         self.parametre_array = [
             self.data["app"]["language"],
             self.data["app"]["use_nerd_font"],
-            self.data["ui"]["display_project"],
             self.data["projects"]["editor"],
             self.data["projects"]["repo"],
             self.data["app"]["check_update_at_launch"],
@@ -103,8 +97,8 @@ class ParamScreen:
         # * check update at lauch
         # * logo (left, center)
         parametre_consigne = {
-            "en": ["Language", "Use Nerd Font", "Display projects", "Editor", "Repo", "Check update at lauch", "Logo", "Actual versions"],
-            "fr": ["Langage", "Utiliser Nerd Font", "Afficher projets", "Editeur", "Depo", "Regarder update au lancement", "Logo", "Version actuelle"]
+            "en": ["Language", "Use Nerd Font",  "Editor", "Repo", "Check update at lauch", "Logo", "Actual versions"],
+            "fr": ["Langage", "Utiliser Nerd Font", "Editeur", "Depo", "Regarder update au lancement", "Logo", "Version actuelle"]
         }
 
         caract = ["", "▶"]
@@ -118,7 +112,7 @@ class ParamScreen:
         start_y = (max_y - HEIGHT) // 2
         start_x = (max_x - WIDTH) // 2
 
-        self.win.addstr(start_y + 0, start_x, "================== PARAMÈTRES ==================")
+        self.win.addstr(start_y + 0, start_x+2, "================== PARAMÈTRES ==================")
 
         for i in range(len(self.parametre_array)):
             arrow = (i == self._selection_parametre)
@@ -128,7 +122,7 @@ class ParamScreen:
                 f'{caract[arrow]}  {parametre_consigne[lang][i].ljust(WIDTH - len(str(self.parametre_array[i])) + (0 if arrow else 1) - 3)}{self.parametre_array[i]}'
             )
 
-        self.win.addstr(start_y + len(self.parametre_array) + 1, start_x, "-" * WIDTH)
+        self.win.addstr(start_y + len(self.parametre_array) + 1, start_x+2, "-" * WIDTH)
         txt = {
             "en":["Navigation", "Change", "Quit"],
             "fr":["Navigation", "Changer", "Quitter"]

@@ -99,25 +99,52 @@ class MainScreen:
             logging.debug(f"CUSOR OVERFLOW, : {gap_curror_over}")
         else :
             gap_curror_over = 0
+            logging.debug(f"CUSOR IN, : {gap_curror_over}")
 
-        for i, item in enumerate(self.projectsArray[gap_curror_over::]):
-            # i par rapport début lsite et pa par rapoort premier el affiché
-            logging.debug("-------")
-            logging.debug(f'i : {i}, h : {self.main_app.h}')
-            if 10 + i < self.main_app.h:
-                # logging.debug("condition pass")
-                space = 0
-                if i == self._selection and self.show_details:
-                    item.display_project_compacte(selected_index=self._selection, my_index=i, space=space+1) # why reverse display_compacte and full don't display the first project on side mod
-                    item.display_project_full("lol", i)
-                else:
-                    space = 4 if self.show_details else space
-                    if self.show_details and self._selection > i:
-                        item.display_project_compacte(selected_index=self._selection, my_index=i+gap_curror_over, space=+1)
-                    else:
-                        item.display_project_compacte(selected_index=self._selection, my_index=i+gap_curror_over, space=space+1) # put gap here ?
+        gap = 0
+        logging.debug(f"h of main : {h}")
+        dif = h - len(self.projectsArray)
+        logging.debug(f' dif = {h} - {len(self.projectsArray)} = {h - len(self.projectsArray)}')
+        if dif >= 0:
+            gap = len(self.projectsArray) 
+            logging.debug(f"gap :{gap} | dif <= 0")
+        elif dif < 0 :
+            gap = h + gap_curror_over
+            logging.debug(f"{gap} - dif > 0 (else)")
+        else:
+            logging.debug(f"WTF gap = {gap}")
 
-            self.win.refresh()
+        logging.debug(f"GAP /, , {gap}")
+        # display_proj = self.projectsArray[gap_curror_over:gap:]
+        logging.debug("======START FOR ========")
+        for i, project in enumerate(self.projectsArray[gap_curror_over:gap:]): # j'ai 0 a 4 donc 3 mais afficbe 4 truc ... WHY
+            
+            space = 4 if self.show_details else 0
+            logging.debug(f"selectin_index:{self._selection}, myindex:{i}, gap:{gap_curror_over}")
+            project.display_project_compacte(selected_index=self._selection, my_index=i, space=space, gap=gap_curror_over)
+            if self._selection == i and self.show_details:
+                project.display_project_full("to_delete", i)
+        
+        
+        self.win.refresh()
+
+        # for i, item in enumerate(self.projectsArray[gap_curror_over::]):
+        #     # i par rapport début lsite et pa par rapoort premier el affiché
+        #     logging.debug("-------")
+        #     if 10 + i < self.main_app.h:
+        #         # logging.debug("condition pass")
+        #         space = 0
+        #         if i == self._selection and self.show_details:
+        #             item.display_project_compacte(selected_index=self._selection, my_index=i, space=space+1) # why reverse display_compacte and full don't display the first project on side mod
+        #             item.display_project_full("lol", i)
+        #         else:
+        #             space = 4 if self.show_details else space
+        #             if self.show_details and self._selection > i:
+        #                 item.display_project_compacte(selected_index=self._selection, my_index=i+gap_curror_over, space=+1)
+        #             else:
+        #                 item.display_project_compacte(selected_index=self._selection, my_index=i+gap_curror_over, space=space+1) # put gap here ?
+
+        
 
         
 
@@ -264,18 +291,20 @@ class Project:
 
 
 
-    def display_project_compacte(self,selected_index, my_index, space):
+    def display_project_compacte(self,selected_index, my_index, space, gap=0):
         if self.main_app.main_app.param_manager.get_data("ui", "display_project") == "side":
             space = 0
 
-        logging.debug(f"select : {selected_index}   my{my_index}")
-        if selected_index == my_index:
-            logging.debug(f"CHECK ARE EQUALS")
+        # logging.debug(f"select : {selected_index}   my{my_index}")
+        # if selected_index == my_index:
+            # logging.debug(f"CHECK ARE EQUALS")
+        if selected_index == my_index + gap:
+            logging.debug(f"CONDITION CHECK de {self.name}")
 
-        arrow = "▶" if selected_index == my_index else ""
+        arrow = "▶" if selected_index == my_index + gap else ""
         icone_folder = ["󰉋", ""]
         icone = (str(icone_folder[0]) + "  ") if self.main_app.main_app.param_manager.get_data("app", "use_nerd_font") else ""
-        if selected_index == my_index:
+        if selected_index == my_index + gap:
             # self.main_app.popup("la")
             self.main_app.win.addstr(my_index+space, 3, f"{arrow} {icone}{self.name}", curses.color_pair(2))
         else:
