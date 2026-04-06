@@ -344,7 +344,6 @@ class Project:
             elif display == "side":
                 self.detail_panel.win.clear() # clear at "init"
                 h, w = self.detail_panel.win.getmaxyx()
-                self.detail_panel.win.addstr(11,w//5, f"{w,  h} ") #debug, to delete
 
                 center_name_x = self.detail_panel.get_middle_x(self.data['name'])
                 self.detail_panel.win.addstr(2,center_name_x, f"{self.data['name']} ", curses.A_BOLD) # Name in BOLD
