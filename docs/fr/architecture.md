@@ -30,7 +30,7 @@
 {
     "projects": [
         {
-            "id": "72b38123", #
+            "id": "72b38123", #uuid4
             "path": "/Users/Axel/Pixel_Code",
             "status": "todo" # ("todo", ...)
         }, ...
@@ -42,7 +42,7 @@
 
 ## Fonctionnement des écrans (`screens`)
 
-Les écrans dans Pixel Code sont des interfaces utilisateur construites avec la bibliothèque `curses`. Chaque écran est encapsulé dans une classe Python et est conçu pour gérer une partie spécifique de l'application. Deplus chaque écran est initialisé avec une référence à l'application principale (`main_app`) depuis ``app.py`` pour accéder aux ressources partagées comme `stdscr` (l'écran principal de `curses`) et les gestionnaires de données. Les écrans utilisent des fenêtres (`newwin`) pour afficher leurs contenus et interagir avec l'utilisateur. L'écran active (main/parametre) est enregistré dans la variable self.current dans la class App et peut prendre comme valeur: "main" et "parametre"
+Les écrans dans Pixel Code sont des interfaces utilisateur construites avec la bibliothèque `curses`. Chaque écran est encapsulé dans une classe Python et est conçu pour gérer une partie spécifique de l'application. De plus chaque écran est initialisé avec une référence à l'application principale (`main_app`) depuis ``app.py`` pour accéder aux ressources partagées comme `stdscr` (l'écran principal de `curses`) et le gestionnaires de donné ``paramManager``. Les écrans utilisent des fenêtres (`newwin`) pour afficher leurs contenus et interagir avec l'utilisateur. L'écran actif (main/parametre) est enregistré dans la variable self.current dans la class App et peut prendre comme valeur: "main" et "parametre".
 
 Voici une liste des écrans  de ``/screens``:
 
@@ -52,7 +52,7 @@ Voici une liste des écrans  de ``/screens``:
 - **Caractéristiques** :
   - Charge ``data/logo.txt`` contenant le logo.
   - Centre ou aligne le logo selon les paramètres utilisateur.
-  - Peut etre affiché soit a gauche ("left") ou milieu ("center") selon les réglage de l'utilisateur 
+  - Peut être affiché soit à gauche ("left") ou au milieu ("center") selon les réglage de l'utilisateur.
 
 ### 2. `MainScreen`
 - **Fichier** : `screens/main_screen.py`
@@ -62,7 +62,7 @@ Voici une liste des écrans  de ``/screens``:
 
 ### 3. `DetailPanel` 
 - **Fichier** : `screens/detail_panel_screen.py`
-- **Description** : Affiche un panneau avec les détails du projet selectionné dans une fenêtre dédiée sur le coté gauche de la fenetre main
+- **Description** : Affiche un panneau avec les détails du projet selectionné dans une fenêtre dédiée sur le coté gauche de la fenêtre main.
 - **Caractéristiques** :
   - Crée une fenêtre avec des bordures.
 
@@ -73,7 +73,7 @@ Voici une liste des écrans  de ``/screens``:
 - **Description** : Permet de configurer les paramètres de l'application.
 - **Caractéristiques** :
   - Affiche une liste de paramètres modifiables.
-  - S'affiche a la place de MainScreen
+  - S'affiche à la place de MainScreen.
   - Gère la navigation et la sélection des options.
   
 ### 5. `Input`

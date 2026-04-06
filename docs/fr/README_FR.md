@@ -1,19 +1,10 @@
-```text
-$$$$$$$\  $$\                     $$\        $$$$$$\                  $$\           
-$$  __$$\ \__|                    $$ |      $$  __$$\                 $$ |          
-$$ |  $$ |$$\ $$\   $$\  $$$$$$\  $$ |      $$ /  \__| $$$$$$\   $$$$$$$ | $$$$$$\  
-$$$$$$$  |$$ |\$$\ $$  |$$  __$$\ $$ |      $$ |      $$  __$$\ $$  __$$ |$$  __$$\ 
-$$  ____/ $$ | \$$$$  / $$$$$$$$ |$$ |      $$ |      $$ /  $$ |$$ /  $$ |$$$$$$$$ |
-$$ |      $$ | $$  $$<  $$   ____|$$ |      $$ |  $$\ $$ |  $$ |$$ |  $$ |$$   ____|
-$$ |      $$ |$$  /\$$\ \$$$$$$$\ $$ |      \$$$$$$  |\$$$$$$  |\$$$$$$$ |\$$$$$$$\ 
-\__|      \__|\__/  \__| \_______|\__|$$$$$$\\______/  \______/  \_______| \_______|
-                                      \______|
-```
 # 🇫🇷 - Versions :
-### Qu'est-ce que Pixel_Code ?
-Pixel_Code est un outil en Python permettant de facilement enregistrer vos projets en cours, et de les ouvrir facilement depuis le terminal avec une petite interface.
 
 ![](/docs/assets/preview.png)
+
+### Qu'est-ce que Pixel_Code ?
+Pixel_Code est un outil en Python permettant de facilement enregistrer vos projets en cours, et de les ouvrir facilement depuis le terminal avec une interface.
+
 
 > [!NOTE]
 >
@@ -73,7 +64,7 @@ Voir la **documentation** : [ici](/docs/fr/index.md)
     >[!WARNING]
     >
     > * Si vous recevez une erreur :
-    > **Allez voir instalation avancé windows [en cliquant ici](/docs/fr/install.md)**
+    > **Allez voir installation avancée windows [en cliquant ici](/docs/fr/install.md)**
         
     </details>
 
@@ -95,12 +86,12 @@ Voir la **documentation** : [ici](/docs/fr/index.md)
 > Raccourcis clavier :
 > 
 > * **ESPACE** : afficher / désactiver la vue complète sur un projet
-> * **q** : arrêter l’exécution du fichier
+> * **q** : arrêter l’exécution du programme
 > * **↑/↓** : navigation
 > * **p** : ouvrir les paramètres
 > * **r** : recharger l’affichage (marche seulement dans branch main)
 > * **e** : éditer les données d’un projet depuis Pixel_Code (pas encore fonctionnel)
-> * **a** : ajoutez un projet
+> * **a** : ajouter un projet
 > * **d** : suprimer un projet
 > * **g** : faire action github (pas dispo)
 
@@ -111,7 +102,7 @@ Voir la **documentation** : [ici](/docs/fr/index.md)
 * librairie python : curses pour l'affichage
 * librairie python : request pour le systeme de mise a jour
 * pyproject.tmol
-* .json pour les données enregistré
+* .json pour les données enregistrées
 
 ### License : 
 Le projet est sous license GNU - voir le fichier [LICENSE](/LICENSE.md) pour plus d'informations.

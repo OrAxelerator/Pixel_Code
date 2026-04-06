@@ -1,23 +1,12 @@
-```text
-$$$$$$$\  $$\                     $$\        $$$$$$\                  $$\           
-$$  __$$\ \__|                    $$ |      $$  __$$\                 $$ |          
-$$ |  $$ |$$\ $$\   $$\  $$$$$$\  $$ |      $$ /  \__| $$$$$$\   $$$$$$$ | $$$$$$\  
-$$$$$$$  |$$ |\$$\ $$  |$$  __$$\ $$ |      $$ |      $$  __$$\ $$  __$$ |$$  __$$\ 
-$$  ____/ $$ | \$$$$  / $$$$$$$$ |$$ |      $$ |      $$ /  $$ |$$ /  $$ |$$$$$$$$ |
-$$ |      $$ | $$  $$<  $$   ____|$$ |      $$ |  $$\ $$ |  $$ |$$ |  $$ |$$   ____|
-$$ |      $$ |$$  /\$$\ \$$$$$$$\ $$ |      \$$$$$$  |\$$$$$$  |\$$$$$$$ |\$$$$$$$\ 
-\__|      \__|\__/  \__| \_______|\__|$$$$$$\\______/  \______/  \_______| \_______|
-                                      \______|
-```
 # 🇬🇧/🇺🇸 - English Version
 
 [See the 🇫🇷 README](/docs/fr/README_FR.md)
 
+![](/docs/assets/preview.png)
 
-### What is Pixel_Code?
+## What is Pixel_Code?
 Pixel_Code is a Python tool that makes it easier to open projects in VS Code and provides better organization and visualization of ongoing and completed projects. It works from the terminal with a simple interface.
 
-![](/docs/assets/preview.png)
 
 > [!NOTE]
 >
@@ -87,7 +76,7 @@ see **documentation** : [here](/docs/eng/index.md)
 
 > [!IMPORTANT]
 >
-> For the icons to work, you need to set the **"0xProto Nerd Font"** in your terminal, and if you want to run the code in VS Code, you also need to set **Terminal › Integrated: Font Family** = `"0xProto Nerd Font"`
+> For the icons to work, you need to set the **"0xProto Nerd Font"** in your terminal, and if you want to run the code in VS Code, you also need to set **Terminal › Integrated: Font Family** = `"0xProto Nerd Font"`.
 >
 > Link to install the font: https://github.com/ryanoasis/nerd-fonts/releases/download/v3.4.0/0xProto.zip
 
@@ -95,15 +84,15 @@ see **documentation** : [here](/docs/eng/index.md)
 >
 > Keyboard shortcuts:
 > 
-> * **SPACE**: show/hide full view on a project
-> * **q**: stop the execution of the tui
-> * **↑/↓**: navigation
-> * **p**: open settings
-> * **r**: reload the display (only works in main branch)
-> * **e**: edit project data from Pixel_Code (not yet functional)
-> * **a**: add a project
-> * **d**: delete a project
-> * **g**: perform github action (not available)
+> * **SPACE**: show/hide full view on a project.
+> * **q**: stop the execution of the tui.
+> * **↑/↓**: navigation.
+> * **p**: open settings.
+> * **r**: reload the display (only works in main branch).
+> * **e**: edit project data from Pixel_Code (not yet functional).
+> * **a**: add a project.
+> * **d**: delete a project.
+> * **g**: perform github action (not available).
 
 ---
 

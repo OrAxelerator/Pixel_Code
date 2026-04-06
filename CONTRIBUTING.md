@@ -17,5 +17,6 @@
 * Faire du code facile a lire/comprendre.
 * écrire les commentaires **en anglais**, pas français.
 * Le faire marcher en anglais et francais.
+* Faire marcher le code sur Linux/MacOs et Windows. 
 * Garder la logique du dépot.
 * Pas de print()/input().

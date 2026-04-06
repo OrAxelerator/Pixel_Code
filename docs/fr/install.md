@@ -82,7 +82,7 @@ Puis Tapez : ```py -m pip install -e .``` :
 
 --- 
 
-### Une fois l'intstalation fini :
+### Une fois l'Installation terminée :
 
 > [!NOTE]
 >
@@ -90,4 +90,4 @@ Puis Tapez : ```py -m pip install -e .``` :
 
 ---
 
-Si le code se lance **sans crash** mais a des bugs a affiché certain caractère icone : allez voir [CONFIG](/docs/fr/config.md)
+Si le code se lance **sans crash** mais que certains caractères sont mal affichés : allez voir [CONFIG](/docs/fr/config.md)

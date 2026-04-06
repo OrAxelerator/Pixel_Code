@@ -18,13 +18,13 @@ Puis, la fenêtre affichée (seulement les fenêtres qui prennent 100 % de l'esp
 ## self.run()
 
 S'occupe :
-- d'afficher le logo
-- d'afficher la fenêtre `main` à l'init
-- puis de lancer une boucle `while True`
+- d'afficher le logo.
+- d'afficher la fenêtre `main` à l'init.
+- puis de lancer une boucle `while True`.
 
 Cette boucle détecte :
-- quelle touche est pressée
-- quoi faire en fonction de l'écran
+- quelle touche est pressée.
+- quoi faire en fonction de l'écran.
 
 ---
 
@@ -33,4 +33,4 @@ Cette boucle détecte :
 À noter que la fonction `get_key()` ne renvoie pas toutes les touches du clavier.
 
 Pour rajouter une fonction à l'appui d'une touche, il faut rajouter cette touche dans :
-`pixel_code/script/keybord.py`
+`pixel_code/script/keybord.py` dans la condition os == "nt" (windows), os == "Darwin" ("macos") et Linux. 
