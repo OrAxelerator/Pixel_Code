@@ -42,9 +42,20 @@ cd ./Pixel_Code
 ```
 regardez si pip est installez avec : ```pip --version``` ou ```py -m pip --version```<br>
 Si **pip n'est pas installé**, installez le.
-
-
 Puis Tapez : ```py -m pip install -e .``` :
+* Si vous recevez cette eurreur : 
+    ```
+    WARNING: The script xxx.exe is installed in 'C:\Users\XXX\AppData\Local\Microsoft\WindowsApps' which is not on PATH
+    ```
+    C'est que vous avez surement télécharger python depuis le Microsoft store (pas bien)
+    allez le télechrgez sur le site officiel : [python.org](https://www.python.org/)
+
+    installé pip avrec python : 
+    * py -m ensurepip --upgrade
+    * py -m pip install --upgrade pip
+
+    ---
+
 * Si vous recevez l'erreur :
     ```
     Successfully uninstalled pixel-code-0.1.0 WARNING: The script pixel-code.exe is installed in 'C:\Users\User\AppData\Local\Python\pythoncore-3.14-64\Scripts' which is not on PATH. Consider adding this directory to PATH or, if you prefer to suppress this warning, use --no-warn-script-location. Successfully installed pixel-code-0.1.0
@@ -67,16 +78,6 @@ Puis Tapez : ```py -m pip install -e .``` :
     et problème réglez
     </details>
 
-* Ou sinon si vous recevez cette eurreur : 
-    ```
-    WARNING: The script xxx.exe is installed in 'C:\Users\XXX\AppData\Local\Microsoft\WindowsApps' which is not on PATH
-    ```
-    C'est que vous avez surement télécharger python depuis le Microsoft store (pas bien)
-    allez le télechrgez sur le site officiel : [python.org](https://www.python.org/)
-
-    installé pip avrec python : 
-    * py -m ensurepip --upgrade
-    * py -m pip install --upgrade pip
 
 </details>
 

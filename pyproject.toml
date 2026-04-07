@@ -9,6 +9,7 @@ description = "Pixel_Code - TUI pour gérer et ouvrir des projets"
 requires-python = ">=3.8"
 dependencies = [
     "requests",
+    "windows-curses; platform_system == 'Windows'"
 ]
 [project.scripts]
 pixel-code = "pixel_code.__main__:main"

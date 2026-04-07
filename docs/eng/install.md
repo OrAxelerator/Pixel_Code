@@ -47,9 +47,25 @@
     cd ./Downloads/Pixel_Code
     py -m pip install -e .
     ```
+    Normally with v0.4.0 the only error you can get is :
+    - pip ins't install
+    - you do python but you're computer use py 
+    
+* Or if you get this issus : 
+    ```
+    WARNING: The script xxx.exe is installed in 'C:\Users\XXX\AppData\Local\Microsoft\WindowsApps' which is not on PATH
+    ```
+    You surely use python from MicrosoftStore (bad)
+    Go download python on the official website : [python.org](https://www.python.org/)
+
+    Download pip with python : 
+    * py -m ensurepip --upgrade
+    * py -m pip install --upgrade pip
     * If you get an error:
+        
+        
         <details>
-        <summary>Do :</summary>
+        <summary>other error :</summary>
     
             2. Win + R 
             3. in the popup write : sysdm.cpl
@@ -65,15 +81,5 @@
             issu solved (normally)
         </details>
 
-* Or if you get this issus : 
-    ```
-    WARNING: The script xxx.exe is installed in 'C:\Users\XXX\AppData\Local\Microsoft\WindowsApps' which is not on PATH
-    ```
-    You surely use python from MicrosoftStore (bad)
-    Go download python on the official website : [python.org](https://www.python.org/)
-
-    Download pip with python : 
-    * py -m ensurepip --upgrade
-    * py -m pip install --upgrade pip
 
 </details>

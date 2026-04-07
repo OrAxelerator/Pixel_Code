@@ -63,6 +63,7 @@ see **documentation** : [here](/docs/eng/index.md)
     cd ./Pixel_Code
     py -m pip install -e .
     ```
+    (or python)
     * If you get an error:
     **See advanced Windows installation [by clicking here](/docs/eng/install.md)**
         
