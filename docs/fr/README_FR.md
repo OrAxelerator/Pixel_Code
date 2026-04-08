@@ -105,7 +105,7 @@ Voir la **documentation** : [ici](/docs/fr/index.md)
 * .json pour les données enregistrées
 
 ### License : 
-Le projet est sous license GNU - voir le fichier [LICENSE](/LICENSE.md) pour plus d'informations.
+Le projet est sous license MIT - voir le fichier [LICENSE](/LICENSE.md) pour plus d'informations.
 
 ### Contributing info
 

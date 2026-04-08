@@ -105,7 +105,7 @@ see **documentation** : [here](/docs/eng/index.md)
 * .json for saved data
 
 ### License:
-The project is under GNU license - see the [LICENSE](/LICENSE.md) file for more information.
+The project is under MIT license - see the [LICENSE](/LICENSE.md) file for more information.
 
 ### Contributing info
 
