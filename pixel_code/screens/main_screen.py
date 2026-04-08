@@ -165,18 +165,18 @@ class MainScreen:
     def add_project(self):
         txt_create_project = {
             "en" : {
-                "name" : "  - Name of the project",
-                "description" : "  - Description of the project",
-                "langage" : "  - Langages (separated by commas)",
-                "path" : "  - Directory of the project",
-                "repo" : "  - Url of the github repo"
+                "name" : "  - Name of the project",
+                "description" : "  - Description of the project",
+                "langage" : "  - Langages (separated by commas)",
+                "path" : "  - Directory of the project",
+                "repo" : "  - Url of the github repo"
             },
             "fr" : {
-                "name" : "  - Nom du projet",
-                "description" : "  - Description du projet",
-                "langage" : "  - Langages (séparés par des virgules)",
-                "path" : "  - Chemin du projet",
-                "repo" : "  - Url du dépot github"
+                "name" : "  - Nom du projet",
+                "description" : "  - Description du projet",
+                "langage" : "  - Langages (séparés par des virgules)",
+                "path" : "  - Chemin du projet",
+                "repo" : "  - Url du dépot github"
             }
         }
         try:
