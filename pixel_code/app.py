@@ -1,17 +1,11 @@
 import os
 import json
 import subprocess
-import colorama  
 import sys
-colorama.init()
-
 from pixel_code.script.keybord import get_key
-from pixel_code.script.get_update import get_update
-from pixel_code.script.is_update_available import is_update_available
 from pixel_code.script.translate import translate
 from pixel_code.script.terminal.clear_terminal import clear_terminal
 from pixel_code.script.terminal.clear_from_line import clear_from_line
-from pixel_code.script.git.clone import clone_repo
 
 import shutil
 from pathlib import Path
@@ -22,38 +16,6 @@ BASE_DIR = Path(__file__).resolve().parent
 LOGO_TXT   = BASE_DIR / "data/logo.txt"
 PROJECTS_JSON = BASE_DIR / "data/projects.json"
 PARAMETRES_JSON   = BASE_DIR  / "data/parametres.json"
-
-
-
-# todo :
-#   - sys of pip => installer.py
-#   - Check if user have wifi
-#   - make option to add pixelcode.json so when install new code VIA pixel_code pop to add project on fork on pixel code
-#   -  make something cool with nerd font for icon
-#   -  think about integration in pixel_nav => pixelcode.json ? ..
-#   -  clearFormLine(line=12) hard-coded => bad, calcule height of logo ?
-#   - programme de mise a jour automatique
-#   - Do something cleaner at change_value() in Param
-#   - Improve translate systeme ... 
-#   - projet.json : icone = ["":iconed de base, "favortite : icone + cœur, "]
-#   - Use quit() func in main  instead of break in code
-#   - # Make error message if pwd is False in open_code (Project)
-#   - Use import color
-#   - Choose IDE 
-#   - print_bottom_txt()
-
-# coeur : 󱃪
-# side project : 󰉌
-# add folder : 
-
-# icone (NF) : https://www.nerdfonts.com/cheat-sheet
-
-# Call the code : "pixel-code"
-
-# on macOs : pip install -e .
-# on Ubuntu use pipx and write : pipx install . 
-# on Windows 11 ... go see the README
-
 
 
 
@@ -77,27 +39,8 @@ class Main:
     def run(self):
         # Lauch app
 
-        last_version = get_update() # Check if user have wifi
-        self.parametre.last_version = last_version
         
-        if is_update_available(self.parametre.version, last_version):
-            txt_update = {
-                "en" : f"[Pixel-Code] A new version is here.",
-                "fr" : f"[Pixel-Code] Une nouvelle mise a jour est disponible."
-            }
-            txt_pass = {
-                "en" : "[Enter to pass]",
-                "fr" : "[Tapez pour passer]"
-            }
-            # [Pixel-Code] Une nouvelle mise a jour est disponible.
-            
-            print(translate(txt_update, self.parametre.language))
-            input(translate(txt_pass, self.parametre.language))
-            #if rep == "" or rep == "y" or rep == "o" or rep == "Y" or rep == "O":
-            #   update_txt = [["Update dowload"], ["Mis a jour"]]
-            #   print(translate(update_txt, self.parametre.language))
-               # Update() <= todo
-          
+
         clear_terminal() # Voir si peut faire autrement ..
 
         self.load_projects()
@@ -453,7 +396,11 @@ class Project:
         
 
         # Styles ANSI
-        self.Tname = f"{colorama.Style.BRIGHT}{colorama.Fore.BLUE}{self.name}{colorama.Style.RESET_ALL}" # mArhce mais galere
+        RESET = "\033[0m"
+        BOLD = "\033[1m"
+        BLUE = "\033[34m"
+
+        self.Tname = f"{BOLD}{BLUE}{self.name}{RESET}"
 
         
 
@@ -574,7 +521,6 @@ class Param:
         self.theme = "default"
         self.display_tutorial = False
         self.version = None
-        self.last_version = None # To load from github
         self.check_update = True # Check updae at lauch
         self.details_mode_default = False
         self.truncate_text = True
