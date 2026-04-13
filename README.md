@@ -7,6 +7,7 @@ Pixel_Code est un outil en Python permettant de facilement enregistrer vos proje
 --- 
 
 # Comment marche le lancement de l'app
+
 tout ce fait dans __main__.py (/pixel_code/__main__.py)
 
 La fonction ``main()``appelle la classe Main() qui lance le programme
@@ -18,7 +19,8 @@ La fonction ``main()``appelle la classe Main() qui lance le programme
 Pour lancer le programme tapez :
 ```python
 python3 pixel_code/__main__.py
-````
+```
+depuis la racine du projet
 
 --- 
 
