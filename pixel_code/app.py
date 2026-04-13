@@ -119,12 +119,8 @@ class Main:
                             if url == None:
                                 txt_error = {"en" : "No url found",
                                              "fr": "Aucune url trouvé"}
-                            else :
-                                clone_repo(url)
-                        elif res == "p":
-                            from pixel_code.script.git.pull import git_pull
-                            dir = self.projectsArray[self.selection].pwd
-                            git_pull(dir)
+                            
+                        
                         else:
                             clear_from_line()
                             self.show_git = False
