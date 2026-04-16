@@ -29,7 +29,6 @@ blanck_project = {
     "path": f"{BASE_DIR}",
     "repo": "https://github.com/OrAxelerator/Pixel_Code.git"
 }
-print()
 create_pixelcode_config(blanck_project)
 add_project_global(PROJECTS_JSON, str(BASE_DIR))
                    

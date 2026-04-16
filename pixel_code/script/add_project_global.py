@@ -7,8 +7,7 @@ def add_project_global(path_json_projects, path):
     # open/load json
     with open(path_json_projects, "r") as f:
         data = json.load(f)
-        print(path_json_projects)
-        print(data)
+        
 
     
     if path not in data.get("projects", []):
