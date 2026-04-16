@@ -1,46 +1,4 @@
 {
-    "0": {
-        "name": "Clavier NSI",
-        "pwd": "/home/oraxelerator/Bureau/Cours/Nsi/1209/edit",
-        "description": "Clavier html 3 langues",
-        "programming_languages": [
-            "JavaScript",
-            "HTML",
-            "CSS"
-        ],
-        "editor": "code",
-        "icon": "",
-        "repo": "",
-        "avancement": {
-            "code": "true",
-            "git": "False"
-        }
-    },
-    "1": {
-        "name": "Pixel Code",
-        "pwd": "/home/oraxelerator/Scripts/Pixel_code",
-        "description": "TODOLIST mais pour projet code",
-        "programming_languages": [
-            "Python"
-        ],
-        "editor": "code",
-        "icon": "side",
-        "repo": "https://github.com/OrAxelerator/Pixel_Code.git",
-        "avancement": {
-            "code": "False",
-            "git": "False"
-        }
-    },
-    "2": {
-        "name": "myEnt",
-        "description": "extensions nav",
-        "programming_languages": [
-            "js",
-            "html",
-            "css"
-        ],
-        "pwd": "/home/oraxelerator/Bureau/Pixel_Code",
-        "editor": "code",
-        "repo": "https://github.com/OrAxelerator/myEnt.git"
-    }
+    "projects": [
+    ]
 }

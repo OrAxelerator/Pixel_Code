@@ -1,39 +1,21 @@
-# License
+MIT License
 
-## Droits et restrictions
+Copyright (c) 2026 OrAxelerator
 
-Ce projet est fourni librement avec les conditions suivantes :
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
 
-- ✅ Le code peut être étudié, modifié et utilisé
-- ✅ La création de forks est autorisée
-- ❌ **Il est strictement interdit de réutiliser le même nom de projet**
--  Tout fork ou redistribution doit inclure un lien visible vers le projet original
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
 
-Le nom du projet original est réservé et ne peut en aucun cas être utilisé pour un projet dérivé, modifié ou redistribué.
-
----
-
-## Forks
-
-Les forks sont autorisés à condition de :
-- changer le nom du projet
-- mentionner clairement le dépôt original
-- conserver ce fichier de licence
-
----
-
-## Contribution
-
-Toute contribution est la bienvenue, sans restriction de statut ou d’expérience.
-
-En contribuant à ce projet, vous acceptez de respecter les règles suivantes :
-
-
-## Clause de responsabilité
-
-Ce projet est fourni **tel quel**, sans aucune garantie.
-L’auteur ne peut être tenu responsable de tout dommage résultant de son utilisation.
-
----
-
-© Projet original – tous droits réservés
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.

@@ -2,19 +2,19 @@
     "app": {
         "language": "en",
         "use_nerd_font": true,
-        "display_tutorial": false,
-        "theme": "default",
-        "version": "v0.3.0",
-        "check_update": true
+        "version": "v0.4.0",
+        "check_update_at_launch": true,
+        "allow_prerelease": true
     },
     "ui": {
-        "details_mode_default": false,
-        "truncate_text": true,
-        "path_truncate_mode": "middle",
-        "clear_mode": "partial"
+        "theme": "default",
+        "logo": "left",
+        "display_project": "side"
     },
     "projects": {
-        "auto_reload": false,
-        "sort_by_name": false
+        "sort_by_last_opened": true,
+        "sort_by_name": false,
+        "editor": "vim",
+        "repo": "github"
     }
 }

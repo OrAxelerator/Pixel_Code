@@ -1,6 +1,3 @@
-
-
-
 def translate(text, langage) -> str:
     """
     :param text: array: [0] = english, [1] = french
