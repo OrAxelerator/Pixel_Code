@@ -70,6 +70,14 @@ Voir la **documentation** : [ici](/docs/fr/index.md)
 
 ---
 
+> [!IMPORTANT]
+>
+> Avant de lancer Pixel_Code executez le fichier ``first_use.py`` avec :
+> python3 pixel_code/first_use.py (sur MacOS/Linux)
+> python pixel_code/first_use.py (windows)
+> py pixel_code/first_use.py (aussi windows si l'autre ne marche pas)
+
+
 > [!NOTE]
 >
 > Appelez l'app en tapant la commande : **pixel-code**

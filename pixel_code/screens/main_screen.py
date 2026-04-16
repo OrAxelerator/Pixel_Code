@@ -38,7 +38,7 @@ import logging
 import math
 
 
-
+# from pixel_code.paths import PROJECTS_JSON # for V0.4.1
 BASE_DIR = Path(__file__).resolve().parent.parent
 # input(BASE_DIR) #debug
 PROJECTS_JSON = BASE_DIR / "data/projects.json"
@@ -75,15 +75,16 @@ class MainScreen:
     def load_projects(self):
         logging.debug("load_project in MainScreen")
         try:
-            
-            with open(PROJECTS_JSON, encoding="utf-8") as f:
-                self.projets = json.load(f)
-                #for path in self.projets:
-            
-                for i, project in enumerate(self.projets["projects"]): #recup tout les prjet en tant que class dans projetArray
-                    DATA = get_project_data(project["path"])
-                    self.projectsArray.append(Project(self, project["id"], DATA))
+            if PROJECTS_JSON.exists():
+                with open(PROJECTS_JSON, encoding="utf-8") as f:
+                    self.projets = json.load(f)
+                    #for path in self.projets:
+                    
+                    for i, project in enumerate(self.projets["projects"]): #recup tout les prjet en tant que class dans projetArray
+                        DATA = get_project_data(project["path"])
+                        self.projectsArray.append(Project(self, project["id"], DATA))
         except FileNotFoundError:
+            logging.warning(f"FILE {PROJECTS_JSON} NOT FOUND")
             #"Fichier projets.json introuvable.
             # self.projet = {} so..
             pass
