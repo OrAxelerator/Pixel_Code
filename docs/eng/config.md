@@ -1,15 +1,19 @@
 # Configuration nécéssaire :
 
-* Activer réellement les icones :
+* For activate icone  :
 
-    Pour Activer les icones il suffit de changer la font    de votre terminal par **"0xProto Nerd Font"**, et si vous souhaitez exécuter le code aussi dans VS Code, il faut appliquer la font dans le terminal vscode **Terminal › Integrated: Font Family** = `"0xProto Nerd Font"`
+    For activate icon you need to use **"0xProto Nerd Font"** and use a different terminal appliaction like iterm2 for macos, And if you want execute it on vscode cmd, you need to apply the font on the vscode cmd in settings **Terminal › Integrated: Font Family** = `"0xProto Nerd Font"`
 
-    > Lien pour installer la police : https://github.com/   ryanoasis/nerd-fonts/releases/download/v3.4.0/0xProto.zip
+    > Link to install the font : https://github.com/   ryanoasis/nerd-fonts/releases/download/v3.4.0/0xProto.zip
 
 <br>
 
-* Changer les parametres :
+* Change setting :
 
-    Pour changer les parametres une windows et accessible via la touche ``p``mais peut etre certain parametre **ne sont pas encore modifiable** depuis cette interface, pour acceder totalement au parametre allez à : ``/pixel_code/data/parametres.json``
+    To change setting use the parametre screen (open it with "p" ). **Maybe some setting may not yet be modifiable**. To edit every setting go to  ``/pixel_code/data/parametres.json``
 
 
+>[!NOTE]
+>
+> To lauch in**debug mod** :
+>   From the root execute : ``python3 pixel_code/__main__.py --debug`` (or py/python according to your OS) All the logs are write in debug.log.

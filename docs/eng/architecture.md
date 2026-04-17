@@ -6,20 +6,20 @@
 ```
 {
     "app": {
-        "language": "fr", ("fr", "en")
+        "language": "en", ("fr", "en")
         "use_nerd_font": true, # Icone
         "version": "v0.4.0",
         "check_update_at_launch": true,
         "allow_prerelease": true
     },
     "ui": {
-        "theme": "default", # Fait rien pour l'instant
-        "logo": "left" # positionnement du logo ("center", "left")
+        "theme": "default", # Do nothing for now
+        "logo": "left" # positoin of the logo ("center", "left")
     },
     "projects": {
         "sort_by_last_opened": true,
         "sort_by_name": false,
-        "editor": "code" # ("code", "vim")
+        "editor": "code" # ("code", "vim", "cmd")
     }
 }
 ```
@@ -38,53 +38,46 @@
 }
 
 ```
+## How screen works (`screens`) ?
 
+Screens on Pixel_Code are user interface build with the librarie `curses`. Each screen is built on a python class and is made to manage a specific part of the app. Also each screen is init with a reference to the main app (`maain_app`) from ``app.py`` for access to share ressource like `stdscr` (windows of the terminal for curses) and the setting manager ``ParamManger``. Screens use curses windows  (`newwin`) to display themselve. The active screen is save on the variable `self.current` in the App class and can take "main" / "parametre" for value
 
-## Fonctionnement des écrans (`screens`)
-
-Les écrans dans Pixel Code sont des interfaces utilisateur construites avec la bibliothèque `curses`. Chaque écran est encapsulé dans une classe Python et est conçu pour gérer une partie spécifique de l'application. Deplus chaque écran est initialisé avec une référence à l'application principale (`main_app`) depuis ``app.py`` pour accéder aux ressources partagées comme `stdscr` (l'écran principal de `curses`) et les gestionnaires de données. Les écrans utilisent des fenêtres (`newwin`) pour afficher leurs contenus et interagir avec l'utilisateur.
-
-Voici une liste des écrans  de ``/screens``:
+Here a list of screens ``/screens``:
 
 ### 1. `Logo`
-- **Fichier** : `screens/logo_screen.py`
-- **Description** : Affiche le logo ascii Pixel_Code en haut de l'écran.
-- **Caractéristiques** :
-  - Charge ``data/logo.txt`` contenant le logo.
-  - Centre ou aligne le logo selon les paramètres utilisateur.
-  - Peut etre affiché soit a gauche ("left") ou milieu ("center") selon les réglage de l'utilisateur 
+- **File** : `screens/logo_screen.py`
+- **Description** : Display the ascii Logo on the top of the screen.
+- **Characteristics** :
+  - Load ``data/logo.txt``.
+  - Can display the logo in center or left according to user setting.
+
 
 ### 2. `MainScreen`
-- **Fichier** : `screens/main_screen.py`
-- **Description** : Point d'entrée principal pour gérer les interactions utilisateur.
-- **Caractéristiques** :
-  - Coordonne les différents écrans.
+- **File** : `screens/main_screen.py`
+- **Description** : Display the list of procjects.
+
 
 ### 3. `DetailPanel`
-- **Fichier** : `screens/detail_panel_screen.py`
-- **Description** : Affiche un panneau avec les détails du projet selectionné dans une fenêtre dédiée sur le coté gauche de la fenetre main
-- **Caractéristiques** :
-  - Crée une fenêtre avec des bordures.
+- **File** : `screens/detail_panel_screen.py`
+- **Description** : Display a pannel with details of the selected project in a new windows on the right.
+- **Characteristics** :
+  - Create a windows with border.
 
 ### 4. `ParamScreen`
-- **Fichier** : `screens/param_screen.py`
-- **Description** : Permet de configurer les paramètres de l'application.
-- **Caractéristiques** :
-  - Affiche une liste de paramètres modifiables.
-  - S'affiche a la place de MainScreen
-  - Gère la navigation et la sélection des options.
+- **File** : `screens/param_screen.py`
+- **Description** : Give acess to manage setting of the app.
+- **Characteristics** :
+  - Display the modifiable setting.
+  - Display on top of MainScreen.
   
 ### 5. `Input`
-- **Fichier** : `screens/input_curses.py`
-- **Description** : Gère les entrées utilisateur dans une zone de texte.
-- **Caractéristiques** :
-  - Affiche une boîte de saisie avec un titre.
-  - Permet à l'utilisateur de taper du texte et de le récupérer.
+- **File** : `screens/input_curses.py`
+- **Description** : Manage user input in a text box.
+- **Characteristics** :.
+  - Input box can have a title and have pre-fill text in it.
 
-Représenttion des fenètres dans le terminal : 
+Preview of all the windows in the terminal :
 <img src="/docs/assets/interface.png" style='with:300px; height:220px; margin:0 auto;'>
 
 ---
 
-### Param manager
-Toute les donnés des parametres utilisateur sont enregistrer dans ``parametre.json`` et gérer par ``pixel_code/script/data/param_manager.py``
