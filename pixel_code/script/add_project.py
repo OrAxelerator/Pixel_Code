@@ -18,7 +18,7 @@ def create_pixelcode_config(data_projects: dict):
         raise FileNotFoundError(f"Dossier projet introuvable : {project_path}")
 
     if config_file.exists():
-        raise FileExistsError(f"BRUH")
+        raise FileExistsError(f"\n{"-"*10}\nCONFIG FILE ALREADY EXISTE (.pixelcode.json) \nDelete it with : rm {config_file}\n{"-"*10}")
         
 
     # default config
