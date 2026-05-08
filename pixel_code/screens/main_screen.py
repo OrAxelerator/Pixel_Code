@@ -30,20 +30,13 @@ import subprocess
 from pixel_code.screens.input_curses import Input
 from pixel_code.screens.detail_panel_screen import DetailPanel
 import os
+from pixel_code.paths import PROJECTS_JSON, ensure_user_files
 from pixel_code.utils.translate import translate
 from pixel_code.script.load_project_local import get_project_data
 from pixel_code.script.add_project import create_pixelcode_config
 from pixel_code.script.add_project_global import add_project_global
 import logging
 import math
-
-
-# from pixel_code.paths import PROJECTS_JSON # for V0.4.1
-BASE_DIR = Path(__file__).resolve().parent.parent
-# input(BASE_DIR) #debug
-PROJECTS_JSON = BASE_DIR / "data/projects.json"
-PARAMETRES_JSON   = BASE_DIR  / "data/parametres.json"
-
 
 
 class MainScreen:
@@ -74,6 +67,7 @@ class MainScreen:
 
     def load_projects(self):
         logging.debug("load_project in MainScreen")
+        ensure_user_files()
         try:
             if PROJECTS_JSON.exists():
                 with open(PROJECTS_JSON, encoding="utf-8") as f:
@@ -81,7 +75,13 @@ class MainScreen:
                     #for path in self.projets:
                     
                     for i, project in enumerate(self.projets["projects"]): #recup tout les prjet en tant que class dans projetArray
-                        DATA = get_project_data(project["path"])
+                        project_path = project.get("path")
+                        DATA = get_project_data(project_path)
+                        if DATA is False:
+                            msg = f"Project ignored: .pixelcode.json not found for {project_path}"
+                            logging.warning(f"{msg} (id={project.get('id')})")
+                            continue
+
                         self.projectsArray.append(Project(self, project["id"], DATA))
         except FileNotFoundError:
             logging.warning(f"FILE {PROJECTS_JSON} NOT FOUND")
@@ -220,6 +220,7 @@ class MainScreen:
 
     def delete_project(self):
         try:
+            ensure_user_files()
             txt_confirm = {
                 "en": f"Do you want to delete {self.projectsArray[self._selection]} : [y/N]",
                 "fr": f"Voulez-vous supprimer {self.projectsArray[self._selection]} : [y/N]"

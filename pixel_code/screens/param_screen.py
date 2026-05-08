@@ -1,9 +1,6 @@
 import curses
-from pathlib import Path
 import json
-BASE_DIR = Path(__file__).resolve().parent.parent
-PROJECTS_JSON = BASE_DIR / "data/projects.json"
-PARAMETRES_JSON   = BASE_DIR  / "data/parametres.json"
+from pixel_code.paths import PARAMETRES_JSON
 
 
 class ParamScreen:

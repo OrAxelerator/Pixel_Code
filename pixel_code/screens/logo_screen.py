@@ -1,9 +1,6 @@
 import curses
-from pathlib import Path
 from pixel_code.utils.translate import translate
-import logging
-BASE_DIR = Path(__file__).resolve().parent.parent
-LOGO_TXT = BASE_DIR / "data/logo.txt"
+from pixel_code.paths import LOGO_TXT
 
 class Logo():
     def __init__(self, main_app):
@@ -78,4 +75,3 @@ class Logo():
                     self.logo_window.addstr(0, 0, translate(error_msg, "en"))
 
                     
-

@@ -1,7 +1,7 @@
 # ParamManager
 
 
-ParamManger est une classe (``/pixel_code/script/data/param_manager.py``) créée dans app.py dans la variable ``self.param_manager``. Cette classe charge les paramètres utilisateur (/data/parametre.json) avec self.load_param() et enregistre les données avec self.save_param(). Pour obtenir une donnée il suffit d'accéder à la classe et utiliser get_data(key_section, key).
+ParamManger est une classe (``/pixel_code/script/data/param_manager.py``) créée dans app.py dans la variable ``self.param_manager``. Cette classe charge les paramètres utilisateur depuis le fichier ``PARAMETRES_JSON`` défini dans ``pixel_code/paths.py`` avec self.load_param() et enregistre les données avec self.save_param(). Le fichier est placé dans le dossier de configuration utilisateur via ``platformdirs``, ce qui permet de garder les paramètres pendant les mises à jour. Pour obtenir une donnée il suffit d'accéder à la classe et utiliser get_data(key_section, key).
 
 exemple : 
 ```json

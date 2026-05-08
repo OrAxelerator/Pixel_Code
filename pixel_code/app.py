@@ -7,6 +7,7 @@ from pixel_code.screens.param_screen import ParamScreen
 from pixel_code.screens.detail_panel_screen import DetailPanel
 from pixel_code.screens.input_curses import Input
 from pixel_code.script.data.param_manager import ParamManager
+from pixel_code.paths import LOG_FILE, ensure_user_files
 
 
 
@@ -14,10 +15,12 @@ import logging
 import sys
 # Start debug mod with python3 pixel_code/__main__.py --debug
 
+ensure_user_files()
+
 level = logging.DEBUG if "--debug" in sys.argv else logging.INFO
 
 logging.basicConfig(
-    filename="debug.log",
+    filename=LOG_FILE,
     level=level,
     format="%(asctime)s [%(levelname)s] %(message)s"
 )

@@ -72,10 +72,8 @@ Voir la **documentation** : [ici](/docs/fr/index.md)
 
 > [!IMPORTANT]
 >
-> Avant de lancer Pixel_Code executez le fichier ``first_use.py`` avec :
-> python3 pixel_code/first_use.py (sur MacOS/Linux)
-> python pixel_code/first_use.py (windows)
-> py pixel_code/first_use.py (aussi windows si l'autre ne marche pas)
+> Au premier lancement, Pixel_Code crée automatiquement ses fichiers utilisateur avec ``platformdirs``.
+> Les anciens fichiers ``pixel_code/data/projects.json`` et ``pixel_code/data/parametres.json`` sont migrés si aucun fichier utilisateur n'existe déjà.
 
 
 > [!NOTE]

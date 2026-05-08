@@ -3,8 +3,17 @@
 
 ### Les paramètres :
 
+Les fichiers utilisateur ne sont plus stockés dans ``pixel_code/data``. Pixel_Code utilise ``platformdirs`` pour les placer dans les dossiers standards de l'OS :
+
+- ``parametres.json`` dans le dossier de configuration utilisateur.
+- ``projects.json`` dans le dossier de données utilisateur.
+- ``debug.log`` dans le dossier de données utilisateur.
+
+Au lancement, Pixel_Code crée ces fichiers s'ils n'existent pas et migre les anciens JSON de ``pixel_code/data`` seulement si la nouvelle destination n'existe pas déjà.
+
 ```
 {
+    "schema_version": 1,
     "app": {
         "language": "fr", ("fr", "en")
         "use_nerd_font": true, # Icone
@@ -28,6 +37,7 @@
 
 ```
 {
+    "schema_version": 1,
     "projects": [
         {
             "id": "72b38123", #uuid4
@@ -81,7 +91,6 @@ Voici une liste des écrans  de ``/screens``:
 
 Représenttion des fenètres dans le terminal : 
 <img src="/docs/assets/interface.png" style='with:300px; height:220px; margin:0 auto;'>
-
 
 
 
