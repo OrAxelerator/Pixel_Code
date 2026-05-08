@@ -1,10 +1,19 @@
-# Architecture général du projet
+# General project architecture
 
 
-### Les paramètres :
+### Settings:
+
+User files are no longer stored in ``pixel_code/data``. Pixel_Code uses ``platformdirs`` to place them in the standard OS directories:
+
+- ``parametres.json`` in the user config directory.
+- ``projects.json`` in the user data directory.
+- ``debug.log`` in the user data directory.
+
+On launch, Pixel_Code creates these files if they do not exist and migrates old JSON files from ``pixel_code/data`` only if the new destination does not already exist.
 
 ```
 {
+    "schema_version": 1,
     "app": {
         "language": "en", ("fr", "en")
         "use_nerd_font": true, # Icone
@@ -28,6 +37,7 @@
 
 ```
 {
+    "schema_version": 1,
     "projects": [
         {
             "id": "72b38123", #
@@ -80,4 +90,3 @@ Preview of all the windows in the terminal :
 <img src="/docs/assets/interface.png" style='with:300px; height:220px; margin:0 auto;'>
 
 ---
-

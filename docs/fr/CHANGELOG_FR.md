@@ -57,3 +57,8 @@ Format : Y/M/D
 - Affichage mode "bottom" (├─ description : ...)
 
 
+## [0.5.0] - 2026-05-08
+
+### Rajouté :
+- Utilisation de platformdirs
+- message d'erreur quand .pixelcode.json pas trouvé sur chemin d'un projet

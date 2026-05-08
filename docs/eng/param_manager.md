@@ -1,6 +1,6 @@
 # ParamManager
 
-ParamManger is a class (``/pixel_code/script/data/param_manager.py``) create in app.py in  ``self.param_manager``. this class load user settings  (/data/parametre.json) with self.load_param() and save them with self.save_param(). To get a data of it use get_data(key_section, key).
+ParamManger is a class (``/pixel_code/script/data/param_manager.py``) created in app.py as ``self.param_manager``. This class loads user settings from ``PARAMETRES_JSON`` defined in ``pixel_code/paths.py`` with self.load_param() and saves them with self.save_param(). The file is stored in the user config directory through ``platformdirs``, so settings are preserved during updates. To get data from it, use get_data(key_section, key).
 
 exemple : 
 ```json
