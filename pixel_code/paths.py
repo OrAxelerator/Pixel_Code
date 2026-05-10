@@ -5,6 +5,11 @@ from pathlib import Path
 import json
 import shutil
 
+# FILE on :
+# -macos : /Users/<user>/Library/Application Support/Pixel_Code | ~/Library/Application\ Support/Pixel_Code 
+# -Linux : /home/<user>/.config/Pixel_Code | ~/.config/Pixel_Code
+# -Windows : C:\Users\<user>\AppData\Local\OrAxelerator\Pixel_Code
+
 APP_NAME = "Pixel_Code"
 APP_AUTHOR = "OrAxelerator"
 

@@ -1,7 +1,7 @@
 import curses
 import json
 from pixel_code.paths import PARAMETRES_JSON
-
+import logging
 
 class ParamScreen:
     def __init__(self, main_app):
@@ -185,7 +185,7 @@ class ParamScreen:
                     self.editor = data['projects'].get('editor', self.editor)
 
         except FileNotFoundError:
-            print("Fichier de paramètres introuvable.")
+            logging.error("parametres.json not found")
 
     def save_param(self):
         self.main_app.param_manager.save_param()

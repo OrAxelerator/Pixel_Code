@@ -53,9 +53,9 @@ class App:
 
 
     def run(self):
+        logging.info("-" * 10 + " START APPLICATION " + "-" * 10)
         self.logo.display_logo()
         self.main.display_main()
-        logging.info("main loop launched")
         while True:
             key = get_key()
 
