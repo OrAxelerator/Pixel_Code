@@ -29,4 +29,4 @@
 >[!NOTE]
 >
 > To launch in **debug mode**:
->   From the project root, run: ``python3 pixel_code/__main__.py --debug`` (or py/python according to your OS). Logs are written to ``debug.log`` in the user data directory.
+>   From the project root, run: ``python3 pixel_code/__main__.py --debug`` (or py/python according to your OS). Logs are written to ``debug.log`` in the user data directory. (tail -f debug.log)

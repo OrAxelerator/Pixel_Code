@@ -4,6 +4,7 @@ from platformdirs import user_data_dir, user_config_dir
 from pathlib import Path
 import json
 import shutil
+from importlib.metadata import version
 
 # FILE on :
 # -macos : /Users/<user>/Library/Application Support/Pixel_Code | ~/Library/Application\ Support/Pixel_Code 
@@ -12,6 +13,8 @@ import shutil
 
 APP_NAME = "Pixel_Code"
 APP_AUTHOR = "OrAxelerator"
+
+APP_VERSION = version("pixel-code")
 
 PACKAGE_DIR = Path(__file__).resolve().parent
 PACKAGE_DATA_DIR = PACKAGE_DIR / "data"
@@ -37,7 +40,7 @@ DEFAULT_PARAMETRES = {
     "app": {
         "language": "en",
         "use_nerd_font": False,
-        "version": "v0.5.0",
+        "version": APP_VERSION,
         "check_update_at_launch": True,
         "allow_prerelease": True,
     },

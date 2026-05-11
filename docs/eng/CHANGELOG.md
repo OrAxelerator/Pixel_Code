@@ -58,3 +58,21 @@ Format : Y/M/D
 - Github features
 
 
+## [0.5.0] - 
+
+### Added :
+- 4 new subcommande :
+    - --clean-projects :  Delete invalid projects if the path does not exist
+    - --clean-projects-hard : Delete invalid projects if .pixelcode.json is missing or the path does not exist
+    - --reset-config : reset parametres.json
+    - --clear-log : clear the debug.log file
+    You can see help with ``pixel-code -h```
+- .json file have now a 
+
+### Changed : 
+- All data file like parametres.json, projects.json, debug.log are now somewhere else in Appdata or Application Support or .config acording to the os, (platformdirs do it)
+- More debug/warming message in debug.log
+- logging.basicConfig is now In App
+- How the script get args in __main_.py
+- Default parametres get version now with what is write in pyproject.tmol (Attention it return version from the downloaded version in your machine)
+

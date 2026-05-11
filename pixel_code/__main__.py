@@ -1,3 +1,4 @@
+import argparse
 import os
 import sys
 import curses
@@ -48,20 +49,55 @@ def clean_invalid_projects(hard:bool):
         print(f"Error : {e}")
 
 
-def run(stdscr):
-    App(stdscr)
+
+def reset_confif():
+    from pixel_code.paths import DEFAULT_PARAMETRES, _write_json, PARAMETRES_JSON
+    _write_json(PARAMETRES_JSON, DEFAULT_PARAMETRES)
+
+def clear_log():
+    from pixel_code.paths import LOG_FILE
+    with open(LOG_FILE, "w", encoding="utf-8") as f:
+        f.write("")
+
+
+def parse_args():
+    parser = argparse.ArgumentParser(description="Pixel Code application launcher")
+    parser.add_argument("--clean-projects", action="store_true", help="Delete invalid projects if the path does not exist")
+    parser.add_argument("--clean-projects-hard", action="store_true", help="Delete invalid projects if .pixelcode.json is missing")
+    parser.add_argument("--reset-config", action="store_true", help="Reset setting of user not all of his projects")
+    parser.add_argument("--clear-log", action="store_true", help="Clear debug.log")
+    parser.add_argument("--debug", action="store_true", help="Enable debug logging")
+    return parser.parse_args()
+
+
+
+def run(stdscr, debug: bool = False):
+    App(stdscr, debug=debug)
     
 
 
 def main():
-    if "--clean-projects" in sys.argv:
+    args = parse_args()
+
+    if args.clean_projects:
         clean_invalid_projects(False)
-        sys.exit(0)
-    if "--clean-projects-hard" in sys.argv:
+
+    if args.clean_projects_hard:
         clean_invalid_projects(True)
+
+    if args.reset_config:
+        reset_confif()
+
+    if args.clear_log:
+        clear_log()
+
+    if args.clean_projects or args.clean_projects_hard or args.reset_config :
+        input("ENTER TO LAUNCH Pixel_Code")
+    else:
         sys.exit(0)
 
-    curses.wrapper(run) # lauch normally
+    curses.wrapper(lambda stdscr: run(stdscr, debug=args.debug))
+
 
 
 if __name__ == "__main__":

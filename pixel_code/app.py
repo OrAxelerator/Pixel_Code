@@ -1,4 +1,5 @@
 import curses
+import logging
 
 from pixel_code.script.keybord import get_key
 from pixel_code.screens.logo_screen import Logo
@@ -9,27 +10,27 @@ from pixel_code.screens.input_curses import Input
 from pixel_code.script.data.param_manager import ParamManager
 from pixel_code.paths import LOG_FILE, ensure_user_files
 
-
-
-import logging
-import sys
 # Start debug mod with python3 pixel_code/__main__.py --debug
 
 ensure_user_files()
 
-level = logging.DEBUG if "--debug" in sys.argv else logging.INFO
+# level = logging.DEBUG if "--debug" in sys.argv else logging.INFO
 
-logging.basicConfig(
-    filename=LOG_FILE,
-    level=level,
-    format="%(asctime)s [%(levelname)s] %(message)s"
-)
+
 
 # logging.debug("Valeur de x ")   # affiché seulement en --debug
 # logging.info("APP LAUNCH")   # affiché en --debug ET mode normal
 # logging.warning("Problème détecté")    # toujours affiché
 class App:
-    def __init__(self, stdscr):
+    def __init__(self, stdscr, debug):
+        level = logging.DEBUG if debug else logging.INFO
+        logging.basicConfig(
+            filename=LOG_FILE,
+            level=level,
+            format="%(asctime)s [%(levelname)s] %(message)s"
+        )
+        logging.debug("-" * 15 + " init() " + "-" * 15)
+        logging.debug(f"debug value : {debug}")
         self.stdscr = stdscr
         self.stdscr.keypad(True)
         curses.curs_set(0)
@@ -53,7 +54,7 @@ class App:
 
 
     def run(self):
-        logging.info("-" * 10 + " START APPLICATION " + "-" * 10)
+        logging.info("-" * 10 + " START Application, run() " + "-" * 10)
         self.logo.display_logo()
         self.main.display_main()
         while True:
