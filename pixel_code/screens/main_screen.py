@@ -100,28 +100,28 @@ class MainScreen:
             logging.debug(f"CUSOR OVERFLOW, : {gap_curror_over}")
         else :
             gap_curror_over = 0
-            logging.debug(f"CUSOR IN, : {gap_curror_over}")
+            # logging.debug(f"CUSOR IN, : {gap_curror_over}")
 
         gap = 0
-        logging.debug(f"h of main : {h}")
+        # logging.debug(f"h of main : {h}")
         dif = h - len(self.projectsArray)
-        logging.debug(f' dif = {h} - {len(self.projectsArray)} = {h - len(self.projectsArray)}')
+        # logging.debug(f' dif = {h} - {len(self.projectsArray)} = {h - len(self.projectsArray)}')
         if dif >= 0:
             gap = len(self.projectsArray) 
-            logging.debug(f"gap :{gap} | dif <= 0")
+            # logging.debug(f"gap :{gap} | dif <= 0")
         elif dif < 0 :
             gap = h + gap_curror_over
-            logging.debug(f"{gap} - dif > 0 (else)")
+            # logging.debug(f"{gap} - dif > 0 (else)")
         else:
             logging.debug(f"WTF gap = {gap}")
 
-        logging.debug(f"GAP /, , {gap}")
+        # logging.debug(f"GAP /, , {gap}")
         # display_proj = self.projectsArray[gap_curror_over:gap:]
-        logging.debug("======START FOR ========")
+        # logging.debug("======START FOR ========")
         for i, project in enumerate(self.projectsArray[gap_curror_over:gap:]): # j'ai 0 a 4 donc 3 mais afficbe 4 truc ... WHY
             
             space = 4 if self.show_details else 0
-            logging.debug(f"selectin_index:{self._selection}, myindex:{i}, gap:{gap_curror_over}")
+            # logging.debug(f"selectin_index:{self._selection}, myindex:{i}, gap:{gap_curror_over}")
             project.display_project_compacte(selected_index=self._selection, my_index=i, space=space, gap=gap_curror_over)
             if self._selection == i and self.show_details:
                 project.display_project_full("to_delete", i)
