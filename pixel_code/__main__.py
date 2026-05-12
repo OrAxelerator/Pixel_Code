@@ -92,10 +92,8 @@ def main():
         clear_log()
 
     if args.clean_projects or args.clean_projects_hard or args.reset_config :
-        input("ENTER TO LAUNCH Pixel_Code")
-    else:
-        sys.exit(0)
-
+        input("ENTER TO LAUNCH Pixel_Code")    
+       
     curses.wrapper(lambda stdscr: run(stdscr, debug=args.debug))
 
 

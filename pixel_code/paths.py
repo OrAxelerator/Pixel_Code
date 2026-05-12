@@ -7,8 +7,13 @@ import shutil
 from importlib.metadata import version
 
 # FILE on :
+
 # -macos : /Users/<user>/Library/Application Support/Pixel_Code | ~/Library/Application\ Support/Pixel_Code 
-# -Linux : /home/<user>/.config/Pixel_Code | ~/.config/Pixel_Code
+
+# -Linux : 
+# /home/<user>/.config/Pixel_Code/parametres.json AND
+# /home/<user>/.local/share/Pixel_Code/  => for projects.json and debug.log 
+
 # -Windows : C:\Users\<user>\AppData\Local\OrAxelerator\Pixel_Code
 
 APP_NAME = "Pixel_Code"
@@ -29,6 +34,9 @@ LOGO_TXT = PACKAGE_DATA_DIR / "logo.txt"
 
 OLD_PROJECTS_JSON = PACKAGE_DATA_DIR / "projects.json"
 OLD_PARAMETRES_JSON = PACKAGE_DATA_DIR / "parametres.json"
+# input(LOG_FILE)
+# input(PARAMETRES_JSON)
+# input(PROJECTS_JSON)
 
 DEFAULT_PROJECTS = {
     "schema_version": 1,
