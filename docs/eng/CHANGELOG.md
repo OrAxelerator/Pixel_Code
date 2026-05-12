@@ -58,7 +58,7 @@ Format : Y/M/D
 - Github features
 
 
-## [0.5.0] - 
+## [0.4.1] - 
 
 ### Added :
 - 4 new subcommande :
