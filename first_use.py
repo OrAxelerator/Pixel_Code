@@ -3,15 +3,11 @@ from pixel_code.script.add_project_global import add_project_global
 import os
 from pathlib import Path
 import json
+from pixel_code.paths import PROJECTS_JSON, PACKAGE_DIR
 
-BASE_DIR = Path(__file__).resolve().parent
-# input(BASE_DIR) #debug
-ROOT = BASE_DIR / "pixel_code"
-PROJECTS_JSON = BASE_DIR / "pixel_code/data/projects.json"
-PARAMETRES_JSON   = BASE_DIR  / "pixel_code/data/parametres.json"
+PACKAGE_DIR = PACKAGE_DIR.parent # Go to root of projet
 
 print("Thanks for installing Pixel_Code v0.4.0")
-
 
 
 # blanck_project = {
@@ -26,10 +22,9 @@ blanck_project = {
     "languages": [
         "python", "json"
     ],
-    "path": f"{BASE_DIR}",
+    "path": f"{PACKAGE_DIR}",
     "repo": "https://github.com/OrAxelerator/Pixel_Code.git"
 }
 create_pixelcode_config(blanck_project)
-add_project_global(PROJECTS_JSON, str(BASE_DIR))
-                   
+add_project_global(PROJECTS_JSON, str(PACKAGE_DIR))
                    
