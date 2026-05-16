@@ -29,9 +29,6 @@ def clean_invalid_projects(hard:bool):
             data = json.load(f)
         
         original_count = len(data.get("projects", []))
-        
-        
-
         valid_projects = []
         for p in data["projects"]:
             if os.path.exists(os.path.join(p["path"], ".pixelcode.json") if hard else p["path"]):

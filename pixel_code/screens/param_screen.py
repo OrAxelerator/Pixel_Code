@@ -131,29 +131,29 @@ class ParamScreen:
         # * logo (left, center)
       
 
-        caract = ["", "▶"]
+        caract = [" ", "▶"]
         WIDTH = 48
         HEIGHT = len(self.parametre_array) + 4
 
-        lang = "fr" if self.data["app"]["language"] == "fr" else "en"
+        lang =  self.data["app"]["language"]
 
         self.win.box()
 
         start_y = (max_y - HEIGHT) // 2
         start_x = (max_x - WIDTH) // 2
 
-        self.win.addstr(start_y + 0, start_x+2, f"================== {"SETTINGS" if self.data["app"]["language"] == "en" else "PARAMÈTRE" } ==================")
+        self.win.addstr(start_y + 0, start_x+2, f"================== {"SETTINGS" if lang == "en" else "PARAMÈTRE" } ==================")
 
         for i, param in enumerate(self.settings_config):
             arrow = (i == self._selection_parametre)
             label = param["label"].get( # If text does not existe so use english
-                self.data["app"]["language"],
+                lang,
                 param["label"]["en"]
             )
             self.win.addstr(
                 start_y + i + 1,
                 start_x + 2,
-                f'{caract[arrow]}  {param["icon"] if self.data["app"]["use_nerd_font"] else ""} - {label.ljust(WIDTH - len(str(self.parametre_array[i])) + (0 if arrow else 1) - 3)}{self.parametre_array[i]}'
+                f'{caract[arrow]}  {param["icon"] if self.data["app"]["use_nerd_font"] else " "} - {label.ljust(WIDTH - len(str(self.parametre_array[i])) + 1 - 3)}{self.parametre_array[i]}'
             )
 
         self.win.addstr(start_y + len(self.parametre_array) + 1, start_x+2, "-" * WIDTH)
