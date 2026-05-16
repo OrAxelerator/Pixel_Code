@@ -207,7 +207,11 @@ class MainScreen:
                 "path": pwd,
                 "repo" : repo
             }
-            create_pixelcode_config(new_project)
+            if not create_pixelcode_config(new_project): # .pixelcode.json already exist
+                self.popup("TSTE")
+                logging.error("File .pixelcode.json aleray exist, your input will be ignored")
+                return False
+
 
             add_project_global(PROJECTS_JSON,pwd) # add to projects.json
 

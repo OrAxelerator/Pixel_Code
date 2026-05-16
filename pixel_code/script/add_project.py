@@ -1,6 +1,6 @@
 import json
 from pathlib import Path
-
+import logging
 
 def create_pixelcode_config(data_projects: dict):
     """
@@ -15,10 +15,12 @@ def create_pixelcode_config(data_projects: dict):
     config_file = project_path / ".pixelcode.json"
 
     if not project_path.exists():
-        raise FileNotFoundError(f"Dossier projet introuvable : {project_path}")
+        logging.debug(f"Dossier projet introuvable : {project_path}")
+        return False
 
     if config_file.exists():
-        raise FileExistsError(f"\n{"-"*10}\nCONFIG FILE ALREADY EXISTE (.pixelcode.json) \nDelete it with : rm {config_file}\n{"-"*10}")
+        logging.debug(f"\n{"-"*10}\nCONFIG FILE ALREADY EXISTE (.pixelcode.json) \nDelete it with : rm {config_file}\n{"-"*10}")
+        return False
         
 
     # default config

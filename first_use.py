@@ -25,6 +25,10 @@ blanck_project = {
     "path": f"{PACKAGE_DIR}",
     "repo": "https://github.com/OrAxelerator/Pixel_Code.git"
 }
-create_pixelcode_config(blanck_project)
+if not create_pixelcode_config(blanck_project): # .pixelcode.json already exist
+    print("error, .pixelcode.json file should not be there, delete it")
+    print(f'Do : rm ~/{PACKAGE_DIR} on macos/linux')
+    print("windows : ")
+
 add_project_global(PROJECTS_JSON, str(PACKAGE_DIR))
                    
