@@ -67,12 +67,16 @@ Format : Y/M/D
     - --reset-config : reset parametres.json
     - --clear-log : clear the debug.log file
     You can see help with ``pixel-code -h```
-- .json file have now a 
+- Icon on paramScreen.
 
 ### Changed : 
-- All data file like parametres.json, projects.json, debug.log are now somewhere else in Appdata or Application Support or .config acording to the os, (platformdirs do it)
+- Pixel_Code uses ``platformdirs`` to place them in the standard OS directories:
+    - ``parametres.json`` in the user config directory.
+    - ``projects.json`` in the user data directory.
+    - ``debug.log`` in the user data directory.
 - More debug/warming message in debug.log
 - logging.basicConfig is now In App
 - How the script get args in __main_.py
 - Default parametres get version now with what is write in pyproject.tmol (Attention it return version from the downloaded version in your machine)
+- fisrt_use.py work with new platformdirs data.
 

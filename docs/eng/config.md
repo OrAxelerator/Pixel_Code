@@ -4,7 +4,7 @@
 
     To enable icons you need to use **"0xProto Nerd Font"** in your terminal. If you run Pixel_Code inside VS Code, also set **Terminal › Integrated: Font Family** = `"0xProto Nerd Font"`.
 
-    > Link to install the font : https://github.com/   ryanoasis/nerd-fonts/releases/download/v3.4.0/0xProto.zip
+    > Link to install the font : https://github.com/ryanoasis/nerd-fonts/releases/download/v3.4.0/0xProto.zip
 
 <br>
 
@@ -30,3 +30,11 @@
 >
 > To launch in **debug mode**:
 >   From the project root, run: ``python3 pixel_code/__main__.py --debug`` (or py/python according to your OS). Logs are written to ``debug.log`` in the user data directory. (tail -f debug.log)
+
+Sub commande : 
+    - --clean-projects :  Delete invalid projects if the path does not exist
+    - --clean-projects-hard : Delete invalid projects if .pixelcode.json is missing or the path does not exist
+    - --reset-config : reset parametres.json
+    - --clear-log : clear the debug.log file
+    You can see help with ``pixel-code -h```
+

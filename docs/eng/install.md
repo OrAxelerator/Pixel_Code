@@ -83,3 +83,6 @@
 
 
 </details>
+
+--- 
+and execute fisrt_use.py 

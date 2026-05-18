@@ -11,13 +11,14 @@ User files are no longer stored in ``pixel_code/data``. Pixel_Code uses ``platfo
 
 On launch, Pixel_Code creates these files if they do not exist and migrates old JSON files from ``pixel_code/data`` only if the new destination does not already exist.
 
-```
+parametres.json :
+```json
 {
     "schema_version": 1,
     "app": {
-        "language": "en", ("fr", "en")
-        "use_nerd_font": true, # Icone
-        "version": "v0.4.0",
+        "language": "en", 
+        "use_nerd_font": true,
+        "version": "v0.4.1",
         "check_update_at_launch": true,
         "allow_prerelease": true
     },
@@ -28,26 +29,29 @@ On launch, Pixel_Code creates these files if they do not exist and migrates old 
     "projects": {
         "sort_by_last_opened": true,
         "sort_by_name": false,
-        "editor": "code" # ("code", "vim", "cmd")
+        "editor": "code" 
     }
 }
 ```
+the key "theme" does nothing for now.
+"logo" can take "left" or "center" for value.
+"editor" can take "code" for vscode, "vim" and "cmd" for terminal.
 
 ### Projects.json : 
 
-```
+```json
 {
     "schema_version": 1,
     "projects": [
         {
-            "id": "72b38123", #
+            "id": "72b38123",
             "path": "/Users/Axel/Pixel_Code",
-            "status": "todo" # ("todo", ...)
-        }, ...
+            "status": "todo"
+        },
     ]
 }
-
 ```
+
 ## How screen works (`screens`) ?
 
 Screens on Pixel_Code are user interface build with the librarie `curses`. Each screen is built on a python class and is made to manage a specific part of the app. Also each screen is init with a reference to the main app (`maain_app`) from ``app.py`` for access to share ressource like `stdscr` (windows of the terminal for curses) and the setting manager ``ParamManger``. Screens use curses windows  (`newwin`) to display themselve. The active screen is save on the variable `self.current` in the App class and can take "main" / "parametre" for value
