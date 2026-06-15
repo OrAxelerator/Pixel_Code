@@ -94,6 +94,8 @@ Voir la **documentation** : [ici](/docs/fr/index.md)
 > * **ESPACE** : afficher / désactiver la vue complète sur un projet
 > * **q** : arrêter l’exécution du programme
 > * **↑/↓** : navigation
+> * **/** : chercher un projet par nom
+> * **c** : quitter la recherche et réafficher tous les projets
 > * **p** : ouvrir les paramètres
 > * **r** : recharger l’affichage (marche seulement dans branch main)
 > * **e** : éditer les données d’un projet depuis Pixel_Code (pas encore fonctionnel)

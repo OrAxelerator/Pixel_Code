@@ -59,10 +59,29 @@ class MainScreen:
         self._selection = 0
         self.projets = {}
         self.projectsArray = []
+        self.search_query = ""
         self.show_details = False 
         self.show_git = False # clone, git pull
 
         self.load_projects()
+
+    def get_display_projects(self):
+        query = self.search_query.strip().lower()
+        if query == "":
+            return self.projectsArray
+
+        return [
+            project for project in self.projectsArray
+            if query in project.name.lower()
+        ]
+
+    def get_selected_project(self):
+        display_projects = self.get_display_projects()
+        if len(display_projects) == 0:
+            return None
+
+        self._selection = min(self._selection, len(display_projects) - 1)
+        return display_projects[self._selection]
 
 
     def load_projects(self):
@@ -95,8 +114,23 @@ class MainScreen:
         h, w = self.win.getmaxyx()
         self.main_app.h
         self.win.clear()
+        display_projects = self.get_display_projects()
+        header_offset = 1 if self.search_query else 0
+
+        if self.search_query:
+            search_text = f"Recherche: {self.search_query}"
+            self.win.addstr(0, 3, search_text[:max(0, w - 6)], curses.color_pair(2))
+
+        if len(display_projects) == 0:
+            self._selection = 0
+            self.win.addstr(header_offset, 3, "Aucun projet trouvé")
+            self.win.refresh()
+            return
+
+        self._selection = min(self._selection, len(display_projects) - 1)
 #self.porjetArray[difCurseurExt::] #jusqu'a condition bloue le reste
-        gap_curror_over = self._selection -h +1
+        available_h = h - header_offset
+        gap_curror_over = self._selection - available_h + 1
         if gap_curror_over > 0: # if positive
             logging.debug(f"CUSOR OVERFLOW, : {gap_curror_over}")
         else :
@@ -105,13 +139,13 @@ class MainScreen:
 
         gap = 0
         # logging.debug(f"h of main : {h}")
-        dif = h - len(self.projectsArray)
+        dif = available_h - len(display_projects)
         # logging.debug(f' dif = {h} - {len(self.projectsArray)} = {h - len(self.projectsArray)}')
         if dif >= 0:
-            gap = len(self.projectsArray) 
+            gap = len(display_projects) 
             # logging.debug(f"gap :{gap} | dif <= 0")
         elif dif < 0 :
-            gap = h + gap_curror_over
+            gap = available_h + gap_curror_over
             # logging.debug(f"{gap} - dif > 0 (else)")
         else:
             logging.debug(f"WTF gap = {gap}")
@@ -119,13 +153,13 @@ class MainScreen:
         # logging.debug(f"GAP /, , {gap}")
         # display_proj = self.projectsArray[gap_curror_over:gap:]
         # logging.debug("======START FOR ========")
-        for i, project in enumerate(self.projectsArray[gap_curror_over:gap:]): # j'ai 0 a 4 donc 3 mais afficbe 4 truc ... WHY
+        for i, project in enumerate(display_projects[gap_curror_over:gap:]): # j'ai 0 a 4 donc 3 mais afficbe 4 truc ... WHY
             
             space = 4 if self.show_details else 0
             # logging.debug(f"selectin_index:{self._selection}, myindex:{i}, gap:{gap_curror_over}")
-            project.display_project_compacte(selected_index=self._selection, my_index=i, space=space, gap=gap_curror_over)
-            if self._selection == i and self.show_details:
-                project.display_project_full("to_delete", i)
+            project.display_project_compacte(selected_index=self._selection, my_index=i, space=space, gap=gap_curror_over, row_offset=header_offset)
+            if self._selection == i + gap_curror_over and self.show_details:
+                project.display_project_full("to_delete", i + header_offset)
         
         
         self.win.refresh()
@@ -156,13 +190,35 @@ class MainScreen:
 
     def move_down(self):
         # self._selection = max(1, min(self._selection+1, len(self.projectsArray)))
-        self._selection = min(len(self.projectsArray)-1, self._selection + 1)
-
-    def toggle_project_status(self):
-        if len(self.projectsArray) == 0:
+        display_projects = self.get_display_projects()
+        if len(display_projects) == 0:
+            self._selection = 0
             return
 
-        project = self.projectsArray[self._selection]
+        self._selection = min(len(display_projects)-1, self._selection + 1)
+
+    def search_project(self):
+        search_text = {
+            "en": "Search by name",
+            "fr": "Chercher par nom"
+        }
+        title = translate(search_text, self.main_app.param_manager.get_data("app", "language"))
+        query = self.input.display_input(f"{title} : ", prefill=self.search_query)
+        if query is None:
+            return
+
+        self.search_query = query.strip()
+        self._selection = 0
+
+    def clear_search(self):
+        self.search_query = ""
+        self._selection = 0
+
+    def toggle_project_status(self):
+        project = self.get_selected_project()
+        if project is None:
+            return
+
         project.status = "todo" if project.status == "done" else "done"
         project.data["status"] = project.status
 
@@ -253,9 +309,13 @@ class MainScreen:
     def delete_project(self):
         try:
             ensure_user_files()
+            project_to_delete = self.get_selected_project()
+            if project_to_delete is None:
+                return
+
             txt_confirm = {
-                "en": f"Do you want to delete {self.projectsArray[self._selection]} : [y/N]",
-                "fr": f"Voulez-vous supprimer {self.projectsArray[self._selection]} : [y/N]"
+                "en": f"Do you want to delete {project_to_delete} : [y/N]",
+                "fr": f"Voulez-vous supprimer {project_to_delete} : [y/N]"
             }
 
             confirmation_message = translate(txt_confirm, self.main_app.param_manager.get_data("app", "language"))
@@ -268,7 +328,7 @@ class MainScreen:
             with open(PROJECTS_JSON, encoding="utf-8") as f:
                 projets = json.load(f)
 
-            target_path = self.projectsArray[self._selection].pwd
+            target_path = project_to_delete.pwd
             projets["projects"] = [
                 p for p in projets["projects"] if p["path"] != target_path
             ]
@@ -276,8 +336,11 @@ class MainScreen:
             with open(PROJECTS_JSON, "w", encoding="utf-8") as f:
                 json.dump(projets, f, indent=4, ensure_ascii=False)
 
-            self.projectsArray.pop(self._selection)
-            self._selection = max(0, self._selection - 1)
+            self.projectsArray = [
+                project for project in self.projectsArray
+                if project.pwd != target_path
+            ]
+            self._selection = max(0, min(self._selection, len(self.get_display_projects()) - 1))
             self.popup("Projet supprimé avec succès !")
             logging.info("Project deleted")
 
@@ -290,9 +353,13 @@ class MainScreen:
 
     def pull_project(self):
         from pixel_code.script.git import git_pull_reset_hard
+        project = self.get_selected_project()
+        if project is None:
+            return
+
         res = self.input.display_input("sur ? [y/N]")
         if res == "y":
-            git_pull_reset_hard(self.projectsArray[self._selection].repo)
+            git_pull_reset_hard(project.repo)
 
 
     def popup(self, msg: str):#debug fonction to delete
@@ -327,9 +394,10 @@ class Project:
         return f'{self.name}'
 
     def get_status_badge(self):
+        use_nerd_font = self.main_app.main_app.param_manager.get_data("app", "use_nerd_font")
         if self.status == "done":
-            return "✓"
-        return "○"
+            return "" if use_nerd_font else "[x]"
+        return "" if use_nerd_font else "[ ]"
 
     def get_status_text(self):
         txt = {
@@ -347,7 +415,7 @@ class Project:
 
 
 
-    def display_project_compacte(self,selected_index, my_index, space, gap=0):
+    def display_project_compacte(self,selected_index, my_index, space, gap=0, row_offset=0):
         if self.main_app.main_app.param_manager.get_data("ui", "display_project") == "side":
             space = 0
 
@@ -357,15 +425,16 @@ class Project:
         if selected_index == my_index + gap:
             logging.debug(f"CONDITION CHECK de {self.name}")
 
-        arrow = "▶" if selected_index == my_index + gap else ""
+        arrow = "▶" if selected_index == my_index + gap else " "
         icone_folder = ["󰉋", ""]
         icone = (str(icone_folder[0]) + "  ") if self.main_app.main_app.param_manager.get_data("app", "use_nerd_font") else ""
         status_badge = self.get_status_badge()
+        y = my_index + space + row_offset
         if selected_index == my_index + gap:
             # self.main_app.popup("la")
-            self.main_app.win.addstr(my_index+space, 3, f"{arrow} {status_badge} {icone}{self.name}", curses.color_pair(2))
+            self.main_app.win.addstr(y, 3, f"{arrow} {status_badge} {icone}{self.name}", curses.color_pair(2))
         else:
-            self.main_app.win.addstr(my_index+space, 3, f"{arrow} {status_badge} {icone}{self.name}", curses.color_pair(1))
+            self.main_app.win.addstr(y, 3, f"{arrow} {status_badge} {icone}{self.name}", curses.color_pair(1))
         #self.detail_panel.win.addstr(0,0, f"Project side panel {self.__str__()} ")
         
         self.main_app.win.refresh()

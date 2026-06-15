@@ -86,6 +86,12 @@ class App:
                 elif key == "m":
                     self.main.toggle_project_status()
                     self.main.display_main()
+                elif key == "/":
+                    self.main.search_project()
+                    self.main.display_main()
+                elif key == "c":
+                    self.main.clear_search()
+                    self.main.display_main()
                 elif key == "UP":
                     self.main.move_up()
                     self.main.display_main()
@@ -96,7 +102,9 @@ class App:
                     self.main.show_details = not self.main.show_details
                     self.main.display_main()
                 elif key == "ENTER":
-                    self.main.projectsArray[self.main._selection].open_project()
+                    project = self.main.get_selected_project()
+                    if project is not None:
+                        project.open_project()
                 
             elif "param" == self.current :
                 if key == "p":
