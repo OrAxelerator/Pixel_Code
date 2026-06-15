@@ -83,6 +83,9 @@ class App:
                     self.main.pull_project()
                     pass #gt clone, git pull, git reset
                     #electon input like main with arrow
+                elif key == "m":
+                    self.main.toggle_project_status()
+                    self.main.display_main()
                 elif key == "UP":
                     self.main.move_up()
                     self.main.display_main()

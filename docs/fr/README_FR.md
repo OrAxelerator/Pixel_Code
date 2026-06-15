@@ -99,6 +99,7 @@ Voir la **documentation** : [ici](/docs/fr/index.md)
 > * **e** : éditer les données d’un projet depuis Pixel_Code (pas encore fonctionnel)
 > * **a** : ajouter un projet
 > * **d** : suprimer un projet
+> * **m** : marquer le projet comme fini / pas fini
 > * **g** : faire action github (pas dispo)
 
 ---

@@ -31,6 +31,8 @@ def get_key() -> str:
             return "e"
         elif key == b'g':
             return "g"
+        elif key == b'm':
+            return "m"
         elif key == b'\r':   
             return "ENTER"
 
@@ -77,6 +79,8 @@ def get_key() -> str:
                 return "d"
             elif ch1 == 'g':
                 return "g"
+            elif ch1 == 'm':
+                return "m"
             elif ch1 == ' ':
                 return "SPACE"
             elif ch1 == '\x1b':  # ANSI sequence  for arrows

@@ -82,7 +82,8 @@ class MainScreen:
                             logging.warning(f"{msg} (id={project.get('id')})")
                             continue
 
-                        self.projectsArray.append(Project(self, project["id"], DATA))
+                        status = project.get("status", "todo")
+                        self.projectsArray.append(Project(self, project["id"], DATA, status))
         except FileNotFoundError:
             logging.warning(f"FILE {PROJECTS_JSON} NOT FOUND")
             #"Fichier projets.json introuvable.
@@ -157,6 +158,33 @@ class MainScreen:
         # self._selection = max(1, min(self._selection+1, len(self.projectsArray)))
         self._selection = min(len(self.projectsArray)-1, self._selection + 1)
 
+    def toggle_project_status(self):
+        if len(self.projectsArray) == 0:
+            return
+
+        project = self.projectsArray[self._selection]
+        project.status = "todo" if project.status == "done" else "done"
+        project.data["status"] = project.status
+
+        ensure_user_files()
+        try:
+            with open(PROJECTS_JSON, encoding="utf-8") as f:
+                projets = json.load(f)
+
+            for saved_project in projets.get("projects", []):
+                if saved_project.get("id") == project.id or saved_project.get("path") == project.pwd:
+                    saved_project["status"] = project.status
+                    break
+
+            with open(PROJECTS_JSON, "w", encoding="utf-8") as f:
+                json.dump(projets, f, indent=4, ensure_ascii=False)
+
+            logging.info(f"Project status changed: {project.name} -> {project.status}")
+        except FileNotFoundError:
+            logging.warning("File projects.json not found.")
+        except Exception as e:
+            logging.warning(f"Error while saving project status: {e}")
+
     
     def edit_project(self):
         """Edit info project in nano or vim or notepad or create a interface for this"""
@@ -215,7 +243,7 @@ class MainScreen:
 
             add_project_global(PROJECTS_JSON,pwd) # add to projects.json
 
-            self.projectsArray.append(Project(self, str(4), new_project))
+            self.projectsArray.append(Project(self, str(4), new_project, "todo"))
         except FileNotFoundError:
             logging.warning("File projects.json not found.")
         except Exception as e:
@@ -273,10 +301,13 @@ class MainScreen:
             self.win.refresh()
 
 class Project:
-    def __init__(self, main_app, number, projets):
+    def __init__(self, main_app, number, projets, status="todo"):
         self.main_app = main_app
+        self.id = number
 
         self.data = projets
+        self.status = status or "todo"
+        self.data["status"] = self.status
 
         self.name = self.data["name"]
         self.description = self.data["description"]
@@ -295,6 +326,25 @@ class Project:
     def __str__(self):
         return f'{self.name}'
 
+    def get_status_badge(self):
+        if self.status == "done":
+            return "✓"
+        return "○"
+
+    def get_status_text(self):
+        txt = {
+            "en": {
+                "done": "Done",
+                "todo": "To finish"
+            },
+            "fr": {
+                "done": "Fini",
+                "todo": "À finir"
+            }
+        }
+        lang = self.main_app.main_app.param_manager.get_data("app", "language")
+        return txt.get(lang, txt["en"]).get(self.status, txt.get(lang, txt["en"])["todo"])
+
 
 
     def display_project_compacte(self,selected_index, my_index, space, gap=0):
@@ -310,11 +360,12 @@ class Project:
         arrow = "▶" if selected_index == my_index + gap else ""
         icone_folder = ["󰉋", ""]
         icone = (str(icone_folder[0]) + "  ") if self.main_app.main_app.param_manager.get_data("app", "use_nerd_font") else ""
+        status_badge = self.get_status_badge()
         if selected_index == my_index + gap:
             # self.main_app.popup("la")
-            self.main_app.win.addstr(my_index+space, 3, f"{arrow} {icone}{self.name}", curses.color_pair(2))
+            self.main_app.win.addstr(my_index+space, 3, f"{arrow} {status_badge} {icone}{self.name}", curses.color_pair(2))
         else:
-            self.main_app.win.addstr(my_index+space, 3, f"{arrow} {icone}{self.name}", curses.color_pair(1))
+            self.main_app.win.addstr(my_index+space, 3, f"{arrow} {status_badge} {icone}{self.name}", curses.color_pair(1))
         #self.detail_panel.win.addstr(0,0, f"Project side panel {self.__str__()} ")
         
         self.main_app.win.refresh()
@@ -367,23 +418,21 @@ class Project:
                 for i, sentence in enumerate(description_cut):
                     self.detail_panel.win.addstr(4 + i, 2, sentence)
 
-                # each overflow is +1 space for the rest of the data to show
-                if overfloww == 0:
-                    space = -3
-                
                 text = {
-                    "en": ["Languages", "Path", "Repo"],
-                    "fr":["Langages", "Chemin", "Depo"]
+                    "en": ["Status", "Languages", "Path", "Repo"],
+                    "fr":["Statut", "Langages", "Chemin", "Depo"]
                 }
                 text_description = translate(text, self.main_app.main_app.param_manager.get_data("app", "language"))
-                if  len(self.data['languages']) == 0:
-                    space -= 2
-                    pass
-                else:                
-                    self.detail_panel.win.addstr(4 + overfloww + 2 + space, 2, f"{text_description[0]} : {', '.join(self.data['languages'])}")
+                detail_y = 4 + max(len(description_cut), 1) + 1
+                self.detail_panel.win.addstr(detail_y, 2, f"{text_description[0]} : {self.get_status_text()}")
+                detail_y += 2
 
-                self.detail_panel.win.addstr(4 + overfloww + 4 + space, 2, f"{text_description[1]} : {self.data['path']}")                
-                self.detail_panel.win.addstr(4 + overfloww + 6 + space, 2, f"{text_description[2]} : [{self.data['repo']}]")                
+                if len(self.data['languages']) > 0:
+                    self.detail_panel.win.addstr(detail_y, 2, f"{text_description[1]} : {', '.join(self.data['languages'])}")
+                    detail_y += 2
+
+                self.detail_panel.win.addstr(detail_y, 2, f"{text_description[2]} : {self.data['path']}")
+                self.detail_panel.win.addstr(detail_y + 2, 2, f"{text_description[3]} : [{self.data['repo']}]")
 
                 self.detail_panel.win.border()
                 self.detail_panel.win.refresh()

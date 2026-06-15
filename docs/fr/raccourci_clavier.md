@@ -12,4 +12,5 @@
 > * **e** : éditer les données d’un projet depuis Pixel_Code (pas encore fonctionnel)
 > * **a** : ajouter un projet
 > * **d** : supprimer un projet
+> * **m** : marquer le projet comme fini / pas fini
 > * **g** : faire action github (indisponible pour le moment)
