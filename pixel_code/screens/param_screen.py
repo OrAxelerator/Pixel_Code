@@ -141,8 +141,8 @@ class ParamScreen:
 
         start_y = (max_y - HEIGHT) // 2
         start_x = (max_x - WIDTH) // 2
-
-        self.win.addstr(start_y + 0, start_x+2, f"================== {"SETTINGS" if lang == "en" else "PARAMÈTRE" } ==================")
+        long_separator = 48 - len("SETTINGS" if lang == "en" else "PARAMÈTRE") +2 
+        self.win.addstr(start_y + 0, start_x+2, f"{"="*(long_separator//2)} {"SETTINGS" if lang == "en" else "PARAMÈTRE" } {"="*((long_separator//2)+1)}")
 
         for i, param in enumerate(self.settings_config):
             arrow = (i == self._selection_parametre)
@@ -153,10 +153,10 @@ class ParamScreen:
             self.win.addstr(
                 start_y + i + 1,
                 start_x + 2,
-                f'{caract[arrow]}  {param["icon"] if self.data["app"]["use_nerd_font"] else " "} - {label.ljust(WIDTH - len(str(self.parametre_array[i])) + 1 - 3)}{self.parametre_array[i]}'
+                f'{caract[arrow]}  {param["icon"] if self.data["app"]["use_nerd_font"] else " "} - {label.ljust(WIDTH - len(str(self.parametre_array[i])) - 4)}{self.parametre_array[i]}'
             )
 
-        self.win.addstr(start_y + len(self.parametre_array) + 1, start_x+2, "-" * WIDTH)
+        self.win.addstr(start_y + len(self.parametre_array) + 1, start_x+2, "-" * (WIDTH+4))
         txt = {
             "en":["Navigation", "Change", "Quit"],
             "fr":["Navigation", "Changer", "Quitter"]
@@ -169,7 +169,7 @@ class ParamScreen:
 
         self.win.addstr(
             start_y + len(self.parametre_array) + 2,
-            start_x,
+            start_x + 2,
             f"{txt[lang][0]} : ↑/↓    {txt[lang][1]} : {key[lang]}    {txt[lang][2]} : p"
         )
 
