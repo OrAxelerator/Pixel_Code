@@ -29,6 +29,8 @@ def get_key() -> str:
             return "r"
         elif key == b'e':
             return "e"
+        elif key == b'f':
+            return "f"
         elif key == b'g':
             return "g"
         elif key == b'm':
@@ -75,6 +77,8 @@ def get_key() -> str:
                 return "r"
             elif ch1 == 'e':
                 return "e"
+            elif ch1 == 'f':
+                return "f"
             elif ch1 == 'p':
                 return "p"
             elif ch1 == 'a':

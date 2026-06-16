@@ -60,6 +60,7 @@ class MainScreen:
         self.projets = {}
         self.projectsArray = []
         self.search_query = ""
+        self.status_filter = "all"
         self.show_details = False 
         self.show_git = False # clone, git pull
 
@@ -67,13 +68,42 @@ class MainScreen:
 
     def get_display_projects(self):
         query = self.search_query.strip().lower()
-        if query == "":
-            return self.projectsArray
+        display_projects = self.projectsArray
 
-        return [
-            project for project in self.projectsArray
-            if query in project.name.lower()
-        ]
+        if query != "":
+            display_projects = [
+                project for project in display_projects
+                if query in project.name.lower()
+            ]
+
+        if self.status_filter == "done":
+            display_projects = [
+                project for project in display_projects
+                if project.status == "done"
+            ]
+        elif self.status_filter == "todo":
+            display_projects = [
+                project for project in display_projects
+                if project.status != "done"
+            ]
+
+        return display_projects
+
+    def get_status_filter_label(self):
+        labels = {
+            "en": {
+                "all": "All",
+                "done": "Done",
+                "todo": "To finish"
+            },
+            "fr": {
+                "all": "Tous",
+                "done": "Fini",
+                "todo": "À finir"
+            }
+        }
+        lang = self.main_app.param_manager.get_data("app", "language")
+        return labels.get(lang, labels["en"]).get(self.status_filter, labels["en"]["all"])
 
     def get_selected_project(self):
         display_projects = self.get_display_projects()
@@ -115,11 +145,17 @@ class MainScreen:
         self.main_app.h
         self.win.clear()
         display_projects = self.get_display_projects()
-        header_offset = 1 if self.search_query else 0
+        header_offset = 1 if self.search_query or self.status_filter != "all" else 0
 
-        if self.search_query:
-            search_text = f"Recherche: {self.search_query}"
-            self.win.addstr(0, 3, search_text[:max(0, w - 6)], curses.color_pair(2))
+        if header_offset:
+            header_parts = []
+            if self.search_query:
+                header_parts.append(f"Recherche: {self.search_query}")
+            if self.status_filter != "all":
+                header_parts.append(f"Filtre: {self.get_status_filter_label()}")
+
+            header_text = " | ".join(header_parts)
+            self.win.addstr(0, 3, header_text[:max(0, w - 6)], curses.color_pair(1))
 
         if len(display_projects) == 0:
             self._selection = 0
@@ -212,6 +248,17 @@ class MainScreen:
 
     def clear_search(self):
         self.search_query = ""
+        self._selection = 0
+
+    def reset_project_view(self):
+        self.search_query = ""
+        self.status_filter = "all"
+        self._selection = 0
+
+    def cycle_status_filter(self):
+        filters = ["all", "done", "todo"]
+        index = filters.index(self.status_filter)
+        self.status_filter = filters[(index + 1) % len(filters)]
         self._selection = 0
 
     def toggle_project_status(self):

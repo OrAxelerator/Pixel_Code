@@ -92,6 +92,9 @@ class App:
                 elif key == "c":
                     self.main.clear_search()
                     self.main.display_main()
+                elif key == "f":
+                    self.main.cycle_status_filter()
+                    self.main.display_main()
                 elif key == "UP":
                     self.main.move_up()
                     self.main.display_main()
@@ -99,7 +102,10 @@ class App:
                     self.main.move_down()
                     self.main.display_main()
                 elif key == "SPACE":
-                    self.main.show_details = not self.main.show_details
+                    if self.main.get_selected_project() is None:
+                        self.main.reset_project_view()
+                    else:
+                        self.main.show_details = not self.main.show_details
                     self.main.display_main()
                 elif key == "ENTER":
                     project = self.main.get_selected_project()

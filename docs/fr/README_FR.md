@@ -96,6 +96,7 @@ Voir la **documentation** : [ici](/docs/fr/index.md)
 > * **↑/↓** : navigation
 > * **/** : chercher un projet par nom
 > * **c** : quitter la recherche et réafficher tous les projets
+> * **f** : filtrer les projets par statut (tous / fini / à finir)
 > * **p** : ouvrir les paramètres
 > * **r** : recharger l’affichage (marche seulement dans branch main)
 > * **e** : éditer les données d’un projet depuis Pixel_Code (pas encore fonctionnel)
