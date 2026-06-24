@@ -8,7 +8,7 @@ from importlib.metadata import version
 
 # FILE on :
 
-# -macos : /Users/<user>/Library/Application Support/Pixel_Code | ~/Library/Application\ Support/Pixel_Code 
+# -macos : /Users/<user>/Library/Application Support/Pixel_Code | ~/Library/Application\ Support/Pixel_Code
 
 # -Linux : 
 # /home/<user>/.config/Pixel_Code/parametres.json AND

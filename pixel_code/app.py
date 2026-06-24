@@ -13,10 +13,7 @@ from pixel_code.paths import LOG_FILE, ensure_user_files
 # Start debug mod with python3 pixel_code/__main__.py --debug
 
 ensure_user_files()
-
 # level = logging.DEBUG if "--debug" in sys.argv else logging.INFO
-
-
 
 # logging.debug("Valeur de x ")   # affiché seulement en --debug
 # logging.info("APP LAUNCH")   # affiché en --debug ET mode normal
@@ -79,6 +76,7 @@ class App:
                     # self.main.popup("jsspppp")
                 elif key == "e":
                     self.main.edit_project()
+                    self.main.display_main()
                 elif key == "g":
                     self.main.pull_project()
                     pass #gt clone, git pull, git reset

@@ -80,3 +80,8 @@ Format : Y/M/D
 - Default parametres get version now with what is write in pyproject.tmol (Attention it return version from the downloaded version in your machine)
 - fisrt_use.py work with new platformdirs data.
 
+
+### Added
+- Edit project function with "e"
+
+

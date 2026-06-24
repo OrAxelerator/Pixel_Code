@@ -47,7 +47,8 @@ class MainScreen:
         h, w = main_app.stdscr.getmaxyx()
 
         self.win = curses.newwin(h-10, w, 10, 0)
-        curses.init_pair(1, curses.COLOR_BLUE, curses.COLOR_BLACK)
+        blue = curses.init_color(1, 300, 270, 1000)
+        curses.init_pair(1, 1, curses.COLOR_BLACK)
         curses.init_pair(2, curses.COLOR_GREEN, curses.COLOR_BLACK)
 
         self.input = Input(main_app)
@@ -150,16 +151,19 @@ class MainScreen:
         if header_offset:
             header_parts = []
             if self.search_query:
-                header_parts.append(f"Recherche: {self.search_query}")
+                label_search = translate({"en": "Search", "fr": "Recherche"}, self.main_app.param_manager.get_data("app", "language"))
+                header_parts.append(f"{label_search}: {self.search_query}")
             if self.status_filter != "all":
-                header_parts.append(f"Filtre: {self.get_status_filter_label()}")
+                label_filter = translate({"en": "Filter", "fr": "Filtre"}, self.main_app.param_manager.get_data("app", "language"))
+                header_parts.append(f"{label_filter}: {self.get_status_filter_label()}")
 
             header_text = " | ".join(header_parts)
             self.win.addstr(0, 3, header_text[:max(0, w - 6)], curses.color_pair(1))
 
         if len(display_projects) == 0:
             self._selection = 0
-            self.win.addstr(header_offset, 3, "Aucun projet trouvé")
+            no_project_text = translate({"en": "No projects found", "fr": "Aucun projet trouvé"}, self.main_app.param_manager.get_data("app", "language"))
+            self.win.addstr(header_offset, 3, no_project_text)
             self.win.refresh()
             return
 
@@ -290,8 +294,89 @@ class MainScreen:
 
     
     def edit_project(self):
-        """Edit info project in nano or vim or notepad or create a interface for this"""
-        pass
+        """Edit project fields and save changes to .pixelcode.json."""
+        project = self.get_selected_project()
+        if project is None:
+            return
+
+        lang = self.main_app.param_manager.get_data("app", "language")
+        labels = {
+            "en": {
+                "name": "Name",
+                "description": "Description",
+                "languages": "Languages (comma separated)",
+                "pwd": "Path",
+                "repo": "Repo URL"
+            },
+            "fr": {
+                "name": "Nom",
+                "description": "Description",
+                "languages": "Langages (séparés par des virgules)",
+                "pwd": "Chemin",
+                "repo": "URL du dépôt"
+            }
+        }
+
+        fields = ["name", "description", "languages", "pwd", "repo"]
+        old_path = project.pwd
+        updated_path = None
+        for field in fields:
+            current_value = project.data.get(field, "")
+            if field == "languages":
+                current_value = ", ".join(current_value or [])
+
+            prompt = translate({"en": labels["en"][field], "fr": labels["fr"][field]}, lang)
+            new_value = self.input.display_input(f"{prompt} : ", prefill=current_value)
+            if new_value is None:
+                continue
+
+            new_value = new_value.strip()
+            if field == "languages":
+                project.data["languages"] = [lang_item.strip() for lang_item in new_value.split(",") if lang_item.strip()]
+                project.languages = " ".join(project.data["languages"])
+            elif field == "pwd":
+                if new_value == "":
+                    continue
+                new_path = os.path.expanduser(new_value)
+                if not Path(new_path).exists():
+                    no_path_text = translate({"en": "Path not found", "fr": "Chemin introuvable"}, lang)
+                    self.popup(f"{no_path_text}: {new_path}")
+                    continue
+                project.pwd = new_path
+                project.data["path"] = new_path
+                updated_path = new_path
+            else:
+                project.data[field] = new_value
+                setattr(project, field, new_value)
+
+        project.dataAnsiStr = [project.name, project.description, project.languages, project.pwd]
+        self._save_project_config(project, old_path=old_path, updated_path=updated_path)
+
+    def _save_project_config(self, project, old_path=None, updated_path=None):
+        ensure_user_files()
+        config_file = Path(project.pwd) / ".pixelcode.json"
+        try:
+            with open(config_file, "w", encoding="utf-8") as f:
+                json.dump(project.data, f, indent=4, ensure_ascii=False)
+
+            if updated_path is not None:
+                with open(PROJECTS_JSON, encoding="utf-8") as f:
+                    projets = json.load(f)
+
+                for saved_project in projets.get("projects", []):
+                    if saved_project.get("id") == project.id or saved_project.get("path") == old_path:
+                        saved_project["path"] = updated_path
+                        break
+
+                with open(PROJECTS_JSON, "w", encoding="utf-8") as f:
+                    json.dump(projets, f, indent=4, ensure_ascii=False)
+
+            save_text = translate({"en": "Project saved.", "fr": "Projet enregistré."}, self.main_app.param_manager.get_data("app", "language"))
+            self.popup(save_text)
+        except Exception as e:
+            logging.warning(f"Error saving project config: {e}")
+            save_error_text = translate({"en": "Error saving project.", "fr": "Erreur lors de l'enregistrement du projet."}, self.main_app.param_manager.get_data("app", "language"))
+            self.popup(save_error_text)
 
 
     def add_project(self):
@@ -413,6 +498,11 @@ class MainScreen:
             h, w = self.win.getmaxyx()
             self.win.addstr(h - 2, 2, f"{msg}")
             self.win.refresh()
+
+
+
+
+
 
 class Project:
     def __init__(self, main_app, number, projets, status="todo"):
