@@ -15,7 +15,7 @@ def add_project_global(path_json_projects=PROJECTS_JSON, path=None):
     with open(path_json_projects, "r", encoding="utf-8") as f:
         data = json.load(f)
         logging.debug(path_json_projects)
-        logging.debug("data : ", data)
+        logging.debug(f"data :  {data}")
 
     
     if path not in [project.get("path") for project in data.get("projects", [])]:
