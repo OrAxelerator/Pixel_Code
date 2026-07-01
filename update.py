@@ -6,101 +6,133 @@ import requests
 
 # ---------------- CONFIG ----------------
 REPO = "OrAxelerator/Pixel_Code"
-GITHUB_API_RELEASE = f"https://api.github.com/repos/{REPO}/releases/latest"
+URL = f"https://api.github.com/repos/{REPO}/releases"
 
 ROOT_DIR = os.path.abspath(os.path.dirname(__file__))
-
-FILES_TO_KEEP = [
-    os.path.join("data", "parametres.json"),
-    os.path.join("data", "archives.json"),
-]
+print("root dir : ", ROOT_DIR)
 # ----------------------------------------
 
 
-def download_latest_release():
-    response = requests.get(GITHUB_API_RELEASE, timeout=15)
-    response.raise_for_status()
-    return response.json()["zipball_url"]
+
+import zipfile
+from pathlib import Path
+
+def extract_zip(zip_path, extract_dir):
+    extract_dir = Path(extract_dir)
+    extract_dir.mkdir(parents=True, exist_ok=True)
+
+    with zipfile.ZipFile(zip_path, "r") as z:
+        z.extractall(extract_dir)
+
+def get_latest_version():
+    r = requests.get(URL)
+    releases = r.json()
+
+    print(releases[0]["tag_name"])      # la plus récente, même si c'est une prerelease
+    print(releases[0]["prerelease"])    # True ou False
+
+    # return {
+    #     "prerelease" : releases[0]["prerelease"],
+    #     "tag_name" : releases[0]["tag_name"]
+    # }
+
+    return releases[0]
 
 
-def backup_files(temp_dir):
-    saved = {}
-    for rel_path in FILES_TO_KEEP:
-        abs_path = os.path.join(ROOT_DIR, rel_path)
-        if os.path.exists(abs_path):
-            dest = os.path.join(temp_dir, rel_path)
-            os.makedirs(os.path.dirname(dest), exist_ok=True)
-            shutil.copy2(abs_path, dest)
-            saved[rel_path] = dest
-    return saved
 
 
-def restore_files(saved_files, temp_dir):
-    for rel_path, _ in saved_files.items():
-        src = os.path.join(temp_dir, rel_path)
-        dst = os.path.join(ROOT_DIR, rel_path)
-        os.makedirs(os.path.dirname(dst), exist_ok=True)
-        shutil.copy2(src, dst)
+
+def download_last_version() -> str:
+
+    latest = get_latest_version()
+    zip_url = latest["zipball_url"]
+    response = requests.get(zip_url)
+    # print(response.content) #random stuff in hex
+    with open("update/latest.zip", "wb") as f:
+        f.write(response.content)
+
+    print(type(ROOT_DIR))
+
+    return ROOT_DIR + "/update/latest.zip"
+
+
+import shutil
+import shutil
+from pathlib import Path
+
+def delete_everything(path):
+    path = Path(path)
+
+    if not path.exists():
+        return
+
+    if path.is_dir():
+        shutil.rmtree(path)
+    else:
+        path.unlink()
 
 
 def clean_project():
     for item in os.listdir(ROOT_DIR):
-        if item in (".git", "update.py"):
-            continue
-        path = os.path.join(ROOT_DIR, item)
-        if os.path.isdir(path):
-            shutil.rmtree(path)
+        if item in (".git", "update.py", "update", "pixel_code.egg-info"):
+            pass
         else:
-            os.remove(path)
+        #else
+            path = os.path.join(ROOT_DIR, item)
+            print("DELETE" , path)
+            delete_everything(path)
 
 
-def extract_release(zip_url, extract_to):
-    zip_path = os.path.join(extract_to, "release.zip")
-    with requests.get(zip_url, stream=True, timeout=30) as r:
-        r.raise_for_status()
-        with open(zip_path, "wb") as f:
-            for chunk in r.iter_content(8192):
-                f.write(chunk)
 
-    with zipfile.ZipFile(zip_path, "r") as zip_ref:
-        zip_ref.extractall(extract_to)
-
-    # Le zip GitHub contient un dossier racine unique
-    extracted_root = os.path.join(
-        extract_to,
-        os.listdir(extract_to)[0]
-    )
-    return extracted_root
+from pathlib import Path
+import shutil
 
 
-def copy_new_version(src):
-    for item in os.listdir(src):
-        s = os.path.join(src, item)
-        d = os.path.join(ROOT_DIR, item)
-        if os.path.isdir(s):
-            shutil.copytree(s, d, dirs_exist_ok=True)
+def restore_update(update_folder):
+    update_folder = Path(update_folder)
+    dst = Path(ROOT_DIR)
+
+    print(f"update folder : {update_folder}")
+    print(f"dst : {dst}")
+
+    for item in update_folder.iterdir():
+        print(item)
+        if any(x in str(item) for x in [".git", "update.py", "update"]):
+            pass
         else:
-            shutil.copy2(s, d)
+            shutil.move(str(item), str(dst / item.name))
+
 
 
 def main():
-    print("Téléchargement de la dernière release...")
-    zip_url = download_latest_release()
+    from pathlib import Path
+    
+    zip_path = download_last_version()  # IMPORTANT: doit retourner le path du zip
+    
 
-    with tempfile.TemporaryDirectory() as temp:
-        print("Sauvegarde des fichiers utilisateur...")
-        saved_files = backup_files(temp)
+    extract_dir = Path(ROOT_DIR + "/update")
+    print(extract_dir)
+    
+    # attendre / garantir extraction faite AVANT
+    extract_zip(zip_path, extract_dir)
+    # 
+    folders = [p for p in extract_dir.iterdir() if p.is_dir()]
 
-        print("Extraction de la release...")
-        extracted = extract_release(zip_url, temp)
+    if not folders:
+        raise RuntimeError("Aucun dossier extrait trouvé")
 
-        print("Nettoyage de l'ancien projet...")
-        clean_project()
+    print(type(folders))  # list
 
-        print("Installation de la nouvelle version...")
-        copy_new_version(extracted)
+    # prendre le bon dossier (souvent 1 seul dans un zip GitHub)
+    root_folder = folders[0]
 
-        print("Restauration des paramètres...")
-        restore_files(saved_files, temp)
+    print("root folder:", root_folder)
 
-    print("Mise à jour terminée avec succès.")
+    print("---------")
+    clean_project()
+    print("---------")
+
+
+    restore_update(root_folder)
+
+
