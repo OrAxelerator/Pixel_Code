@@ -10,7 +10,6 @@ URL = f"https://api.github.com/repos/{REPO}/releases"
 
 ROOT_DIR = os.path.abspath(os.path.dirname(__file__))
 
-print("root dir : ", ROOT_DIR)
 
 # ----------------------------------------
 
@@ -28,8 +27,8 @@ def get_latest_version():
     r = requests.get(URL)
     releases = r.json()
 
-    print(releases[0]["tag_name"])      # la plus récente, même si c'est une prerelease
-    print(releases[0]["prerelease"])    # True ou False
+    # print(releases[0]["tag_name"])      # la plus récente, même si c'est une prerelease
+    # print(releases[0]["prerelease"])    # True ou False
 
     return releases[0]
 
