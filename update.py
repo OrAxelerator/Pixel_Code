@@ -1,21 +1,19 @@
 import os
 import shutil
 import zipfile
-import tempfile
 import requests
+from pathlib import Path
 
 # ---------------- CONFIG ----------------
 REPO = "OrAxelerator/Pixel_Code"
 URL = f"https://api.github.com/repos/{REPO}/releases"
 
 ROOT_DIR = os.path.abspath(os.path.dirname(__file__))
+
 print("root dir : ", ROOT_DIR)
+
 # ----------------------------------------
 
-
-
-import zipfile
-from pathlib import Path
 
 def extract_zip(zip_path, extract_dir):
     extract_dir = Path(extract_dir)
@@ -24,17 +22,14 @@ def extract_zip(zip_path, extract_dir):
     with zipfile.ZipFile(zip_path, "r") as z:
         z.extractall(extract_dir)
 
+
 def get_latest_version():
+    """ can return release and pre-release"""
     r = requests.get(URL)
     releases = r.json()
 
     print(releases[0]["tag_name"])      # la plus récente, même si c'est une prerelease
     print(releases[0]["prerelease"])    # True ou False
-
-    # return {
-    #     "prerelease" : releases[0]["prerelease"],
-    #     "tag_name" : releases[0]["tag_name"]
-    # }
 
     return releases[0]
 
@@ -43,22 +38,17 @@ def get_latest_version():
 
 
 def download_last_version() -> str:
-
+    """return path of .zip in str"""
     latest = get_latest_version()
     zip_url = latest["zipball_url"]
     response = requests.get(zip_url)
-    # print(response.content) #random stuff in hex
     with open("update/latest.zip", "wb") as f:
         f.write(response.content)
-
-    print(type(ROOT_DIR))
 
     return ROOT_DIR + "/update/latest.zip"
 
 
-import shutil
-import shutil
-from pathlib import Path
+
 
 def delete_everything(path):
     path = Path(path)
@@ -73,6 +63,7 @@ def delete_everything(path):
 
 
 def clean_project():
+    """delete all stuff from root of Pixel_Code"""
     for item in os.listdir(ROOT_DIR):
         if item in (".git", "update.py", "update", "pixel_code.egg-info"):
             pass
@@ -84,10 +75,6 @@ def clean_project():
 
 
 
-from pathlib import Path
-import shutil
-
-
 def restore_update(update_folder):
     update_folder = Path(update_folder)
     dst = Path(ROOT_DIR)
@@ -97,42 +84,36 @@ def restore_update(update_folder):
 
     for item in update_folder.iterdir():
         print(item)
-        if any(x in str(item) for x in [".git", "update.py", "update"]):
+        if any(x in str(item) for x in [".git", "update.py"]):
             pass
         else:
+            print("move : ", item)
             shutil.move(str(item), str(dst / item.name))
 
 
 
 def main():
-    from pathlib import Path
+    zip_path = download_last_version()  # 
     
-    zip_path = download_last_version()  # IMPORTANT: doit retourner le path du zip
-    
-
     extract_dir = Path(ROOT_DIR + "/update")
     print(extract_dir)
     
-    # attendre / garantir extraction faite AVANT
+    # extract the .zip of github
     extract_zip(zip_path, extract_dir)
-    # 
+    
     folders = [p for p in extract_dir.iterdir() if p.is_dir()]
 
     if not folders:
         raise RuntimeError("Aucun dossier extrait trouvé")
 
-    print(type(folders))  # list
-
-    # prendre le bon dossier (souvent 1 seul dans un zip GitHub)
+    # get unzipfile with last version
     root_folder = folders[0]
 
     print("root folder:", root_folder)
 
     print("---------")
-    clean_project()
+    clean_project() # delete a bunch of stuff
     print("---------")
 
 
-    restore_update(root_folder)
-
-
+    restore_update(root_folder) # mv stuff from /update to root project
