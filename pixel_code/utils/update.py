@@ -14,4 +14,4 @@ def get_latest_version():
     # print(releases[0]["tag_name"])      # la plus récente, même si c'est une prerelease
     # print(releases[0]["prerelease"])    # True ou False
 
-    return releases[0]
+    return r.json()

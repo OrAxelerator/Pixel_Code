@@ -9,7 +9,8 @@ from pixel_code.screens.detail_panel_screen import DetailPanel
 from pixel_code.screens.input_curses import Input
 from pixel_code.script.data.param_manager import ParamManager
 from pixel_code.paths import LOG_FILE, ensure_user_files
-
+from pixel_code.utils.update import get_latest_version
+from pixel_code.utils.translate import translate
 # Start debug mod with python3 pixel_code/__main__.py --debug
 
 ensure_user_files()
@@ -29,15 +30,8 @@ class App:
         logging.debug("-" * 15 + " init() " + "-" * 15)
         logging.debug(f"debug value : {debug}")
         self.stdscr = stdscr
-        self.stdscr.keypad(True)
-        curses.curs_set(0)
-
-        self.h, self.w = stdscr.getmaxyx()
+        
         self.param_manager = ParamManager()
-        self.logo = Logo(self)
-        self.param = ParamScreen(self)
-        self.main = MainScreen(self)
-        self.detail_panel = DetailPanel(self)
         
         # self.win_input = curses.newwin(3, w, h - 3, 0)
         # self.input = Input(self,)
@@ -46,11 +40,78 @@ class App:
         self.current = "main" #("main", "parametre")
         self.run()
 
+    def launch_curses(self):
+        self.stdscr.keypad(True)
+        curses.curs_set(0)
+
+        self.h, self.w = self.stdscr.getmaxyx()
+        self.logo = Logo(self)
+        self.param = ParamScreen(self)
+        self.main = MainScreen(self)
+        self.detail_panel = DetailPanel(self)
 
 
 
+
+    def check_update(self) -> bool:
+        """
+        True : A new versions (pre-realse) is available
+        False : Version install is the lastest
+        """
+        current = self.param_manager.get_data("app", "version")
+        
+        last = get_latest_version()
+
+        logging.debug("last")
+        logging.debug(last)
+        lastest = last["tag_name"][1::] # in github there "v"X.X.X
+        
+        current = current.split(".")
+        lastest = lastest.split(".")
+        
+        lastest = [9,9,9] # debug
+
+        logging.debug(f"actual version : {current}")
+        logging.debug(f"last version : {lastest}")
+
+
+        for i in range(3):
+            if int(current[i]) < int(current[i]):
+                logging.debug("New versions detected")
+                return True, current, lastest
+        logging.debug("No new version")
+
+        return False, current, lastest
 
     def run(self):
+        
+        # CAUTION while debuging you can be blocked by github api 
+        # if you check too many times in a short time
+        has_update, current, latest = True, self.param_manager.get_data("app", "version").split("."), [9,9,9] #use this for debuging
+
+        # has_update, current, latest = self.check_update()
+
+        if has_update:
+            txt = {
+                "en" : f"New versions avaible v{current[0]}.{current[1]}.{current[2]} -> v{latest[0]}.{latest[1]}.{latest[2]}, update ? [Y/n]",
+                "fr" : f"Nouvelle version disponible v{current[0]}.{current[1]}.{current[2]} -> v{latest[0]}.{latest[1]}.{latest[2]}, installez ? [Y/n]"
+            }
+            self.stdscr.addstr(0,0, translate(txt, self.param_manager.get_data("app", "language")))
+            self.stdscr.refresh()
+            res = self.stdscr.getch()
+            logging.debug(res)
+            res = chr(res)
+            # logging.debug(res == chr(10)) # chr = ENTER
+            if res in ("Y", "y", chr(10), " ", None):
+                logging.debug("UPDATING")
+                #call main from update.py
+            else:
+                logging.debug("No updating")
+
+
+
+        self.launch_curses()
+
         logging.info("-" * 10 + " START Application, run() " + "-" * 10)
         self.logo.display_logo()
         self.main.display_main()
