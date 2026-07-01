@@ -58,7 +58,7 @@ Format : Y/M/D
 - Github features
 
 
-## [0.4.1] - 
+## [0.5.0] - 
 
 ### Added :
 - 4 new subcommande :
@@ -78,10 +78,15 @@ Format : Y/M/D
 - logging.basicConfig is now In App
 - How the script get args in __main_.py
 - Default parametres get version now with what is write in pyproject.tmol (Attention it return version from the downloaded version in your machine)
+
 - fisrt_use.py work with new platformdirs data.
 
 
 ### Added
-- Edit project function with "e"
+- Edit project function with "e" (just a lot of input)
 
+### Added
+- Update system (none integreted yet)
 
+### Added
+- Search option/marked option to project

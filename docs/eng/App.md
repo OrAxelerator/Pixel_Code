@@ -29,7 +29,7 @@ This loop detect :
 
 ---
 
-## Gestion des touches
+## Keys input
 
 >[!WARNING]
 >
@@ -38,3 +38,7 @@ This loop detect :
 To add a specific key yoiu need to add it on 
 `pixel_code/script/keybord.py` in the condition os == "nt" (windows) **AND** os == "Darwin" ("macos")  **AND** Linux.
 So it works on every OS.
+
+## Update system
+
+``update.py `` download last version from github (can be a release or pre-release) to /update, delete all file/folder from root of project and move all stuff of new versions in update to ../ (root of project)

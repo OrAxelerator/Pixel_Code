@@ -5,9 +5,11 @@
 > * **SPACE**: show/hide full view on a project
 > * **q**: stop the execution of the tui
 > * **↑/↓**: navigation
+> * **/** : Search a project by name
+> * **c** : quit rescearch
+> * **f** : sort project by status (all / done / todo)
 > * **p**: open settings
-> * **r**: reload the display (only works in main branch)
-> * **e**: edit project data from Pixel_Code (not yet functional)
+> * **e**: edit project data from Pixel_Code
 > * **a**: add a project
 > * **d**: delete a project
-> * **g**: perform github action (not available)
+> **m**: marked a project done/todo
