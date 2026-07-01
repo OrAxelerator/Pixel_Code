@@ -62,3 +62,22 @@ Format : Y/M/D
 ### Rajouté :
 - Utilisation de platformdirs
 - message d'erreur quand .pixelcode.json pas trouvé sur chemin d'un projet
+
+### Rajouté
+- Sous commande : 
+    - --clean-projects :  Supprime project invalide so le chemin n'existe pas/plus
+    - --clean-projects-hard : comme clean-project mais surpime aussi si .pixelcode.json est introuvable
+    - --reset-config : reset parametres.json
+    - --clear-log : effacez le contenu de debug.log
+
+    utlisez ``pixel-code -h`` pour afficher l'aide
+
+### Rajouté
+- Editez un projet avec "e"
+
+### Rajouté
+- Système d'update (pas encore intégré)
+
+### Rajouté
+Option de recherche de projet
+

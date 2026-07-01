@@ -33,3 +33,11 @@
 > Lancer en **mode debug** :
 >   Depuis la racine du projet vous pouvez taper la commande : ``python3 pixel_code/__main__.py --debug`` (ou py/python selon votre machine). Les logs sont envoyés dans ``debug.log`` dans le dossier de données utilisateur. A noter que pour le moment les log ne sont quasiment pas utilisés.
 
+sous commande : 
+    - --clean-projects :  Supprime project invalide so le chemin n'existe pas/plus
+    - --clean-projects-hard : comme clean-project mais surpime aussi si .pixelcode.json est introuvable
+    - --reset-config : reset parametres.json
+    - --clear-log : effacez le contenu de debug.log
+
+    utlisez ``pixel-code -h`` pour afficher l'aide
+
