@@ -23,7 +23,6 @@
 
 
 import curses
-import shutil
 from pathlib import Path
 import json
 import subprocess

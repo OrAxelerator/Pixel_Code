@@ -14,7 +14,6 @@ from pixel_code.screens.logo_screen import Logo
 from pixel_code.screens.main_screen import MainScreen
 from pixel_code.screens.param_screen import ParamScreen
 from pixel_code.screens.detail_panel_screen import DetailPanel
-from pixel_code.screens.input_curses import Input
 from pixel_code.script.data.param_manager import ParamManager
 from pixel_code.paths import LOG_FILE, ensure_user_files
 from pixel_code.utils.update import get_latest_version

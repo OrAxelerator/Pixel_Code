@@ -1,5 +1,5 @@
 import curses
-from curses.textpad import Textbox, rectangle
+from curses.textpad import Textbox
 
 class Input:
     def __init__(self, main_app):
