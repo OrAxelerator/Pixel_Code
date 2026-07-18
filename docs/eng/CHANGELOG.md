@@ -58,7 +58,7 @@ Format : Y/M/D
 - Github features
 
 
-## [0.5.0] - 
+## [0.5.0] - 2026-07-18
 
 ### Added :
 - 4 new subcommande :
@@ -86,7 +86,7 @@ Format : Y/M/D
 - Edit project function with "e" (just a lot of input)
 
 ### Added
-- Update system (none integreted yet)
+- Update system
 
 ### Added
 - Search option/marked option to project

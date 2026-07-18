@@ -41,4 +41,7 @@ So it works on every OS.
 
 ## Update system
 
-``update.py `` download last version from github (can be a release or pre-release) to /update, delete all file/folder from root of project and move all stuff of new versions in update to ../ (root of project)
+``update.py `` download last version from github (can be a release or pre-release) to /update, delete all file/folder from root of project and move all stuff of new versions in /update to ../ (root of project)
+
+In debug mode update checker (execute before launching pixel_code)
+do not ping github.com to get last versions but return v999.9.9 (cause by ping github.com every time he block my ip).
