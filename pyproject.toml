@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pixel-code"
-version = "0.4.1"
+version = "0.5.1"
 description = "TUI - Project organization tool"
 authors = [{name = "OrAxelerator"}]
 license = { file = "LICENSE.md" }
