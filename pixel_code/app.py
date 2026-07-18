@@ -1,5 +1,13 @@
 import curses
 import logging
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent.parent
+if str(ROOT) not in sys.path:
+    sys.path.append(str(ROOT))
+
+
 
 from pixel_code.script.keybord import get_key
 from pixel_code.screens.logo_screen import Logo
@@ -53,7 +61,7 @@ class App:
 
 
 
-    def check_update(self) -> bool:
+    def check_update(self) -> tuple[bool, list, list]:
         """
         True : A new versions (pre-realse) is available
         False : Version install is the lastest
@@ -62,7 +70,7 @@ class App:
         
         
         if logging.getLogger().getEffectiveLevel() == logging.DEBUG:
-            lastest = ["9", "9", "9"] # debug
+            lastest = ["999", "9", "9"] # debug
         else:
             last = get_latest_version()
             logging.debug("last")
@@ -111,6 +119,17 @@ class App:
             # logging.debug(res == chr(10)) # chr = ENTER
             if res in ("Y", "y", chr(10), " ", None):
                 logging.debug("UPDATING")
+                if latest == ["999", "9", "9"]:
+                    logging.debug("DEBUG MODE, no update")
+                else:
+                    # fc is on the path /update.py
+                    from update import main
+                    main() # call main from update.py
+                    logging.debug("UPDATE DONE")
+                    self.stdscr.addstr(1,0, "Update done, please restart the app")
+                    self.stdscr.refresh()
+                    self.stdscr.getch()
+                    exit(0)
                 #call main from update.py
             else:
                 logging.debug("No updating")
