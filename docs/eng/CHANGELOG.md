@@ -90,3 +90,9 @@ Format : Y/M/D
 
 ### Added
 - Search option/marked option to project
+
+## [0.5.0] - 2026-07-18
+
+### Changed
+
+Fix issus, version was 0.4.1 and not 0.5.0 ...
