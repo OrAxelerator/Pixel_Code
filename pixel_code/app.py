@@ -74,7 +74,7 @@ class App:
             last = get_latest_version()
             logging.debug("last")
             logging.debug(last)
-            lastest = last["tag_name"][1::] # in github there "v"X.X.X
+            lastest = last[0]["tag_name"][1::] # in github there "v"X.X.X
             
             lastest = lastest.split(".")
 

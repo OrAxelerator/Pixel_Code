@@ -5,7 +5,7 @@ from pixel_code.paths import PROJECTS_JSON, PACKAGE_DIR
 
 PACKAGE_DIR = PACKAGE_DIR.parent # Go to root of projet
 
-print("Thanks for installing Pixel_Code v0.4.0")
+print("Thanks for installing Pixel_Code v0.5.0")
 
 
 # blanck_project = {
