@@ -1,10 +1,7 @@
 import curses
-from pathlib import Path
 import json
-BASE_DIR = Path(__file__).resolve().parent.parent
-PROJECTS_JSON = BASE_DIR / "data/projects.json"
-PARAMETRES_JSON   = BASE_DIR  / "data/parametres.json"
-
+from pixel_code.paths import PARAMETRES_JSON
+import logging
 
 class ParamScreen:
     def __init__(self, main_app):
@@ -23,41 +20,77 @@ class ParamScreen:
                 "key": "language",
                 "type": "cycle",
                 "values": ["en", "fr"],
-                "section":"app"
+                "section":"app",
+                "icon":"󰗊",
+                "label":{
+                    "en":"Language",
+                    "fr":"Langage"
+                }
             },
             {
                 "key": "use_nerd_font",
                 "type": "toggle",
-                "section":"app"
+                "section":"app",
+                "icon":"󰛖",
+		        "label": {
+			        "en":"Use nerd font",
+			        "fr":"Utiliser nerd font"
+		        }
             },
-            
             {
                 "key": "editor",
                 "type": "cycle",
                 "values": ["code", "vim", "cmd"],
-                "section":"projects"
+                "section":"projects",
+                "icon":"󰆍",
+                "label": {
+                    "en":"Editor",
+                    "fr":"Editeur"
+                }
             },
             {
                 "key": "repo",
                 "type": "cycle",
                 "values": ["github", "null"],
-                "section":"projects"
+                "section":"projects",
+                "icon":"󰊢",
+                "label": {
+                    "en":"Repo",
+                    "fr":"Depo"
+                }
+
             },
             {
                 "key": "check_update_at_launch",
                 "type": "toggle",
-                "section":"app"
+                "section":"app",
+                "icon":"󰚰",
+                "label":{
+                    "en":"Check update at launch",
+                    "fr":"Regarder update au lancement"
+                }
+                
             },
             {
                 "key": "logo",
                 "type": "cycle",
                 "values": ["center", "left"],
-                "section":"ui"
+                "section":"ui",
+                "icon" :"",
+                "label": {
+                    "en":"Logo",
+                    "fr":"Logo"
+                }
             },
             {
                 "key": "version",
                 "type": "readonly",
-                "section":"app"
+                "section":"app",
+                "icon" :"󰏖",
+                "label":{
+                    "en":"Version",
+                    "fr":"Version"
+                }
             }
         ]
         # ---------------
@@ -96,33 +129,34 @@ class ParamScreen:
         # * editor (code, vim, cmd)
         # * check update at lauch
         # * logo (left, center)
-        parametre_consigne = {
-            "en": ["Language", "Use Nerd Font",  "Editor", "Repo", "Check update at lauch", "Logo", "Actual versions"],
-            "fr": ["Langage", "Utiliser Nerd Font", "Editeur", "Depo", "Regarder update au lancement", "Logo", "Version actuelle"]
-        }
+      
 
-        caract = ["", "▶"]
+        caract = [" ", "▶"]
         WIDTH = 48
         HEIGHT = len(self.parametre_array) + 4
 
-        lang = "fr" if self.data["app"]["language"] == "fr" else "en"
+        lang =  self.data["app"]["language"]
 
         self.win.box()
 
         start_y = (max_y - HEIGHT) // 2
         start_x = (max_x - WIDTH) // 2
+        long_separator = 48 - len("SETTINGS" if lang == "en" else "PARAMÈTRE") +2 
+        self.win.addstr(start_y + 0, start_x+2, f"{"="*(long_separator//2)} {"SETTINGS" if lang == "en" else "PARAMÈTRE" } {"="*((long_separator//2)+1)}")
 
-        self.win.addstr(start_y + 0, start_x+2, "================== PARAMÈTRES ==================")
-
-        for i in range(len(self.parametre_array)):
+        for i, param in enumerate(self.settings_config):
             arrow = (i == self._selection_parametre)
+            label = param["label"].get( # If text does not existe so use english
+                lang,
+                param["label"]["en"]
+            )
             self.win.addstr(
                 start_y + i + 1,
                 start_x + 2,
-                f'{caract[arrow]}  {parametre_consigne[lang][i].ljust(WIDTH - len(str(self.parametre_array[i])) + (0 if arrow else 1) - 3)}{self.parametre_array[i]}'
+                f'{caract[arrow]}  {param["icon"] if self.data["app"]["use_nerd_font"] else " "} - {label.ljust(WIDTH - len(str(self.parametre_array[i])) - 4)}{self.parametre_array[i]}'
             )
 
-        self.win.addstr(start_y + len(self.parametre_array) + 1, start_x+2, "-" * WIDTH)
+        self.win.addstr(start_y + len(self.parametre_array) + 1, start_x+2, "-" * (WIDTH+4))
         txt = {
             "en":["Navigation", "Change", "Quit"],
             "fr":["Navigation", "Changer", "Quitter"]
@@ -135,7 +169,7 @@ class ParamScreen:
 
         self.win.addstr(
             start_y + len(self.parametre_array) + 2,
-            start_x,
+            start_x + 2,
             f"{txt[lang][0]} : ↑/↓    {txt[lang][1]} : {key[lang]}    {txt[lang][2]} : p"
         )
 
@@ -188,7 +222,7 @@ class ParamScreen:
                     self.editor = data['projects'].get('editor', self.editor)
 
         except FileNotFoundError:
-            print("Fichier de paramètres introuvable.")
+            logging.error("parametres.json not found")
 
     def save_param(self):
         self.main_app.param_manager.save_param()

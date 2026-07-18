@@ -1,9 +1,4 @@
 import curses
-from pathlib import Path
-
-BASE_DIR = Path(__file__).resolve().parent.parent
-PROJECTS_JSON = BASE_DIR / "data/projects.json"
-PARAMETRES_JSON   = BASE_DIR  / "data/parametres.json"
 
 
 class DetailPanel:
@@ -19,6 +14,5 @@ class DetailPanel:
         
     def get_middle_x(self, text):
         return (self.win.getmaxyx()[1] // 2) - (len(text) // 2)
-
 
 

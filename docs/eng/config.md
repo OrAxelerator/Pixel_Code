@@ -1,15 +1,40 @@
-# Configuration nécéssaire :
+# Required configuration:
 
-* Activer réellement les icones :
+* To enable icons:
 
-    Pour Activer les icones il suffit de changer la font    de votre terminal par **"0xProto Nerd Font"**, et si vous souhaitez exécuter le code aussi dans VS Code, il faut appliquer la font dans le terminal vscode **Terminal › Integrated: Font Family** = `"0xProto Nerd Font"`
+    To enable icons you need to use **"0xProto Nerd Font"** in your terminal. If you run Pixel_Code inside VS Code, also set **Terminal › Integrated: Font Family** = `"0xProto Nerd Font"`.
 
-    > Lien pour installer la police : https://github.com/   ryanoasis/nerd-fonts/releases/download/v3.4.0/0xProto.zip
+    > Link to install the font : https://github.com/ryanoasis/nerd-fonts/releases/download/v3.4.0/0xProto.zip
 
 <br>
 
-* Changer les parametres :
+* Change settings:
 
-    Pour changer les parametres une windows et accessible via la touche ``p``mais peut etre certain parametre **ne sont pas encore modifiable** depuis cette interface, pour acceder totalement au parametre allez à : ``/pixel_code/data/parametres.json``
+    To change settings, use the settings screen with the ``p`` key. **Some settings may not yet be editable** from this screen.
+    Settings are stored in the user config directory managed by ``platformdirs``:
+    - macOS: ``~/Library/Application Support/Pixel_Code/parametres.json``
+    - Linux: ``~/.config/Pixel_Code/parametres.json`` or according to your XDG variables
+    - Windows: ``C:\Users\<user>\AppData\Local\OrAxelerator\Pixel_Code\parametres.json``
 
+>[!NOTE]
+>
+> Projects are stored separately in the user data directory:
+> - macOS: ``~/Library/Application Support/Pixel_Code/projects.json``
+> - Linux: ``~/.local/share/Pixel_Code/projects.json``
+> - Windows: ``C:\Users\<user>\AppData\Local\OrAxelerator\Pixel_Code\projects.json``
+>
+> These files are preserved even if Pixel_Code's source code is replaced during an update.
+
+
+>[!NOTE]
+>
+> To launch in **debug mode**:
+>   From the project root, run: ``python3 pixel_code/__main__.py --debug`` (or py/python according to your OS). Logs are written to ``debug.log`` in the user data directory. (tail -f debug.log)
+
+Sub commande : 
+    - --clean-projects :  Delete invalid projects if the path does not exist
+    - --clean-projects-hard : Delete invalid projects if .pixelcode.json is missing or the path does not exist
+    - --reset-config : reset parametres.json
+    - --clear-log : clear the debug.log file
+    You can see help with ``pixel-code -h```
 

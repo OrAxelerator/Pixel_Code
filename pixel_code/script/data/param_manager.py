@@ -1,12 +1,6 @@
-from pathlib import Path
 import json
 
-from pixel_code.utils.translate import translate
-BASE_DIR = Path(__file__).resolve().parent.parent.parent
-PROJECTS_JSON = BASE_DIR / "data/projects.json"
-PARAMETRES_JSON   = BASE_DIR  / "data/parametres.json"
-
-#print(BASE_DIR)
+from pixel_code.paths import DEFAULT_PARAMETRES, PARAMETRES_JSON, ensure_user_files
 
 
 class ParamManager():
@@ -34,38 +28,27 @@ class ParamManager():
         #self.parametre_array = [self.language, self.use_nerd_font, self.version] #here to get len() on setter
 
     def load_param(self):
-        default_data = {
-            "app": {
-                "language": "en",
-                "use_nerd_font": False,
-                "version": None,
-                "check_update_at_launch": True,
-                "allow_prerelease": True,
-            },
-            "ui": {
-                "theme": "default",
-                "logo":"center",
-                "display_project":"side"
-            },
-            "projects": {
-                "sort_by_last_opened": False,
-                "sort_by_name": True,
-                "editor": "code",
-            },
-        }
-
+        ensure_user_files()
         try:
             with open(PARAMETRES_JSON, encoding="utf-8") as f:
                 file_data = json.load(f)
         except FileNotFoundError:
-            print("no foud")
             file_data = {}
 
-        
-        self.data = default_data
-        for section in default_data:
+        self.data = {
+            section: values.copy() if isinstance(values, dict) else values
+            for section, values in DEFAULT_PARAMETRES.items()
+        }
+
+        if "schema_version" in file_data:
+            self.data["schema_version"] = file_data["schema_version"]
+
+        for section in DEFAULT_PARAMETRES:
             if section in file_data:
-                self.data[section].update(file_data[section])
+                if isinstance(self.data[section], dict) and isinstance(file_data[section], dict):
+                    self.data[section].update(file_data[section])
+                else:
+                    self.data[section] = file_data[section]
         
 
     def get_data(self, key_section:str, key:str):
@@ -79,6 +62,7 @@ class ParamManager():
 
 
     def save_param(self):
+        ensure_user_files()
         data_to_save = self.data.copy()
         with open(PARAMETRES_JSON, "w", encoding="utf-8") as f:
             json.dump(data_to_save, f, indent=4, ensure_ascii=False)

@@ -72,10 +72,8 @@ Voir la **documentation** : [ici](/docs/fr/index.md)
 
 > [!IMPORTANT]
 >
-> Avant de lancer Pixel_Code executez le fichier ``first_use.py`` avec :
-> python3 pixel_code/first_use.py (sur MacOS/Linux)
-> python pixel_code/first_use.py (windows)
-> py pixel_code/first_use.py (aussi windows si l'autre ne marche pas)
+> Au premier lancement, Pixel_Code crée automatiquement ses fichiers utilisateur avec ``platformdirs``.
+> Les anciens fichiers ``pixel_code/data/projects.json`` et ``pixel_code/data/parametres.json`` sont migrés si aucun fichier utilisateur n'existe déjà.
 
 
 > [!NOTE]
@@ -96,11 +94,15 @@ Voir la **documentation** : [ici](/docs/fr/index.md)
 > * **ESPACE** : afficher / désactiver la vue complète sur un projet
 > * **q** : arrêter l’exécution du programme
 > * **↑/↓** : navigation
+> * **/** : chercher un projet par nom
+> * **c** : quitter la recherche et réafficher tous les projets
+> * **f** : filtrer les projets par statut (tous / fini / à finir)
 > * **p** : ouvrir les paramètres
 > * **r** : recharger l’affichage (marche seulement dans branch main)
 > * **e** : éditer les données d’un projet depuis Pixel_Code (pas encore fonctionnel)
 > * **a** : ajouter un projet
 > * **d** : suprimer un projet
+> * **m** : marquer le projet comme fini / pas fini
 > * **g** : faire action github (pas dispo)
 
 ---

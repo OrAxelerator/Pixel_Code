@@ -13,3 +13,7 @@ venv/
 # OS
 .DS_Store
 Thumbs.db
+
+# Others
+todo.md
+.pixelcode.json

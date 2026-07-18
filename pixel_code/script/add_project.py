@@ -1,11 +1,14 @@
 import json
 from pathlib import Path
-
+import logging
 
 def create_pixelcode_config(data_projects: dict):
     """
     Create .pixelcode.json file in the folder of the project.
     Crée un fichier .pixelcode.json dans le dossier du projet.
+
+    If config file already exist or path doen'st exist => return False
+    Else => retrun True and write it
     """
 
     project_path = Path(data_projects["path"]).expanduser().resolve()
@@ -13,12 +16,18 @@ def create_pixelcode_config(data_projects: dict):
     #     json.dump(data_projects, f, indent=4, ensure_ascii=False)
         
     config_file = project_path / ".pixelcode.json"
+    logging.debug(f"project_path : {project_path}")
+    logging.debug(f"config_file : {config_file}")
+    logging.debug(f"data_projects : {data_projects}")
+
 
     if not project_path.exists():
-        raise FileNotFoundError(f"Dossier projet introuvable : {project_path}")
+        logging.debug(f"Dossier projet introuvable : {project_path}")
+        return False
 
     if config_file.exists():
-        raise FileExistsError(f"BRUH")
+        logging.debug(f"\n{"-"*10}\nCONFIG FILE ALREADY EXISTE (.pixelcode.json) \nDelete it with : rm {config_file}\n{"-"*10}")
+        return False
         
 
     # default config
@@ -35,3 +44,5 @@ def create_pixelcode_config(data_projects: dict):
 
     with open(config_file, "w", encoding="utf-8") as f:
         json.dump(data_projects, f, indent=4, ensure_ascii=False)
+
+    return True 

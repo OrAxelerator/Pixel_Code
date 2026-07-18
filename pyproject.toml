@@ -4,13 +4,14 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pixel-code"
-version = "0.4.0"
+version = "0.4.1"
 description = "TUI - Project organization tool"
 authors = [{name = "OrAxelerator"}]
 license = { file = "LICENSE.md" }
 readme = "README.md"
 requires-python = ">=3.8"
 dependencies = [
+    "platformdirs",
     "requests",
     "windows-curses; platform_system == 'Windows'"
 ]
@@ -27,12 +28,15 @@ classifiers = [
 [project.scripts]
 pixel-code = "pixel_code.__main__:main"
 
-[tool.setuptools.packages.find]
-where = ["."]
+[tool.setuptools]
 include-package-data = true
 
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["pixel_code*"]
+
 [tool.setuptools.package-data]
-pixel_code = ["*.json", "*.txt"]
+pixel_code = ["data/*.txt"]
 
 [project.urls]
 Homepage = "https://github.com/OrAxelerator/Pixel_Code"
