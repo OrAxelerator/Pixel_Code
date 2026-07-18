@@ -60,36 +60,43 @@ class App:
         """
         current = self.param_manager.get_data("app", "version")
         
-        last = get_latest_version()
-
-        logging.debug("last")
-        logging.debug(last)
-        lastest = last["tag_name"][1::] # in github there "v"X.X.X
         
+        if logging.getLogger().getEffectiveLevel() == logging.DEBUG:
+            lastest = ["9", "9", "9"] # debug
+        else:
+            last = get_latest_version()
+            logging.debug("last")
+            logging.debug(last)
+            lastest = last["tag_name"][1::] # in github there "v"X.X.X
+            
+            lastest = lastest.split(".")
+
         current = current.split(".")
-        lastest = lastest.split(".")
-        
-        lastest = [9,9,9] # debug
-
         logging.debug(f"actual version : {current}")
         logging.debug(f"last version : {lastest}")
 
 
         for i in range(3):
-            if int(current[i]) < int(current[i]):
+            if int(current[i]) == int(lastest[i]):
+                continue
+            elif int(current[i]) < int(lastest[i]):
                 logging.debug("New versions detected")
                 return True, current, lastest
+            else:
+                logging.debug("No new version")
+                return False, current, lastest
+            
         logging.debug("No new version")
 
-        return False, current, lastest
+        return False, current, lastest # if same version
 
     def run(self):
         
         # CAUTION while debuging you can be blocked by github api 
         # if you check too many times in a short time
-        has_update, current, latest = True, self.param_manager.get_data("app", "version").split("."), [9,9,9] #use this for debuging
+        # has_update, current, latest = True, self.param_manager.get_data("app", "version").split("."), [9,9,9] #use this for debuging
 
-        # has_update, current, latest = self.check_update()
+        has_update, current, latest = self.check_update()
 
         if has_update:
             txt = {
