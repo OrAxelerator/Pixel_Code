@@ -121,7 +121,7 @@ class App:
                 logging.debug("UPDATING")
                 if latest == ["999", "9", "9"]:
                     logging.debug("DEBUG MODE, no update")
-                else:
+                else: #call main from update.py
                     # fc is on the path /update.py
                     from update import main
                     main() # call main from update.py
@@ -130,7 +130,7 @@ class App:
                     self.stdscr.refresh()
                     self.stdscr.getch()
                     exit(0)
-                #call main from update.py
+                
             else:
                 logging.debug("No updating")
 
