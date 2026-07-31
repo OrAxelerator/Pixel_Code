@@ -3,6 +3,9 @@ import shutil
 import zipfile
 import requests
 from pathlib import Path
+from importlib.metadata import version
+import json
+from pixel_code.paths import PARAMETRES_JSON
 
 # ---------------- CONFIG ----------------
 REPO = "OrAxelerator/Pixel_Code"
@@ -22,14 +25,24 @@ def extract_zip(zip_path, extract_dir):
         z.extractall(extract_dir)
 
 
-def get_latest_version():
-    """ can return release and pre-release"""
-    r = requests.get(URL)
-    releases = r.json()
+def get_latest_version()-> object | None:
+    """ 
+    can return release and pre-release.
+    And None if 404 or user don't have connection
+    """
 
+    try:
+        r = requests.get(URL)
+
+        if r.status_code == 404:
+            return None
+        else:
+            releases = r.json()
+    except:
+        return None
+    
     # print(releases[0]["tag_name"])      # la plus récente, même si c'est une prerelease
     # print(releases[0]["prerelease"])    # True ou False
-
     return releases[0]
 
 
@@ -90,6 +103,33 @@ def restore_update(update_folder):
             shutil.move(str(item), str(dst / item.name))
 
 
+def write_new_version_parametre(version_of_pyproject:str):
+
+    with open(str(PARAMETRES_JSON), 'r') as f:
+        data = json.load(f)
+        print(data["app"]["version"])
+
+        param_version = data["app"]["version"].split(".")
+        print(param_version)
+
+        actual_version = version_of_pyproject.split(".")
+        print(actual_version)
+
+        for i in range(len(actual_version)):
+            if actual_version[i] > param_version[i]: #  besion de changement
+                print("écriture dans parametres.json")
+                # write version_of_pyproject in data["app"]["version"].split(".")
+                data["app"]["version"] = version_of_pyproject
+                with open(str(PARAMETRES_JSON), 'w') as f:
+                    json.dump(data, f, indent=4)
+                break
+            elif actual_version[i] == param_version[i]:
+                continue
+            elif actual_version[i] < param_version[i]:
+                print("WHAAAT you downgrade version, HOW ?")
+                print("pls make a issue on github")
+
+# write_new_version_parametre(version("pixel-code")) # debug
 
 def main():
     zip_path = download_last_version()  # 
@@ -116,3 +156,7 @@ def main():
 
 
     restore_update(root_folder) # mv stuff from /update to root project
+
+    APP_VERSION = version("pixel-code")
+
+    write_new_version_parametre(APP_VERSION)

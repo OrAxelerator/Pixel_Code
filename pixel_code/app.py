@@ -15,7 +15,7 @@ from pixel_code.screens.main_screen import MainScreen
 from pixel_code.screens.param_screen import ParamScreen
 from pixel_code.screens.detail_panel_screen import DetailPanel
 from pixel_code.script.data.param_manager import ParamManager
-from pixel_code.paths import LOG_FILE, ensure_user_files
+from pixel_code.paths import LOG_FILE, ensure_user_files, APP_VERSION
 from pixel_code.utils.update import get_latest_version
 from pixel_code.utils.translate import translate
 # Start debug mod with python3 pixel_code/__main__.py --debug
@@ -27,7 +27,7 @@ ensure_user_files()
 # logging.info("APP LAUNCH")   # affiché en --debug ET mode normal
 # logging.warning("Problème détecté")    # toujours affiché
 class App:
-    def __init__(self, stdscr, debug):
+    def __init__(self, stdscr, debug, wifi: bool = False):
         level = logging.DEBUG if debug else logging.INFO
         logging.basicConfig(
             filename=LOG_FILE,
@@ -36,7 +36,9 @@ class App:
         )
         logging.debug("-" * 15 + " init() " + "-" * 15)
         logging.debug(f"debug value : {debug}")
+        logging.debug(f"wifi value : {wifi}")
         self.stdscr = stdscr
+        self.wifi = wifi
         
         self.param_manager = ParamManager()
         
@@ -65,10 +67,9 @@ class App:
         True : A new versions (pre-realse) is available
         False : Version install is the lastest
         """
-        current = self.param_manager.get_data("app", "version")
+        current = APP_VERSION
         
-        
-        if logging.getLogger().getEffectiveLevel() == logging.DEBUG:
+        if logging.getLogger().getEffectiveLevel() == logging.DEBUG and not self.wifi:
             lastest = ["999", "9", "9"] # debug
         else:
             last = get_latest_version()
