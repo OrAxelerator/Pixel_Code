@@ -27,7 +27,7 @@ ensure_user_files()
 # logging.info("APP LAUNCH")   # affiché en --debug ET mode normal
 # logging.warning("Problème détecté")    # toujours affiché
 class App:
-    def __init__(self, stdscr, debug):
+    def __init__(self, stdscr, debug, wifi: bool = False):
         level = logging.DEBUG if debug else logging.INFO
         logging.basicConfig(
             filename=LOG_FILE,
@@ -36,7 +36,9 @@ class App:
         )
         logging.debug("-" * 15 + " init() " + "-" * 15)
         logging.debug(f"debug value : {debug}")
+        logging.debug(f"wifi value : {wifi}")
         self.stdscr = stdscr
+        self.wifi = wifi
         
         self.param_manager = ParamManager()
         
@@ -67,7 +69,7 @@ class App:
         """
         current = APP_VERSION
         
-        if logging.getLogger().getEffectiveLevel() == logging.DEBUG:
+        if logging.getLogger().getEffectiveLevel() == logging.DEBUG and not self.wifi:
             lastest = ["999", "9", "9"] # debug
         else:
             last = get_latest_version()

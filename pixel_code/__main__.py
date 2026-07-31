@@ -64,12 +64,13 @@ def parse_args():
     parser.add_argument("--reset-config", action="store_true", help="Reset setting of user not all of his projects")
     parser.add_argument("--clear-log", action="store_true", help="Clear debug.log")
     parser.add_argument("--debug", action="store_true", help="Enable debug logging")
+    parser.add_argument("--wifi", action="store_true", help="Look reel last version of pc in github even in debug mod")
     return parser.parse_args()
 
 
 
-def run(stdscr, debug: bool = False):
-    App(stdscr, debug=debug)
+def run(stdscr, debug: bool = False, wifi: bool = False):
+    App(stdscr, debug=debug, wifi=wifi)
     
 
 
@@ -90,8 +91,8 @@ def main():
 
     if args.clean_projects or args.clean_projects_hard or args.reset_config :
         input("ENTER TO LAUNCH Pixel_Code")    
-       
-    curses.wrapper(lambda stdscr: run(stdscr, debug=args.debug))
+
+    curses.wrapper(lambda stdscr: run(stdscr, debug=args.debug, wifi=args.wifi))
 
 
 
