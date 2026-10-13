@@ -2,46 +2,36 @@
 
 ## Initialization
 
-
-In the init, the class`App` manage to create all these class  :
+``__main__.py`` creates the class `App` inside ``curses.wrapper()``. In the init, `App` creates the ``ParamManager``, checks for updates, then creates all the screens:
 - `Logo`
 - `ParamScreen`
 - `MainScreen`
 - `DetailPanel`
-- `ParamManager`
 
-With  `self` as an argument, So every class have an access to can access to other class.
+With `self` as an argument, so every class has access to the other classes.
 
-And full size windows like "main" and "parametre" are save in `sefl.current`, and the main loop lauch with `self.run()`.
+The full size window displayed (``"main"`` or ``"param"``) is saved in `self.current`, and the main loop is launched with `self.run()`.
 
 ---
 
 ## self.run()
 
-Do :
-- Display logo.
-- Display `main` screen  at start.
-- Lauch  `while True`.
+Does:
+- Check for updates (see [update](/docs/eng/update.md)). If the user accepts, ``run()`` stops here and the update is installed by ``__main__.py``.
+- Display the logo.
+- Display the `main` screen at start.
+- Launch the `while True` loop.
 
-This loop detect :
-- Wich key is pressed.
-- What to do according to the screen.
+This loop detects:
+- Which key is pressed.
+- What to do according to the screen (``self.current``).
 
 ---
 
 ## Keys input
 
->[!WARNING]
+> [!WARNING]
 >
-> `get_key()` function does't return all of the key
+> `get_key()` doesn't return all the keys of the keyboard.
 
-To add a specific key yoiu need to add it on 
-`pixel_code/script/keybord.py` in the condition os == "nt" (windows) **AND** os == "Darwin" ("macos")  **AND** Linux.
-So it works on every OS.
-
-## Update system
-
-``update.py `` download last version from github (can be a release or pre-release) to /update, delete all file/folder from root of project and move all stuff of new versions in /update to ../ (root of project)
-
-In debug mode update checker (execute before launching pixel_code)
-do not ping github.com to get last versions but return v999.9.9 (cause by ping github.com every time he block my ip).
+To add a key you need to add it in ``pixel_code/script/keybord.py``, in the condition ``os.name == "nt"`` (Windows) **AND** in the ``else`` (macOS / Linux), so it works on every OS. Then add what the key does in the loop of ``App.run()``.

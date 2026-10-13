@@ -1,18 +1,32 @@
-# Raccourci clavier : 
+# Raccourcis clavier
 
-> [!NOTE]
->
-> Raccourcis clavier :
-> 
-> * **ESPACE** : afficher / désactiver la vue complète sur un projet
-> * **q** : arrêter l’exécution de Pixel_Code
-> * **↑/↓** : navigation
-> * **/** : chercher un projet par nom
-> * **c** : quitter la recherche et réafficher tous les projets
-> * **f** : filtrer les projets par statut (tous / fini / à finir)
-> * **p** : ouvrir les paramètres
-> * **e** : éditer les données d’un projet depuis Pixel_Code 
-> * **a** : ajouter un projet
-> * **d** : supprimer un projet
-> * **m** : marquer le projet comme fini / pas fini
-> * **g** : faire action github (indisponible pour le moment)
+### Écran principal
+
+| Touche | Action |
+| --- | --- |
+| **↑/↓** | navigation |
+| **ENTRÉE** | ouvrir le projet sélectionné avec votre éditeur (paramètre ``editor`` : VS Code, vim ou un terminal) |
+| **ESPACE** | afficher / cacher le panneau de détails d'un projet |
+| **/** | chercher un projet par nom |
+| **c** | effacer la recherche |
+| **f** | filtrer les projets par statut (tous / fini / à finir) |
+| **m** | marquer le projet comme fini / à finir |
+| **a** | ajouter un projet |
+| **e** | éditer les données d'un projet |
+| **d** | supprimer un projet (seulement de Pixel_Code, vos fichiers ne sont pas supprimés) |
+| **p** | ouvrir les paramètres |
+| **g** | actions github (pas encore disponible) |
+| **q** | quitter Pixel_Code |
+
+### Écran des paramètres
+
+| Touche | Action |
+| --- | --- |
+| **↑/↓** | navigation |
+| **ESPACE** | changer la valeur du paramètre |
+| **p** | enregistrer et revenir à l'écran principal |
+| **q** | quitter Pixel_Code |
+
+### Zones de saisie (ajout / édition / recherche)
+
+Tapez le texte puis appuyez sur **ENTRÉE** pour valider.

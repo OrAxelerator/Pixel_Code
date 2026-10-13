@@ -423,7 +423,7 @@ class MainScreen:
                 "repo" : repo
             }
             if not create_pixelcode_config(new_project): # .pixelcode.json already exist
-                self.popup("TSTE")
+                self.popup(translate({"en": ".pixelcode.json already exists in this folder, project not added.", "fr": ".pixelcode.json existe déjà dans ce dossier, projet non ajouté."}, self.main_app.param_manager.get_data("app", "language")))
                 logging.error("File .pixelcode.json aleray exist, your input will be ignored")
                 return False
 
@@ -453,7 +453,7 @@ class MainScreen:
             res = self.input.display_input(confirmation_message)
             self.win.refresh()#do nothing?
             if res.lower() not in ("y", "yes"):
-                self.popup("Action cancelled. Project not delete.")
+                self.popup(translate({"en": "Action cancelled. Project not deleted.", "fr": "Action annulée. Projet non supprimé."}, self.main_app.param_manager.get_data("app", "language")))
                 return
 
             with open(PROJECTS_JSON, encoding="utf-8") as f:
@@ -472,7 +472,7 @@ class MainScreen:
                 if project.pwd != target_path
             ]
             self._selection = max(0, min(self._selection, len(self.get_display_projects()) - 1))
-            self.popup("Projet supprimé avec succès !")
+            self.popup(translate({"en": "Project deleted.", "fr": "Projet supprimé avec succès !"}, self.main_app.param_manager.get_data("app", "language")))
             logging.info("Project deleted")
 
         except FileNotFoundError:
@@ -483,14 +483,8 @@ class MainScreen:
 
 
     def pull_project(self):
-        from pixel_code.script.git import git_pull_reset_hard
-        project = self.get_selected_project()
-        if project is None:
-            return
-
-        res = self.input.display_input("sur ? [y/N]")
-        if res == "y":
-            git_pull_reset_hard(project.repo)
+        # Github features are not available for now (see script/git.py)
+        self.popup(translate({"en": "Github actions are not available yet.", "fr": "Les actions github ne sont pas encore disponibles."}, self.main_app.param_manager.get_data("app", "language")))
 
 
     def popup(self, msg: str):#debug fonction to delete
@@ -657,14 +651,9 @@ class Project:
             elif editor == "code":
                 subprocess.run(["code", "-n", str(project_path)])
                 return
-                error_msg = {
-                "en":"error while lauching projects in your IDE, check value of 'editor' in parametes.json",
-                "fr":"erreur pedant lancement du projets dans votre IDE, regardez la valeur de 'editor' dans parametres.json"
-                }
             elif editor == "cmd":
                 if os.path.exists(project_path) and os.path.isdir(project_path):
                 #cd into directory?
-                    self.main_app.popup("path existe")
                     import platform
                     import sys
                     system = platform.system()
@@ -698,10 +687,10 @@ class Project:
 
                         else:
                             logging.warning(f"OS not  supported: {system}") # user on temple os ?
-                            self.main_app.popup(f"OS not  supported: {system}")
+                            self.main_app.popup(translate({"en": f"OS not supported: {system}", "fr": f"OS non supporté : {system}"}, self.main_app.main_app.param_manager.get_data("app", "language")))
 
                     except Exception as e:
                         logging.warning(f"Error opening terminal : {e}")
-                        self.main_app.popup(f"Error opening terminal : {e}")
+                        self.main_app.popup(translate({"en": f"Error opening terminal : {e}", "fr": f"Erreur à l'ouverture du terminal : {e}"}, self.main_app.main_app.param_manager.get_data("app", "language")))
 
                     sys.exit() # quit Pixel_Code

@@ -26,7 +26,7 @@ def create_pixelcode_config(data_projects: dict):
         return False
 
     if config_file.exists():
-        logging.debug(f"\n{"-"*10}\nCONFIG FILE ALREADY EXISTE (.pixelcode.json) \nDelete it with : rm {config_file}\n{"-"*10}")
+        logging.debug(f"\n{'-'*10}\nCONFIG FILE ALREADY EXISTE (.pixelcode.json) \nDelete it with : rm {config_file}\n{'-'*10}")
         return False
         
 

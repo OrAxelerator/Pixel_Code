@@ -14,15 +14,18 @@ Pixel_Code is a Python tool that makes it easier to open projects in VS Code and
 
 #### How does it work?
 
-see **documentation** : [here](/docs/eng/index.md)
+See the **documentation**: [here](/docs/eng/index.md)
 
 
 ### Installation on:
+
+Pixel_Code needs **Python 3.10+** and **git**.
+
 <details>
 <summary><strong>1. Ubuntu/Linux</strong></summary>
 
 * If **pipx isn't installed:**
-    
+
     ```bash
     sudo apt install pipx
     pipx ensurepath
@@ -41,14 +44,16 @@ see **documentation** : [here](/docs/eng/index.md)
 <summary><strong>2. MacOS</strong></summary>
 
 
-* Clone the repo and install the TUI:
+* Clone the repo and install the TUI (or ``pip install .`` without pipx):
 
-    ```cmd
+    ```bash
+    brew install pipx
+    pipx ensurepath
     git clone https://github.com/OrAxelerator/Pixel_Code.git
     cd Pixel_Code
-    pip install -e .
+    pipx install .
     ```
-    
+
 </details>
 
 ---
@@ -60,14 +65,14 @@ see **documentation** : [here](/docs/eng/index.md)
 * Download the project and install the tool:
     ```cmd
     git clone https://github.com/OrAxelerator/Pixel_Code.git
-    cd ./Pixel_Code
-    py -m pip install -e .
+    cd Pixel_Code
+    py -m pip install .
     ```
     (or python)
     * If you get an error:
     **See advanced Windows installation [by clicking here](/docs/eng/install.md)**
-        
-    </details>
+
+</details>
 
 ---
 > [!IMPORTANT]
@@ -77,6 +82,11 @@ see **documentation** : [here](/docs/eng/index.md)
 
 > Launch the app by typing the command: **pixel-code**
 
+> [!NOTE]
+>
+> **Updates**: at launch, Pixel_Code proposes to install the new version if there is one (and starts normally without connection). Your projects and settings are kept. See [update](/docs/eng/update.md).
+>
+> Coming from **v0.5.2 or older**? Reinstall once by hand with the commands above (``pipx install --force .``).
 
 > [!IMPORTANT]
 >
@@ -86,17 +96,16 @@ see **documentation** : [here](/docs/eng/index.md)
 
 > [!NOTE]
 >
-> Keyboard shortcuts:
-> 
-> * **SPACE**: show/hide full view on a project.
-> * **q**: stop the execution of the tui.
+> Keyboard shortcuts (all of them [here](/docs/eng/key_bind.md)):
+>
 > * **↑/↓**: navigation.
+> * **ENTER**: open the project with your editor.
+> * **SPACE**: show/hide the details of a project.
+> * **/**: search a project by name, **c**: clear the search.
+> * **f**: filter projects by status, **m**: mark a project done / to finish.
+> * **a**: add a project, **e**: edit a project, **d**: delete a project.
 > * **p**: open settings.
-> * **r**: reload the display (only works in main branch).
-> * **e**: edit project data from Pixel_Code (not yet functional).
-> * **a**: add a project.
-> * **d**: delete a project.
-> * **g**: perform github action (not available).
+> * **q**: quit.
 
 ---
 

@@ -142,7 +142,7 @@ class ParamScreen:
         start_y = (max_y - HEIGHT) // 2
         start_x = (max_x - WIDTH) // 2
         long_separator = 48 - len("SETTINGS" if lang == "en" else "PARAMÈTRE") +2 
-        self.win.addstr(start_y + 0, start_x+2, f"{"="*(long_separator//2)} {"SETTINGS" if lang == "en" else "PARAMÈTRE" } {"="*((long_separator//2)+1)}")
+        self.win.addstr(start_y + 0, start_x+2, f"{'='*(long_separator//2)} {'SETTINGS' if lang == 'en' else 'PARAMÈTRE'} {'='*((long_separator//2)+1)}")
 
         for i, param in enumerate(self.settings_config):
             arrow = (i == self._selection_parametre)

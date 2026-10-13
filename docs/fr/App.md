@@ -2,38 +2,36 @@
 
 ## Initialisation
 
-À l'init, la classe `App` s'occupe de créer toutes les classes :
+``__main__.py`` crée la classe `App` dans ``curses.wrapper()``. À l'init, `App` crée le ``ParamManager``, vérifie les mises à jour, puis crée tous les écrans :
 - `Logo`
 - `ParamScreen`
 - `MainScreen`
 - `DetailPanel`
-- `ParamManager`
 
 Avec comme argument `self`, pour que, depuis n'importe quelle classe, on puisse accéder aux autres.
 
-Puis, la fenêtre affichée (seulement les fenêtres qui prennent 100 % de l'espace, donc `main` ou `paramètre`) est enregistrée dans `self.current`, et la boucle principale se lance avec `self.run()`.
+La fenêtre affichée (seulement les fenêtres qui prennent 100 % de l'espace, donc ``"main"`` ou ``"param"``) est enregistrée dans `self.current`, et la boucle principale se lance avec `self.run()`.
 
 ---
 
 ## self.run()
 
 S'occupe :
+- De vérifier les mises à jour (voir [mise à jour](/docs/fr/update.md)). Si l'utilisateur accepte, ``run()`` s'arrête là et la mise à jour est installée par ``__main__.py``.
 - D'afficher le logo.
-- D'afficher la fenêtre `main` à l'init.
+- D'afficher la fenêtre `main` au démarrage.
 - Puis de lancer une boucle `while True`.
 
 Cette boucle détecte :
-- quelle touche est pressée.
-- quoi faire en fonction de l'écran.
+- Quelle touche est pressée.
+- Quoi faire en fonction de l'écran (``self.current``).
 
 ---
 
 ## Gestion des touches
 
->[!WARNING]
+> [!WARNING]
 >
->`get_key()` ne renvoie pas toutes les touches du clavier.
+> `get_key()` ne renvoie pas toutes les touches du clavier.
 
-Pour rajouter une fonction à l'appui d'une touche, il faut rajouter cette touche dans :
-`pixel_code/script/keybord.py` dans la condition os == "nt" (windows), os == "Darwin" ("macos") et Linux. 
-Pour que cela marche pour tout les OS.
+Pour rajouter une touche, il faut la rajouter dans ``pixel_code/script/keybord.py``, dans la condition ``os.name == "nt"`` (Windows) **ET** dans le ``else`` (macOS / Linux), pour que ça marche sur tous les OS. Puis rajoutez ce que fait la touche dans la boucle de ``App.run()``.

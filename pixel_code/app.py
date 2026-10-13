@@ -16,11 +16,13 @@ from pixel_code.screens.param_screen import ParamScreen
 from pixel_code.screens.detail_panel_screen import DetailPanel
 from pixel_code.script.data.param_manager import ParamManager
 from pixel_code.paths import LOG_FILE, ensure_user_files, APP_VERSION
-from pixel_code.utils.update import get_latest_version
+from pixel_code.utils.update import get_latest_release, is_newer, get_editable_location
 from pixel_code.utils.translate import translate
 # Start debug mod with python3 pixel_code/__main__.py --debug
 
 ensure_user_files()
+
+DEBUG_TAG = "v999.9.9"
 # level = logging.DEBUG if "--debug" in sys.argv else logging.INFO
 
 # logging.debug("Valeur de x ")   # affiché seulement en --debug
@@ -41,6 +43,7 @@ class App:
         self.wifi = wifi
         
         self.param_manager = ParamManager()
+        self.update_tag = None # tag of the release to install when Pixel_Code is closed
         
         # self.win_input = curses.newwin(3, w, h - 3, 0)
         # self.input = Input(self,)
@@ -62,79 +65,76 @@ class App:
 
 
 
-    def check_update(self) -> tuple[bool, list, list]:
+    def check_update(self) -> dict | None:
         """
-        True : A new versions (pre-realse) is available
-        False : Version install is the lastest
+        Return the github release if a new version is available, else None.
+        Return None too if user doesn't have connection.
         """
-        current = APP_VERSION
-        
+        if not self.param_manager.get_data("app", "check_update_at_launch"):
+            logging.debug("Update check disabled in parametres.json")
+            return None
+
+        # CAUTION while debuging you can be blocked by github api
+        # if you check too many times in a short time, so use --wifi to really check
         if logging.getLogger().getEffectiveLevel() == logging.DEBUG and not self.wifi:
-            lastest = ["999", "9", "9"] # debug
-        else:
-            last = get_latest_version()
-            logging.debug("last")
-            logging.debug(last)
-            lastest = last[0]["tag_name"][1::] # in github there "v"X.X.X
-            
-            lastest = lastest.split(".")
+            logging.debug("Debug mode : fake release v999.9.9")
+            return {"tag_name": DEBUG_TAG}
 
-        current = current.split(".")
-        logging.debug(f"actual version : {current}")
-        logging.debug(f"last version : {lastest}")
+        release = get_latest_release(self.param_manager.get_data("app", "allow_prerelease"))
+        if release is None:
+            return None
 
+        logging.debug(f"actual version : {APP_VERSION}")
+        logging.debug(f"last version : {release['tag_name']}")
+        if is_newer(release["tag_name"], APP_VERSION):
+            logging.debug("New version detected")
+            return release
 
-        for i in range(3):
-            if int(current[i]) == int(lastest[i]):
-                continue
-            elif int(current[i]) < int(lastest[i]):
-                logging.debug("New versions detected")
-                return True, current, lastest
-            else:
-                logging.debug("No new version")
-                return False, current, lastest
-            
         logging.debug("No new version")
+        return None
 
-        return False, current, lastest # if same version
+    def ask_update(self, release: dict):
+        """Ask user to update, if yes save the tag in self.update_tag (installed after curses is closed)"""
+        lang = self.param_manager.get_data("app", "language")
+        tag = release["tag_name"]
+        txt = {
+            "en" : f"New version available v{APP_VERSION} -> {tag}, update ? [Y/n]",
+            "fr" : f"Nouvelle version disponible v{APP_VERSION} -> {tag}, installer ? [Y/n]"
+        }
+        self.stdscr.clear()
+        self.stdscr.addstr(0, 0, translate(txt, lang))
+        self.stdscr.refresh()
+        res = self.stdscr.getch()
+        if res not in (ord("Y"), ord("y"), 10, 13, ord(" ")):
+            logging.debug("No updating")
+            return
+
+        if tag == DEBUG_TAG:
+            logging.debug("DEBUG MODE, no update")
+            return
+
+        editable_location = get_editable_location()
+        if editable_location is not None:
+            # "pip install -e ." : the code is a git repo, pip must not replace it
+            txt = {
+                "en" : f"Pixel_Code is installed with 'pip install -e', update it with 'git pull' in {editable_location}. Press a key to continue.",
+                "fr" : f"Pixel_Code est installé avec 'pip install -e', mettez le à jour avec 'git pull' dans {editable_location}. Appuyez sur une touche pour continuer."
+            }
+            self.stdscr.addstr(2, 0, translate(txt, lang))
+            self.stdscr.refresh()
+            self.stdscr.getch()
+            return
+
+        self.update_tag = tag
 
     def run(self):
-        
-        # CAUTION while debuging you can be blocked by github api 
-        # if you check too many times in a short time
-        # has_update, current, latest = True, self.param_manager.get_data("app", "version").split("."), [9,9,9] #use this for debuging
-
-        has_update, current, latest = self.check_update()
-
-        if has_update:
-            txt = {
-                "en" : f"New versions avaible v{current[0]}.{current[1]}.{current[2]} -> v{latest[0]}.{latest[1]}.{latest[2]}, update ? [Y/n]",
-                "fr" : f"Nouvelle version disponible v{current[0]}.{current[1]}.{current[2]} -> v{latest[0]}.{latest[1]}.{latest[2]}, installez ? [Y/n]"
-            }
-            self.stdscr.addstr(0,0, translate(txt, self.param_manager.get_data("app", "language")))
-            self.stdscr.refresh()
-            res = self.stdscr.getch()
-            logging.debug(res)
-            res = chr(res)
-            # logging.debug(res == chr(10)) # chr = ENTER
-            if res in ("Y", "y", chr(10), " ", None):
-                logging.debug("UPDATING")
-                if latest == ["999", "9", "9"]:
-                    logging.debug("DEBUG MODE, no update")
-                else: #call main from update.py
-                    # fc is on the path /update.py
-                    from update import main
-                    main() # call main from update.py
-                    logging.debug("UPDATE DONE")
-                    self.stdscr.addstr(1,0, "Update done, please restart the app")
-                    self.stdscr.refresh()
-                    self.stdscr.getch()
-                    exit(0)
-                
-            else:
-                logging.debug("No updating")
-
-
+        release = self.check_update()
+        if release is not None:
+            self.ask_update(release)
+            if self.update_tag is not None:
+                return # quit curses, update is done in __main__.py
+        self.stdscr.clear()
+        self.stdscr.refresh()
 
         self.launch_curses()
 

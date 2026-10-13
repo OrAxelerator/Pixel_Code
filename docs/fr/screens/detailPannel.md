@@ -1,6 +1,6 @@
 ### Detail pannel screens :
 
-En réalité il n'est utilisé que lorsque le paramètre ``"display_projects" = "side" ``  car quand ce paramètre vaut ``"bottom"`` (supprimé depuis v0.4.0) les données du projet sont affichées en dessous de son nom sur la fenêtre main.
+En réalité il n'est utilisé que lorsque le paramètre ``"display_project" = "side"``  car quand ce paramètre vaut ``"bottom"`` (supprimé depuis v0.4.0) les données du projet sont affichées en dessous de son nom sur la fenêtre main.
 
 
 Preview : 

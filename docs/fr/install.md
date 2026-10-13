@@ -1,94 +1,123 @@
-# Installation - poussé
+# Installation - avancée
 
+Pixel_Code a besoin de **Python 3.10 ou plus récent** et de **git**.
 
 <details>
-<summary><strong>1. Installation sur Linux :</strong></summary><br>
+<summary><strong>1. Ubuntu/Linux</strong></summary><br>
 
-tapez dans un terminal : ```pipx --version```
+* Regardez si pipx est installé : ``pipx --version``. Sinon :
 
-Si rien est affiché installé pipx avec :
-```sudo apt install pipx``` et ```pipx ensurepath```
+    ```bash
+    sudo apt install pipx
+    pipx ensurepath
+    ```
+    Puis fermez et ré-ouvrez le terminal.
 
-Puis cloner le depo github :     
-```bash
-git clone https://github.com/OrAxelerator/Pixel_Code.git
-cd Pixel_Code
-pipx install .
-```
+* Clonez le dépôt et installez la TUI :
 
+    ```bash
+    git clone https://github.com/OrAxelerator/Pixel_Code.git
+    cd Pixel_Code
+    pipx install .
+    ```
 </details>
 
 <details>
-<summary><strong>2. Installation sur MacOs :</strong></summary><br>
+<summary><strong>2. MacOS</strong></summary><br>
 
-clonez le dépot et initialisez le module
-```cmd
-git clone https://github.com/OrAxelerator/Pixel_Code.git
-cd Pixel_Code
-pip install -e .
-```
+* Avec pipx (recommandé) :
 
+    ```bash
+    brew install pipx
+    pipx ensurepath
+    git clone https://github.com/OrAxelerator/Pixel_Code.git
+    cd Pixel_Code
+    pipx install .
+    ```
+
+* Ou avec pip :
+
+    ```bash
+    git clone https://github.com/OrAxelerator/Pixel_Code.git
+    cd Pixel_Code
+    pip install .
+    ```
 </details>
 
 <details>
-<summary><strong>3. Installation sur Windows :</strong></summary><br>
-
-L'instalation sur windows n'es pas encore 100% documenté dans tout les cas..
-
-Téléchargez le projet :
-```cmd
-git clone https://github.com/OrAxelerator/Pixel_Code.git
-cd ./Pixel_Code
-```
-regardez si pip est installez avec : ```pip --version``` ou ```py -m pip --version```<br>
-Si **pip n'est pas installé**, installez le.
-Puis Tapez : ```py -m pip install -e .``` :
-* Si vous recevez cette eurreur : 
-    ```
-    WARNING: The script xxx.exe is installed in 'C:\Users\XXX\AppData\Local\Microsoft\WindowsApps' which is not on PATH
-    ```
-    C'est que vous avez surement télécharger python depuis le Microsoft store (pas bien)
-    allez le télechrgez sur le site officiel : [python.org](https://www.python.org/)
-
-    installé pip avrec python : 
-    * py -m ensurepip --upgrade
-    * py -m pip install --upgrade pip
-
-    ---
-
-* Si vous recevez l'erreur :
-    ```
-    Successfully uninstalled pixel-code-0.1.0 WARNING: The script pixel-code.exe is installed in 'C:\Users\User\AppData\Local\Python\pythoncore-3.14-64\Scripts' which is not on PATH. Consider adding this directory to PATH or, if you prefer to suppress this warning, use --no-warn-script-location. Successfully installed pixel-code-0.1.0
-    ```
-    <details>
-    <summary>Faite :</summary>
-    
-    1. faite : 
-    2. Win + R 
-    3. dans la popup rentrez : sysdm.cpl
-    4. onglet avancé
-    5. variables d'environement
-    6. Dans Variables utilisateur → sélectionner Path
-    7. Modifier
-    8. Nouveau
-    9. coller ce chemin si (changez avec votre username) : C:\Users\votre username\AppData\Local\Python\pythoncore-3.14-64\Scripts
-    10. OK -> OK -> OK
-    11. Fermez et re-ouvrez le terminal après ça.
-        
-    et problème réglez
-    </details>
-
-
-</details>
-
---- 
-
-### Une fois l'Installation terminée :
+<summary><strong>3. Windows</strong></summary><br>
 
 > [!NOTE]
 >
-> Appelez l'app en tapant la commande : **pixel-code**
+> L'installation sur Windows n'est pas encore documentée à 100% dans tous les cas.
+
+* Téléchargez le projet et installez l'outil :
+
+    ```cmd
+    git clone https://github.com/OrAxelerator/Pixel_Code.git
+    cd Pixel_Code
+    py -m pip install .
+    ```
+    Les erreurs les plus courantes sont :
+    - pip n'est pas installé (voir en dessous)
+    - vous avez tapé ``python`` mais votre ordinateur utilise ``py`` (ou l'inverse)
+
+* Si vous recevez cette erreur :
+    ```
+    WARNING: The script xxx.exe is installed in 'C:\Users\XXX\AppData\Local\Microsoft\WindowsApps' which is not on PATH
+    ```
+    C'est que vous avez sûrement téléchargé python depuis le Microsoft Store (pas bien).
+    Téléchargez-le depuis le site officiel : [python.org](https://www.python.org/)
+
+    Puis installez pip avec python :
+    * ``py -m ensurepip --upgrade``
+    * ``py -m pip install --upgrade pip``
+
+* Si vous recevez cette erreur :
+    ```
+    WARNING: The script pixel-code.exe is installed in 'C:\Users\User\AppData\Local\Python\pythoncore-3.14-64\Scripts' which is not on PATH.
+    ```
+    <details>
+    <summary>Faites :</summary>
+
+    1. Win + R
+    2. Dans la popup rentrez : ``sysdm.cpl``
+    3. Onglet avancé
+    4. Variables d'environnement
+    5. Dans Variables utilisateur → sélectionnez ``Path``
+    6. Modifier
+    7. Nouveau
+    8. Collez ce chemin (changez avec votre nom d'utilisateur) : ``C:\Users\USERNAME\AppData\Local\Python\pythoncore-3.14-64\Scripts``
+    9. OK -> OK -> OK
+    10. Fermez et ré-ouvrez le terminal.
+
+    Problème réglé (normalement).
+    </details>
+
+</details>
 
 ---
 
-Si le code se lance **sans crash** mais que certains caractères sont mal affichés : allez voir [CONFIG](/docs/fr/config.md)
+### Une fois l'installation terminée
+
+> [!NOTE]
+>
+> Lancez l'app en tapant la commande : **pixel-code**
+
+* Si l'app se lance **sans crash** mais que certains caractères sont mal affichés : allez voir [configuration](/docs/fr/config.md).
+* Les mises à jour sont proposées automatiquement au lancement : voir [mise à jour](/docs/fr/update.md).
+* Optionnel : depuis le clone, ``python3 first_use.py`` ajoute Pixel_Code lui-même comme projet d'exemple (marche seulement si Pixel_Code est installé avec pip, pas pipx). Vous pouvez aussi simplement ajouter un projet avec la touche ``a``.
+
+### Pour les développeurs
+
+```bash
+pip install -e .
+```
+Avec une installation éditable, le code utilisé est votre clone : mettez-le à jour avec ``git pull`` (Pixel_Code n'installera pas les mises à jour lui-même).
+
+### Désinstaller
+
+```bash
+pipx uninstall pixel-code   # ou : pip uninstall pixel-code
+```
+Vos projets et paramètres restent sur votre ordinateur (voir [configuration](/docs/fr/config.md) pour savoir où).

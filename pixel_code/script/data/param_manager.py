@@ -1,6 +1,7 @@
 import json
+import logging
 
-from pixel_code.paths import DEFAULT_PARAMETRES, PARAMETRES_JSON, ensure_user_files
+from pixel_code.paths import APP_VERSION, DEFAULT_PARAMETRES, PARAMETRES_JSON, ensure_user_files
 
 
 class ParamManager():
@@ -49,16 +50,18 @@ class ParamManager():
                     self.data[section].update(file_data[section])
                 else:
                     self.data[section] = file_data[section]
-        
+
+        # The version is always the installed one (pyproject.toml), not the one saved in the json
+        self.data["app"]["version"] = APP_VERSION
 
     def get_data(self, key_section:str, key:str):
         if key_section in self.data.keys():
             if key in self.data[key_section].keys():
                 return self.data[key_section][key]
             else:
-                print("key not found")
+                logging.warning(f"key not found : {key_section}/{key}")
         else:
-            print("key section not found")
+            logging.warning(f"key section not found : {key_section}")
 
 
     def save_param(self):

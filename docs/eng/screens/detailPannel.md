@@ -1,11 +1,11 @@
 ### Detail pannel screens :
 
-This screen is only used when ``"display_projects" = "side" `` 
+In fact this screen is only used when the setting ``"display_project" = "side"``, because when this setting was ``"bottom"`` (deleted since v0.4.0) the data of the project was displayed below its name in the main window.
 
 Preview : 
 ![](/docs/assets/detailPannel.png)
 
-Screen is composed by 5 information :
+The window is composed of 5 pieces of information:
 
 * Name of the project center and in **bold**
 * Description of the project
@@ -13,23 +13,23 @@ Screen is composed by 5 information :
 * Local path of the project 
 * Link of the github REPO
 
-The code to display this windows is in ``display_project_full()`` in ``Project`` and use self.detail_panel.win to accesse to the screen
+The code that displays this window is in the function ``display_project_full()`` of the class ``Project`` and uses ``self.detail_panel.win`` to access the window.
 
 ### Display of the description :
-Description can be longer than the width of detailPannel, unfortunately curses doesn't do backslash and return error : ``addwstr()`` or bug display
+The description can be longer than the width of the window, unfortunately curses doesn't go to the next line by itself and returns the error ``addwstr()`` or displays badly.
 
-The text in  ``description_str`` is cut in several line  in ``description_cut``, we can calculate where to add '\n' .
+The text ``description_str`` is cut in several lines in ``description_cut``, the number of lines needed is calculated with:
 
 ```python
 overflow:int =math.ceil(len(description_str) / w - 3)
 # -3 bcs 2ch for the border and 1 for "margin-left"
 # math.ceil round to the top value 
 ```
-After that :
+Then:
 ```python
 max_width = w - 3 #2 ch border + 1 space left
     for i in range(0, len(description_str), max_width):
     description_cut.append(description_str[i:i + max_width])
 ```
 
-> Must add + overflow in ``y`` to all other data after the description for always have the same gap of 2charactère between the description and the rst of the data.
+> + overflow must be added to ``y`` of all the other data after the description, to always have a gap of 2 characters between the description and the rest of the data.

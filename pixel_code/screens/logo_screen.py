@@ -31,7 +31,7 @@ class Logo():
                 "en":"logo not found",
                 "fr":"logo introuvable"
             }
-            self.logo_window.addstr(0, 0, translate(error_msg, "en"))
+            self.logo_window.addstr(0, 0, translate(error_msg, self.main_app.param_manager.get_data("app", "language")))
 
         h, w = self.logo_window.getmaxyx()
         self.logo_window.addstr(h-1, 0, f"{'-' * (w - 1)}")
@@ -72,6 +72,6 @@ class Logo():
                         "en":"logo not found",
                         "fr":"logo introuvable"
                     }
-                    self.logo_window.addstr(0, 0, translate(error_msg, "en"))
+                    self.logo_window.addstr(0, 0, translate(error_msg, self.main_app.param_manager.get_data("app", "language")))
 
                     
