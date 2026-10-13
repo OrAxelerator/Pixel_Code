@@ -17,3 +17,5 @@ Thumbs.db
 # Others
 todo.md
 .pixelcode.json
+# pip build output
+build/
